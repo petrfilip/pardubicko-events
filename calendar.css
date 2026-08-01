@@ -1,0 +1,39 @@
+.calendar-ongoing {
+  margin-bottom: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: var(--card);
+}
+
+.calendar-ongoing > h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.calendar-ongoing > p {
+  margin: 2px 0 10px;
+  color: var(--muted);
+  font-size: .82rem;
+}
+
+.calendar-ongoing-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 8px;
+}
+
+.calendar-ongoing .calendar-event {
+  margin-bottom: 0;
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--line));
+}
+
+@media (max-width: 620px) {
+  .calendar-ongoing {
+    padding: 10px;
+  }
+
+  .calendar-ongoing-list {
+    grid-template-columns: 1fr;
+  }
+}
