@@ -18,35 +18,51 @@
 
   <main class="page-width">
     <section class="controls" aria-label="Filtry akcí">
-      <label class="control control-search">
-        <span>Hledat</span>
-        <input id="search" type="search" placeholder="Název, obec nebo místo…" autocomplete="off">
-      </label>
-      <label class="control">
-        <span>Týden</span>
-        <select id="week"><option value="">Všechny týdny</option></select>
-      </label>
-      <label class="control">
-        <span>Obec</span>
-        <select id="municipality"><option value="">Všechny obce</option></select>
-      </label>
-      <label class="control">
-        <span>Kategorie</span>
-        <select id="category"><option value="">Všechny kategorie</option></select>
-      </label>
-      <label class="control">
-        <span>Vstupné</span>
-        <select id="price">
-          <option value="">Jakékoli</option>
-          <option value="free">Zdarma</option>
-          <option value="paid">Placené</option>
-          <option value="unknown">Neuvedeno</option>
-        </select>
-      </label>
-      <label class="checkbox-control">
-        <input id="futureOnly" type="checkbox" checked>
-        <span>Pouze budoucí akce</span>
-      </label>
+      <div class="primary-filters">
+        <label class="control control-search">
+          <span>Hledat</span>
+          <input id="search" type="search" placeholder="Název, obec nebo místo…" autocomplete="off">
+        </label>
+        <label class="control control-week">
+          <span>Týden</span>
+          <select id="week"><option value="">Všechny týdny</option></select>
+        </label>
+      </div>
+
+      <div class="quick-date-filter" role="group" aria-label="Rychlý výběr termínu">
+        <button type="button" data-date-range="" class="active" aria-pressed="true">Vše</button>
+        <button type="button" data-date-range="today" aria-pressed="false">Dnes</button>
+        <button type="button" data-date-range="tomorrow" aria-pressed="false">Zítra</button>
+        <button type="button" data-date-range="weekend" aria-pressed="false">Tento víkend</button>
+      </div>
+
+      <button id="advancedToggle" class="advanced-toggle" type="button" aria-expanded="false" aria-controls="advancedFilters">
+        Další filtry
+      </button>
+
+      <div id="advancedFilters" class="advanced-filters">
+        <label class="control">
+          <span>Obec</span>
+          <select id="municipality"><option value="">Všechny obce</option></select>
+        </label>
+        <label class="control">
+          <span>Kategorie</span>
+          <select id="category"><option value="">Všechny kategorie</option></select>
+        </label>
+        <label class="control">
+          <span>Vstupné</span>
+          <select id="price">
+            <option value="">Jakékoli</option>
+            <option value="free">Zdarma</option>
+            <option value="paid">Placené</option>
+            <option value="unknown">Neuvedeno</option>
+          </select>
+        </label>
+        <label class="checkbox-control">
+          <input id="futureOnly" type="checkbox" checked>
+          <span>Pouze budoucí akce</span>
+        </label>
+      </div>
     </section>
 
     <section class="toolbar" aria-label="Výsledky a zobrazení">
@@ -64,9 +80,7 @@
     <section id="events" class="events" aria-live="polite" aria-label="Seznam akcí" hidden></section>
     <section id="calendar" class="calendar" aria-live="polite" aria-label="Týdenní kalendář"></section>
 
-    <noscript>
-      <p class="message">Pro zobrazení katalogu je nutné povolit JavaScript.</p>
-    </noscript>
+    <noscript><p class="message">Pro zobrazení katalogu je nutné povolit JavaScript.</p></noscript>
   </main>
 
   <template id="event-template">
