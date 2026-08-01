@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Akce Pardubicko</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Pardubice · Chrudim · okolí</p>
+      <h1>Akce Pardubicko</h1>
+      <p>Veřejné akce v regionu, přehledně podle týdne.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="controls" aria-label="Filtry">
+      <input id="search" type="search" placeholder="Hledat akci, obec nebo místo…">
+      <select id="week"><option value="">Všechny týdny</option></select>
+      <select id="municipality"><option value="">Všechna místa</option></select>
+      <select id="category"><option value="">Všechny kategorie</option></select>
+      <select id="price"><option value="">Jakékoli vstupné</option><option value="free">Zdarma</option><option value="paid">Placené</option><option value="unknown">Neuvedeno</option></select>
+      <label class="checkbox"><input id="futureOnly" type="checkbox" checked> Jen budoucí</label>
+    </section>
+
+    <div class="summary"><strong id="count">Načítám…</strong><span id="updated"></span></div>
+    <div id="error" class="error" hidden></div>
+    <section id="events" class="events" aria-live="polite"></section>
+  </main>
+
+  <template id="event-template">
+    <article class="event-card">
+      <div class="event-date"></div>
+      <div class="event-body">
+        <div class="event-topline"><span class="event-category"></span><span class="event-price"></span></div>
+        <h2 class="event-title"></h2>
+        <p class="event-place"></p>
+        <p class="event-description"></p>
+        <div class="event-footer"><span class="event-verification"></span><a class="event-source" target="_blank" rel="noopener noreferrer">Zdroj</a></div>
+      </div>
+    </article>
+  </template>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
