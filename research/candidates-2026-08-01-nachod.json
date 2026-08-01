@@ -1,0 +1,61 @@
+{
+  "generated_at": "2026-08-01T19:45:00+02:00",
+  "candidates": [
+    {
+      "id": "nocni-prohlidka-srubu-brezinka-2026-08-10",
+      "title": "Noční prohlídka srubu Březinka",
+      "date_text": "10. 8. 2026",
+      "municipality": "Náchod",
+      "venue": "Pěchotní srub Březinka",
+      "discovered_at": "2026-08-01T19:40:00+02:00",
+      "discovery_method": "official-calendar",
+      "discovery_scope": "priority-14-days",
+      "query": "site:mestonachod.cz srpen 2026 akce Náchod",
+      "source_url": "https://mestonachod.cz/pro-turistu/kultura-sport/akce/detail/?id=41892",
+      "status": "needs-verification",
+      "notes": "Oficiální kalendář potvrzuje datum a konkrétní detail URL; doplnit přesný čas a vstupné."
+    },
+    {
+      "id": "pozorovani-zatmeni-slunce-dobrosov-2026-08-12",
+      "title": "Pozorování zatmění Slunce na Pevnosti Dobrošov",
+      "date_text": "12. 8. 2026",
+      "municipality": "Náchod",
+      "venue": "Pevnost Dobrošov",
+      "discovered_at": "2026-08-01T19:40:00+02:00",
+      "discovery_method": "official-calendar",
+      "discovery_scope": "priority-14-days",
+      "query": "site:mestonachod.cz srpen 2026 akce Náchod",
+      "source_url": "https://mestonachod.cz/pro-turistu/kultura-sport/akce/detail/?id=41844",
+      "status": "needs-verification",
+      "notes": "Oficiální kalendář potvrzuje datum a konkrétní detail URL; doplnit čas, přesné místo a případné podmínky pozorování."
+    },
+    {
+      "id": "farmarske-trhy-nachod-2026-08-12",
+      "title": "Farmářské trhy v Náchodě",
+      "date_text": "12. 8. 2026",
+      "municipality": "Náchod",
+      "venue": "Náchod",
+      "discovered_at": "2026-08-01T19:40:00+02:00",
+      "discovery_method": "official-calendar",
+      "discovery_scope": "priority-14-days",
+      "query": "site:mestonachod.cz srpen 2026 akce Náchod",
+      "source_url": "https://mestonachod.cz/pro-turistu/kultura-sport/akce/detail/?id=41815",
+      "status": "needs-verification",
+      "notes": "Oficiální kalendář potvrzuje datum a konkrétní detail URL; doplnit čas a přesné tržiště."
+    },
+    {
+      "id": "meivis-male-lazne-nachod-2026-08-16",
+      "title": "Meivis v Malých lázních",
+      "date_text": "16. 8. 2026 v 15:00",
+      "municipality": "Náchod",
+      "venue": "Zahrada Vily Komenský, Malé lázně Běloves",
+      "discovered_at": "2026-08-01T19:40:00+02:00",
+      "discovery_method": "official-calendar",
+      "discovery_scope": "priority-14-days",
+      "query": "site:mestonachod.cz srpen 2026 akce Náchod",
+      "source_url": "https://mestonachod.cz/pro-turistu/kultura-sport/akce/detail/?id=41611",
+      "status": "verified",
+      "notes": "Oficiální detail potvrzuje datum, čas, místo a vstup zdarma; koncert je součástí Kulturního léta v Malých lázních Běloves."
+    }
+  ]
+}
