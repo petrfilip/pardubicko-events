@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "week": "2026-W36",
-  "generated_at": "2026-08-01T14:40:00+02:00",
+  "generated_at": "2026-08-01T14:10:00+02:00",
   "events": [
     {
       "id": "siebeneichener-quartett-peckova-pavlica-dropp-2026-08-31",
@@ -89,8 +89,8 @@
       "venue": "Výstavní síň Chrudim – Divadlo Karla Pippicha",
       "municipality": "Chrudim",
       "categories": ["výstava", "umění"],
-      "price": {"type": "unknown", "text": "Neuvedeno"},
-      "source": {"type": "official", "url": "https://www.chrudimskabeseda.cz/kalendar-akci/"},
+      "price": {"type": "paid", "text": "20 Kč"},
+      "source": {"type": "official", "url": "https://www.chrudimskabeseda.cz/akce/rodinna-anamneza-jaroslav-korecek-marketa-koreckova-juliana-mackova/"},
       "cancelled": false
     }
   ]
