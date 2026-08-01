@@ -25,9 +25,16 @@
       <label class="checkbox"><input id="futureOnly" type="checkbox" checked> Jen budoucí</label>
     </section>
 
-    <div class="summary"><strong id="count">Načítám…</strong><span id="updated"></span></div>
+    <div class="summary">
+      <div><strong id="count">Načítám…</strong><span id="updated"></span></div>
+      <div class="view-switch" aria-label="Zobrazení">
+        <button id="listView" class="active" type="button">Seznam</button>
+        <button id="calendarView" type="button">Kalendář</button>
+      </div>
+    </div>
     <div id="error" class="error" hidden></div>
     <section id="events" class="events" aria-live="polite"></section>
+    <section id="calendar" class="calendar" aria-live="polite" hidden></section>
   </main>
 
   <template id="event-template">
