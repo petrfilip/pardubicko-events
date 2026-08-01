@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "week": "2026-W33",
+  "generated_at": "2026-08-01T13:45:00+02:00",
+  "events": [
+    {
+      "id": "komentovana-prohlidka-opevneni-chrudim-2026-08-10",
+      "week": "2026-W33",
+      "title": "Komentovaná prohlídka městského opevnění a bašty Prachárna",
+      "description": "Komentovaná prohlídka chrudimského opevnění včetně expozice v baště Prachárna. Sraz je v Turistickém informačním centru na Resselově náměstí.",
+      "start_at": "2026-08-10T10:00:00+02:00",
+      "end_at": null,
+      "all_day": false,
+      "venue": "Turistické informační centrum, Resselovo náměstí",
+      "municipality": "Chrudim",
+      "categories": ["prohlídka", "historie", "rodiny"],
+      "price": {"type": "free", "text": "Zdarma"},
+      "source": {"type": "official", "url": "https://www.chrudim.eu/vydejte-se-za-historii-mestskeho-opevneni/"},
+      "cancelled": false
+    },
+    {
+      "id": "karantena-pardubice-2026-08-15",
+      "week": "2026-W33",
+      "title": "Karanténa: příběh zapomenutého lazaretu",
+      "description": "Tematická komentovaná prohlídka věnovaná zaniklé vojenské nemocnici a historii barákového města na území dnešní Dukly.",
+      "start_at": "2026-08-15T10:00:00+02:00",
+      "end_at": null,
+      "all_day": false,
+      "venue": "Sraz před živnostenským úřadem, Gorkého 489",
+      "municipality": "Pardubice",
+      "categories": ["prohlídka", "historie"],
+      "price": {"type": "paid", "text": "Dle ceníku Turistického informačního centra"},
+      "source": {"type": "official", "url": "https://pardubice.eu/prohlidky"},
+      "cancelled": false
+    },
+    {
+      "id": "czech-tour-etapa-3-pardubice-2026",
+      "week": "2026-W33",
+      "title": "Czech Tour 2026 – start 3. etapy",
+      "description": "Start třetí etapy profesionálního cyklistického závodu Czech Tour z Pardubic na Dlouhé stráně. Doprovodný program začíná v 10:45, představení týmů v 10:55 a slavnostní start ve 12:00.",
+      "start_at": "2026-08-15T10:45:00+02:00",
+      "end_at": "2026-08-15T12:20:00+02:00",
+      "all_day": false,
+      "venue": "Pernštýnské náměstí",
+      "municipality": "Pardubice",
+      "categories": ["sport", "cyklistika", "rodiny"],
+      "price": {"type": "free", "text": "Zdarma"},
+      "source": {"type": "official", "url": "https://www.czechtour.com/cs/etapa-3-26"},
+      "cancelled": false
+    },
+    {
+      "id": "pardubice-po-roce-1845-2026-08-16",
+      "week": "2026-W33",
+      "title": "Pardubice po roce 1845",
+      "description": "Komentovaná prohlídka zaměřená na proměnu Pardubic po příchodu železnice a následný rozvoj města.",
+      "start_at": "2026-08-16T10:00:00+02:00",
+      "end_at": null,
+      "all_day": false,
+      "venue": "Pardubice",
+      "municipality": "Pardubice",
+      "categories": ["prohlídka", "historie"],
+      "price": {"type": "paid", "text": "Dle ceníku Turistického informačního centra"},
+      "source": {"type": "official", "url": "https://pardubice.eu/prohlidky"},
+      "cancelled": false
+    },
+    {
+      "id": "bienale-ve-veci-umeni-nezbytna-prani-2026-w33",
+      "week": "2026-W33",
+      "title": "Bienále Ve věci umění: Nezbytná přání",
+      "description": "Mezinárodní výstava současného umění v Galerii města Pardubic. Akce probíhá od 12. června do 26. září 2026.",
+      "start_at": "2026-06-12T10:00:00+02:00",
+      "end_at": "2026-09-26T18:00:00+02:00",
+      "all_day": false,
+      "venue": "GAMPA, Automatické mlýny",
+      "municipality": "Pardubice",
+      "categories": ["výstava", "umění"],
+      "price": {"type": "paid", "text": "Volné vstupné nebo doporučený příspěvek 60 / 100 Kč"},
+      "source": {"type": "official", "url": "https://www.automatickemlyny.eu/udalost/bienale-ve-veci-umeni-nezbytna-prani/"},
+      "cancelled": false
+    }
+  ]
+}
