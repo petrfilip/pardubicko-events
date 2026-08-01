@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "week": "2026-W32",
+  "generated_at": "2026-08-01T12:20:00+02:00",
+  "events": [
+    {
+      "id": "preview-sportovni-park-pardubice-2026-08-03",
+      "week": "2026-W32",
+      "title": "Sportovní park Pardubice",
+      "description": "Ukázková položka pro náhled aplikace. Celodenní sportovní a rodinný program.",
+      "start_at": "2026-08-03T09:00:00+02:00",
+      "end_at": "2026-08-03T18:00:00+02:00",
+      "all_day": false,
+      "venue": "Park Na Špici",
+      "municipality": "Pardubice",
+      "categories": ["sport", "rodiny"],
+      "price": {"type": "free", "text": "Zdarma"},
+      "source": {"type": "official", "url": "https://pardubice.eu/"},
+      "cancelled": false
+    },
+    {
+      "id": "preview-letni-kino-chrudim-2026-08-05",
+      "week": "2026-W32",
+      "title": "Letní kino pod širým nebem",
+      "description": "Ukázková položka pro ověření filtrování podle obce, kategorie a vstupného.",
+      "start_at": "2026-08-05T21:00:00+02:00",
+      "end_at": "2026-08-05T23:00:00+02:00",
+      "all_day": false,
+      "venue": "Letní scéna",
+      "municipality": "Chrudim",
+      "categories": ["kino", "kultura"],
+      "price": {"type": "paid", "text": "150 Kč"},
+      "source": {"type": "official", "url": "https://www.chrudim.eu/"},
+      "cancelled": false
+    },
+    {
+      "id": "preview-detsky-den-krizanovice-2026-08-06",
+      "week": "2026-W32",
+      "title": "Dětský den",
+      "description": "Ukázková facebooková akce pro rodiny s dětmi.",
+      "start_at": "2026-08-06T14:00:00+02:00",
+      "end_at": null,
+      "all_day": false,
+      "venue": "Obecní hřiště",
+      "municipality": "Křižanovice",
+      "categories": ["děti", "rodiny"],
+      "price": {"type": "unknown", "text": "Neuvedeno"},
+      "source": {"type": "facebook", "url": "https://www.facebook.com/events/"},
+      "cancelled": false
+    },
+    {
+      "id": "preview-koncert-nasavrky-2026-08-07",
+      "week": "2026-W32",
+      "title": "Večerní koncert",
+      "description": "Ukázkový hudební program v okolí Pardubic a Chrudimi.",
+      "start_at": "2026-08-07T19:30:00+02:00",
+      "end_at": "2026-08-07T22:00:00+02:00",
+      "all_day": false,
+      "venue": "Náměstí",
+      "municipality": "Nasavrky",
+      "categories": ["hudba", "koncert"],
+      "price": {"type": "free", "text": "Zdarma"},
+      "source": {"type": "regional", "url": "https://www.nasavrky.cz/"},
+      "cancelled": false
+    },
+    {
+      "id": "preview-gastro-prelouc-2026-08-08",
+      "week": "2026-W32",
+      "title": "Street food festival",
+      "description": "Ukázková celodenní gastro akce.",
+      "start_at": "2026-08-08T10:00:00+02:00",
+      "end_at": "2026-08-08T20:00:00+02:00",
+      "all_day": false,
+      "venue": "Městský park",
+      "municipality": "Přelouč",
+      "categories": ["gastro", "festival"],
+      "price": {"type": "free", "text": "Vstup zdarma"},
+      "source": {"type": "official", "url": "https://www.mestoprelouc.cz/"},
+      "cancelled": false
+    }
+  ]
+}
