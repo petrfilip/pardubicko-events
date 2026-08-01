@@ -88,7 +88,7 @@ function renderOngoingEvents(events, onEventOpen) {
 }
 
 export function resolveCalendarWeek(weeks, selectedWeekId, now = new Date()) {
-  if (selectedWeekId) return selectedWeekId;
+  if (selectedWeekId && weeks.some(week => week.id === selectedWeekId)) return selectedWeekId;
   const today = dateKey(now);
   return weeks.find(week => week.from <= today && week.to >= today)?.id || weeks[0]?.id || '';
 }
