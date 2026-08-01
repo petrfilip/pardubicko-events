@@ -1,20 +1,34 @@
 # Pardubicko Events
 
-Veřejný katalog akcí pro Pardubice, Chrudim a okolí.
+Veřejný statický katalog akcí pro Pardubice, Chrudim a okolí. Web běží bez serveru a databáze jako GitHub Pages a načítá data z týdenních JSON souborů v repozitáři.
 
 ## Struktura
 
-- `index.html` – jednoduchý frontend pro GitHub Pages
-- `app.js` – načítání, filtrování a řazení akcí
-- `styles.css` – vzhled aplikace
+- `index.html` – HTML rozhraní bez aplikační logiky
+- `styles.css` – responzivní vzhled seznamu, filtrů a kalendáře
+- `js/app.js` – orchestrace načtení dat, filtrů a pohledů
+- `js/data.js` – načtení manifestu a týdenních JSON souborů
+- `js/filters.js` – inicializace a aplikace filtrů
+- `js/list.js` – seznamový pohled
+- `js/calendar.js` – týdenní kalendář
+- `js/format.js` – formátování data, času a popisků
 - `data/manifest.json` – seznam dostupných týdnů
 - `data/weeks/YYYY-Www.json` – akce pro konkrétní ISO týden
-- `schema/event-schema.json` – JSON Schema pro validaci dat
-- `.github/workflows/validate.yml` – kontrola JSON souborů při každém commitu
+- `config/sources.json` – kurátorovaný seznam zdrojů ke kontrole
+
+## Lokální spuštění
+
+ES moduly a `fetch()` vyžadují HTTP server. V kořeni repozitáře lze použít například:
+
+```bash
+python3 -m http.server 8000
+```
+
+Potom otevřete `http://localhost:8000/`.
 
 ## GitHub Pages
 
-V nastavení repozitáře zvolte **Settings → Pages → Deploy from a branch → main / root**.
+Publikace je určena z větve `main` a kořene repozitáře.
 
 ## Datový model
 
