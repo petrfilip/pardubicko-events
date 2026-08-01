@@ -3,53 +3,91 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Veřejný katalog akcí pro Pardubice, Chrudim a okolí.">
   <title>Akce Pardubicko</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="hero">
-    <div>
+    <div class="page-width">
       <p class="eyebrow">Pardubice · Chrudim · okolí</p>
       <h1>Akce Pardubicko</h1>
       <p>Veřejné akce v regionu, přehledně podle týdne.</p>
     </div>
   </header>
 
-  <main>
-    <section class="controls" aria-label="Filtry">
-      <input id="search" type="search" placeholder="Hledat akci, obec nebo místo…">
-      <select id="week"><option value="">Všechny týdny</option></select>
-      <select id="municipality"><option value="">Všechna místa</option></select>
-      <select id="category"><option value="">Všechny kategorie</option></select>
-      <select id="price"><option value="">Jakékoli vstupné</option><option value="free">Zdarma</option><option value="paid">Placené</option><option value="unknown">Neuvedeno</option></select>
-      <label class="checkbox"><input id="futureOnly" type="checkbox" checked> Jen budoucí</label>
+  <main class="page-width">
+    <section class="controls" aria-label="Filtry akcí">
+      <label class="control control-search">
+        <span>Hledat</span>
+        <input id="search" type="search" placeholder="Název, obec nebo místo…" autocomplete="off">
+      </label>
+      <label class="control">
+        <span>Týden</span>
+        <select id="week"><option value="">Všechny týdny</option></select>
+      </label>
+      <label class="control">
+        <span>Obec</span>
+        <select id="municipality"><option value="">Všechny obce</option></select>
+      </label>
+      <label class="control">
+        <span>Kategorie</span>
+        <select id="category"><option value="">Všechny kategorie</option></select>
+      </label>
+      <label class="control">
+        <span>Vstupné</span>
+        <select id="price">
+          <option value="">Jakékoli</option>
+          <option value="free">Zdarma</option>
+          <option value="paid">Placené</option>
+          <option value="unknown">Neuvedeno</option>
+        </select>
+      </label>
+      <label class="checkbox-control">
+        <input id="futureOnly" type="checkbox" checked>
+        <span>Pouze budoucí akce</span>
+      </label>
     </section>
 
-    <div class="summary">
-      <div><strong id="count">Načítám…</strong><span id="updated"></span></div>
-      <div class="view-switch" aria-label="Zobrazení">
-        <button id="listView" class="active" type="button">Seznam</button>
-        <button id="calendarView" type="button">Kalendář</button>
+    <section class="toolbar" aria-label="Výsledky a zobrazení">
+      <div>
+        <strong id="count">Načítám…</strong>
+        <span id="updated" class="updated"></span>
       </div>
-    </div>
-    <div id="error" class="error" hidden></div>
-    <section id="events" class="events" aria-live="polite"></section>
-    <section id="calendar" class="calendar" aria-live="polite" hidden></section>
+      <div class="view-switch" role="group" aria-label="Zobrazení akcí">
+        <button id="listView" class="active" type="button" aria-pressed="true">Seznam</button>
+        <button id="calendarView" type="button" aria-pressed="false">Kalendář</button>
+      </div>
+    </section>
+
+    <div id="error" class="message message-error" role="alert" hidden></div>
+    <section id="events" class="events" aria-live="polite" aria-label="Seznam akcí"></section>
+    <section id="calendar" class="calendar" aria-live="polite" aria-label="Týdenní kalendář" hidden></section>
+
+    <noscript>
+      <p class="message">Pro zobrazení katalogu je nutné povolit JavaScript.</p>
+    </noscript>
   </main>
 
   <template id="event-template">
     <article class="event-card">
       <div class="event-date"></div>
       <div class="event-body">
-        <div class="event-topline"><span class="event-category"></span><span class="event-price"></span></div>
+        <div class="event-topline">
+          <span class="event-category"></span>
+          <span class="event-price"></span>
+        </div>
         <h2 class="event-title"></h2>
         <p class="event-place"></p>
         <p class="event-description"></p>
-        <div class="event-footer"><span class="event-verification"></span><a class="event-source" target="_blank" rel="noopener noreferrer">Zdroj</a></div>
+        <div class="event-footer">
+          <span class="event-source-type"></span>
+          <a class="event-source" target="_blank" rel="noopener noreferrer">Otevřít konkrétní zdroj</a>
+        </div>
       </div>
     </article>
   </template>
 
-  <script src="app.js" defer></script>
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
