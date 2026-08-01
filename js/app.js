@@ -43,6 +43,10 @@ function setView(view) {
   render();
 }
 
+function weekForDate(date) {
+  return state.manifest.weeks.find(week => week.from <= date && week.to >= date);
+}
+
 function render() {
   const filterValues = state.filters.values();
   const filteredEvents = filterEvents(state.events, filterValues, { weeks: state.manifest.weeks });
@@ -51,6 +55,10 @@ function render() {
     elements.count.textContent = eventCountLabel(filteredEvents.length);
     renderList(elements.events, filteredEvents);
     return;
+  }
+
+  if (filterValues.dateFrom) {
+    state.calendarWeek = weekForDate(filterValues.dateFrom)?.id || state.calendarWeek;
   }
 
   const weekId = resolveCalendarWeek(state.manifest.weeks, filterValues.week || state.calendarWeek);
@@ -65,6 +73,7 @@ function render() {
     weekId,
     onWeekChange: nextWeek => {
       state.calendarWeek = nextWeek;
+      if (filterValues.dateRange) state.filters.setDateRange('', false);
       if (filterValues.week) state.filters.setWeek(nextWeek);
       else render();
     },
