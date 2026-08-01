@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "week": "2026-W34",
-  "generated_at": "2026-08-01T14:05:00+02:00",
+  "generated_at": "2026-08-01T14:10:00+02:00",
   "events": [
     {
       "id": "komentovana-prohlidka-opevneni-chrudim-2026-08-17",
@@ -37,15 +37,15 @@
       "id": "opekani-burtu-dubina-2026-08-21",
       "week": "2026-W34",
       "title": "Opékání buřtů na Dubině",
-      "description": "Sousedské opékání buřtů pořádané městským obvodem Pardubice III.",
-      "start_at": "2026-08-21T00:00:00+02:00",
-      "end_at": null,
-      "all_day": true,
-      "venue": "Před Základní školou Dubina",
+      "description": "Sousedské opékání buřtů s country a folkovou hudbou. Vlastní buřty s sebou.",
+      "start_at": "2026-08-21T19:00:00+02:00",
+      "end_at": "2026-08-21T22:00:00+02:00",
+      "all_day": false,
+      "venue": "Dubina",
       "municipality": "Pardubice",
-      "categories": ["sousedská akce", "rodiny", "gastro"],
-      "price": {"type": "unknown", "text": "Neuvedeno"},
-      "source": {"type": "official", "url": "https://pardubice.eu/kulturni-akce"},
+      "categories": ["sousedská akce", "rodiny", "gastro", "hudba"],
+      "price": {"type": "free", "text": "Zdarma"},
+      "source": {"type": "official", "url": "https://pardubice.eu/opekani-burtu-na-drazce-41956"},
       "cancelled": false
     },
     {
