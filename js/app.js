@@ -5,7 +5,15 @@ import { createFilters, eventsForWeek, filterEvents } from './filters.js';
 import { addDays, dateKey, eventCountLabel, formatUpdated, parseLocalDate } from './format.js';
 import { renderList } from './list.js';
 
-const state = { manifest: null, events: [], filters: null, detail: null, view: 'calendar', calendarWeek: '' };
+const state = {
+  manifest: null,
+  events: [],
+  filters: null,
+  detail: null,
+  view: 'calendar',
+  calendarWeek: '',
+  previousDateRange: '',
+};
 const elements = {
   count: document.getElementById('count'), updated: document.getElementById('updated'),
   error: document.getElementById('error'), events: document.getElementById('events'),
@@ -63,6 +71,12 @@ function openEvent(event, { updateUrl = true } = {}) {
 
 function render() {
   const filterValues = state.filters.values();
+
+  if (state.previousDateRange && !filterValues.dateRange && !filterValues.week) {
+    state.calendarWeek = resolveCalendarWeek(state.manifest.weeks, '');
+  }
+  state.previousDateRange = filterValues.dateRange;
+
   const filteredEvents = filterEvents(state.events, filterValues, { weeks: state.manifest.weeks });
 
   if (state.view === 'list') {
