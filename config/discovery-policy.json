@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "timezone": "Europe/Prague",
+  "planning_horizon_weeks": 8,
+  "daily_limits": {
+    "max_municipalities": 30,
+    "max_queries": 180,
+    "max_candidates": 120,
+    "max_new_sources": 25
+  },
+  "tiers": [
+    {
+      "id": "tier-1",
+      "description": "Krajská a okresní města, velká kulturní centra a zdroje s vysokou historickou úspěšností.",
+      "target_check_interval_days": 1
+    },
+    {
+      "id": "tier-2",
+      "description": "Menší města, městyse a obce s pravidelným kulturním nebo sportovním programem.",
+      "target_check_interval_days": 3
+    },
+    {
+      "id": "tier-3",
+      "description": "Ostatní obce a místní části kontrolované rotačně nebo při zvýšené sezónní prioritě.",
+      "target_check_interval_days": 7
+    }
+  ],
+  "daily_batch": {
+    "tier_1_share": 0.35,
+    "tier_2_share": 0.35,
+    "tier_3_share": 0.30,
+    "minimum_districts_per_run": 4,
+    "require_both_regions": true
+  },
+  "priority_factors": {
+    "days_since_last_check": 0.40,
+    "historic_event_yield": 0.20,
+    "seasonal_signal": 0.15,
+    "coverage_gap": 0.15,
+    "new_source_signal": 0.10
+  },
+  "stop_conditions": [
+    "Stop adding broad queries when the daily query limit is reached.",
+    "Do not repeatedly query the same municipality with near-identical phrases in one run.",
+    "Do not process more candidates than the curator can reasonably verify in the next run.",
+    "Prefer quality and geographic rotation over exhaustive same-day crawling."
+  ],
+  "maintenance_rules": [
+    "Update last_checked_at only for municipalities or sources actually checked.",
+    "Do not create empty commits.",
+    "Keep research files compact; archive verbose historical reports by month.",
+    "Review limits monthly using actual runtime, candidate yield and curator backlog."
+  ]
+}
