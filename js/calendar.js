@@ -24,19 +24,23 @@ function createEventButton(event, day, onEventOpen) {
   button.title = [event.title, event.venue, event.municipality].filter(Boolean).join(' — ');
   button.addEventListener('click', () => onEventOpen(event));
 
-  const badges = document.createElement('span');
-  badges.className = 'calendar-event-badges';
-  renderCategoryBadges(badges, event.categories, { limit: 1 });
-
   const time = document.createElement('span');
   time.className = 'calendar-event-time';
   time.textContent = formatCalendarTime(event, day);
+
+  const heading = document.createElement('span');
+  heading.className = 'calendar-event-heading';
 
   const title = document.createElement('span');
   title.className = 'calendar-event-title';
   title.textContent = event.cancelled ? `${event.title} — ZRUŠENO` : event.title;
 
-  button.append(badges, time, title);
+  const badges = document.createElement('span');
+  badges.className = 'calendar-event-badges category-badges';
+  renderCategoryBadges(badges, event.categories, { limit: 1 });
+
+  heading.append(title, badges);
+  button.append(time, heading);
   return button;
 }
 
