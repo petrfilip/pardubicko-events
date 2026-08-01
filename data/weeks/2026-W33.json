@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "week": "2026-W33",
-  "generated_at": "2026-08-01T13:45:00+02:00",
+  "generated_at": "2026-08-01T14:10:00+02:00",
   "events": [
     {
       "id": "komentovana-prohlidka-opevneni-chrudim-2026-08-10",
@@ -29,22 +29,22 @@
       "venue": "Sraz před živnostenským úřadem, Gorkého 489",
       "municipality": "Pardubice",
       "categories": ["prohlídka", "historie"],
-      "price": {"type": "paid", "text": "Dle ceníku Turistického informačního centra"},
-      "source": {"type": "official", "url": "https://pardubice.eu/prohlidky"},
+      "price": {"type": "paid", "text": "150 Kč, snížené 80 Kč"},
+      "source": {"type": "official", "url": "https://pardubice.eu/karantena-pribeh-zapomenuteho-lazaretu"},
       "cancelled": false
     },
     {
       "id": "czech-tour-etapa-3-pardubice-2026",
       "week": "2026-W33",
       "title": "Czech Tour 2026 – start 3. etapy",
-      "description": "Start třetí etapy profesionálního cyklistického závodu Czech Tour z Pardubic na Dlouhé stráně. Doprovodný program začíná v 10:45, představení týmů v 10:55 a slavnostní start ve 12:00.",
-      "start_at": "2026-08-15T10:45:00+02:00",
-      "end_at": "2026-08-15T12:20:00+02:00",
+      "description": "Start třetí etapy profesionálního cyklistického závodu Czech Tour z Pardubic na Dlouhé stráně.",
+      "start_at": "2026-08-15T12:20:00+02:00",
+      "end_at": null,
       "all_day": false,
       "venue": "Pernštýnské náměstí",
       "municipality": "Pardubice",
       "categories": ["sport", "cyklistika", "rodiny"],
-      "price": {"type": "free", "text": "Zdarma"},
+      "price": {"type": "unknown", "text": "Vstupné neuvedeno"},
       "source": {"type": "official", "url": "https://www.czechtour.com/cs/etapa-3-26"},
       "cancelled": false
     },
@@ -59,8 +59,8 @@
       "venue": "Pardubice",
       "municipality": "Pardubice",
       "categories": ["prohlídka", "historie"],
-      "price": {"type": "paid", "text": "Dle ceníku Turistického informačního centra"},
-      "source": {"type": "official", "url": "https://pardubice.eu/prohlidky"},
+      "price": {"type": "paid", "text": "150 Kč, snížené 80 Kč"},
+      "source": {"type": "official", "url": "https://pardubice.eu/pardubice-po-roce-1845-24"},
       "cancelled": false
     },
     {
