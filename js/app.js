@@ -2,25 +2,14 @@ import { renderCalendar, resolveCalendarWeek } from './calendar.js';
 import { loadEventData } from './data.js';
 import { createEventDetail } from './detail.js';
 import { createFilters, eventsForWeek, filterEvents } from './filters.js';
-import { eventCountLabel, formatUpdated } from './format.js';
+import { addDays, dateKey, eventCountLabel, formatUpdated, parseLocalDate } from './format.js';
 import { renderList } from './list.js';
 
-const state = {
-  manifest: null,
-  events: [],
-  filters: null,
-  detail: null,
-  view: 'calendar',
-  calendarWeek: '',
-};
-
+const state = { manifest: null, events: [], filters: null, detail: null, view: 'calendar', calendarWeek: '' };
 const elements = {
-  count: document.getElementById('count'),
-  updated: document.getElementById('updated'),
-  error: document.getElementById('error'),
-  events: document.getElementById('events'),
-  calendar: document.getElementById('calendar'),
-  listView: document.getElementById('listView'),
+  count: document.getElementById('count'), updated: document.getElementById('updated'),
+  error: document.getElementById('error'), events: document.getElementById('events'),
+  calendar: document.getElementById('calendar'), listView: document.getElementById('listView'),
   calendarView: document.getElementById('calendarView'),
 };
 
@@ -43,8 +32,15 @@ function setView(view) {
   render();
 }
 
-function weekForDate(date) {
-  return state.manifest.weeks.find(week => week.from <= date && week.to >= date);
+function weekForDate(value) {
+  return state.manifest.weeks.find(week => week.from <= value && week.to >= value);
+}
+
+function makeCalendarWeek(value) {
+  const selected = parseLocalDate(value);
+  const weekday = selected.getUTCDay();
+  const monday = addDays(selected, weekday === 0 ? -6 : 1 - weekday);
+  return { id: 'selected-date', from: dateKey(monday), to: dateKey(addDays(monday, 6)) };
 }
 
 function render() {
@@ -57,20 +53,25 @@ function render() {
     return;
   }
 
+  let calendarWeeks = state.manifest.weeks;
+  let weekId = resolveCalendarWeek(calendarWeeks, filterValues.week || state.calendarWeek);
   if (filterValues.dateFrom) {
-    state.calendarWeek = weekForDate(filterValues.dateFrom)?.id || state.calendarWeek;
+    const matchingWeek = weekForDate(filterValues.dateFrom);
+    if (matchingWeek) weekId = matchingWeek.id;
+    else {
+      const selectedWeek = makeCalendarWeek(filterValues.dateFrom);
+      calendarWeeks = [selectedWeek];
+      weekId = selectedWeek.id;
+    }
   }
 
-  const weekId = resolveCalendarWeek(state.manifest.weeks, filterValues.week || state.calendarWeek);
-  const week = state.manifest.weeks.find(item => item.id === weekId);
+  const week = calendarWeeks.find(item => item.id === weekId);
   const calendarEvents = eventsForWeek(filteredEvents, week);
-  state.calendarWeek = weekId;
+  if (!filterValues.dateFrom) state.calendarWeek = weekId;
   elements.count.textContent = eventCountLabel(calendarEvents.length);
 
   renderCalendar(elements.calendar, {
-    events: calendarEvents,
-    weeks: state.manifest.weeks,
-    weekId,
+    events: calendarEvents, weeks: calendarWeeks, weekId,
     onWeekChange: nextWeek => {
       state.calendarWeek = nextWeek;
       if (filterValues.dateRange) state.filters.setDateRange('', false);
@@ -89,16 +90,11 @@ async function init() {
     state.calendarWeek = resolveCalendarWeek(manifest.weeks, '');
     state.filters = createFilters({ events, weeks: manifest.weeks, onChange: render });
     state.detail = createEventDetail();
-
-    elements.updated.textContent = manifest.generated_at
-      ? `Aktualizováno ${formatUpdated(manifest.generated_at)}`
-      : '';
+    elements.updated.textContent = manifest.generated_at ? `Aktualizováno ${formatUpdated(manifest.generated_at)}` : '';
     elements.listView.addEventListener('click', () => setView('list'));
     elements.calendarView.addEventListener('click', () => setView('calendar'));
     setView('calendar');
-  } catch (error) {
-    showError(error);
-  }
+  } catch (error) { showError(error); }
 }
 
 init();
