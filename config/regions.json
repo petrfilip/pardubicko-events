@@ -1,0 +1,28 @@
+{
+  "coverage_mode": "full_regions",
+  "regions": [
+    {
+      "id": "pardubicky-kraj",
+      "name": "Pardubický kraj",
+      "country": "CZ",
+      "districts": [
+        "Chrudim",
+        "Pardubice",
+        "Svitavy",
+        "Ústí nad Orlicí"
+      ]
+    },
+    {
+      "id": "kralovehradecky-kraj",
+      "name": "Královéhradecký kraj",
+      "country": "CZ",
+      "districts": [
+        "Hradec Králové",
+        "Jičín",
+        "Náchod",
+        "Rychnov nad Kněžnou",
+        "Trutnov"
+      ]
+    }
+  ]
+}
