@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "week": "2026-W33",
-  "generated_at": "2026-08-01T14:10:00+02:00",
+  "generated_at": "2026-08-01T19:08:00+02:00",
   "events": [
     {
       "id": "komentovana-prohlidka-opevneni-chrudim-2026-08-10",
@@ -16,6 +16,22 @@
       "categories": ["prohlídka", "historie", "rodiny"],
       "price": {"type": "free", "text": "Zdarma"},
       "source": {"type": "official", "url": "https://www.chrudim.eu/vydejte-se-za-historii-mestskeho-opevneni/"},
+      "cancelled": false
+    },
+    {
+      "id": "loutkove-predstaveni-hlinsko-2026-08-13",
+      "week": "2026-W33",
+      "title": "Loutkové představení: Studánka a kouzlo lesa",
+      "description": "Loutkové představení pro děti v památkové rezervaci Betlém.",
+      "start_at": "2026-08-13T14:30:00+02:00",
+      "end_at": null,
+      "all_day": false,
+      "venue": "Betlém",
+      "municipality": "Hlinsko",
+      "categories": ["divadlo", "rodiny", "děti"],
+      "price": {"type": "free", "text": "Zdarma"},
+      "source": {"type": "official-calendar", "url": "https://www.hlinsko.cz/volny-cas/prehled-kulturnich-akci/"},
+      "last_verified_at": "2026-08-01T19:05:00+02:00",
       "cancelled": false
     },
     {
@@ -34,6 +50,38 @@
       "cancelled": false
     },
     {
+      "id": "krajem-maliru-vysociny-2026-08-15",
+      "week": "2026-W33",
+      "title": "Krajem malířů Vysočiny",
+      "description": "Tradiční turistický pochod a cyklojízda krajinou v okolí Hlinska; start je průběžný od rána.",
+      "start_at": "2026-08-15T06:00:00+02:00",
+      "end_at": "2026-08-15T10:00:00+02:00",
+      "all_day": false,
+      "venue": "Gymnázium K. V. Raise – start",
+      "municipality": "Hlinsko",
+      "categories": ["sport", "turistika", "cyklistika", "rodiny"],
+      "price": {"type": "unknown", "text": "Neuvedeno"},
+      "source": {"type": "official-calendar", "url": "https://www.hlinsko.cz/volny-cas/prehled-kulturnich-akci/"},
+      "last_verified_at": "2026-08-01T19:05:00+02:00",
+      "cancelled": false
+    },
+    {
+      "id": "letni-prohlidka-litomysl-2026-08-15",
+      "week": "2026-W33",
+      "title": "Letní komentovaná prohlídka Litomyšle",
+      "description": "Komentovaná procházka historickým centrem Litomyšle se srazem u morového sloupu.",
+      "start_at": "2026-08-15T11:00:00+02:00",
+      "end_at": null,
+      "all_day": false,
+      "venue": "Sraz u morového sloupu",
+      "municipality": "Litomyšl",
+      "categories": ["prohlídka", "historie"],
+      "price": {"type": "paid", "text": "100 Kč"},
+      "source": {"type": "official", "url": "https://www.litomysl.cz/kalendar_akci/2026_07_18_letni_komentovana_prohlidka_litomysle"},
+      "last_verified_at": "2026-08-01T19:05:00+02:00",
+      "cancelled": false
+    },
+    {
       "id": "czech-tour-etapa-3-pardubice-2026",
       "week": "2026-W33",
       "title": "Czech Tour 2026 – start 3. etapy",
@@ -46,6 +94,38 @@
       "categories": ["sport", "cyklistika", "rodiny"],
       "price": {"type": "unknown", "text": "Vstupné neuvedeno"},
       "source": {"type": "official", "url": "https://www.czechtour.com/cs/etapa-3-26"},
+      "cancelled": false
+    },
+    {
+      "id": "den-mesta-hlinska-2026-08-15",
+      "week": "2026-W33",
+      "title": "Den města Hlinska",
+      "description": "Městské slavnosti s kulturním a rodinným programem v areálu Betléma a před Orlovnou.",
+      "start_at": "2026-08-15T12:30:00+02:00",
+      "end_at": null,
+      "all_day": false,
+      "venue": "Areál Betléma a prostor před Orlovnou",
+      "municipality": "Hlinsko",
+      "categories": ["slavnosti", "hudba", "rodiny", "komunitní-akce"],
+      "price": {"type": "unknown", "text": "Neuvedeno"},
+      "source": {"type": "official-calendar", "url": "https://www.hlinsko.cz/volny-cas/prehled-kulturnich-akci/"},
+      "last_verified_at": "2026-08-01T19:05:00+02:00",
+      "cancelled": false
+    },
+    {
+      "id": "litomyslske-dny-barokni-tradice-2026",
+      "week": "2026-W33",
+      "title": "Litomyšlské dny barokní tradice",
+      "description": "Vícedenní festival věnovaný barokní kultuře, hudbě, duchovnímu programu a historickému dědictví Litomyšle.",
+      "start_at": "2026-08-15T00:00:00+02:00",
+      "end_at": "2026-08-20T23:59:00+02:00",
+      "all_day": true,
+      "venue": "Více míst v Litomyšli",
+      "municipality": "Litomyšl",
+      "categories": ["festival", "historie", "hudba", "duchovní"],
+      "price": {"type": "unknown", "text": "Liší se podle programu"},
+      "source": {"type": "official", "url": "https://www.litomysl.cz/top_akce/?rok=2026"},
+      "last_verified_at": "2026-08-01T19:05:00+02:00",
       "cancelled": false
     },
     {
