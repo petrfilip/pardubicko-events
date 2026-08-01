@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "week": "2026-W33",
-  "generated_at": "2026-08-01T19:08:00+02:00",
+  "generated_at": "2026-08-01T19:25:00+02:00",
   "events": [
     {
       "id": "komentovana-prohlidka-opevneni-chrudim-2026-08-10",
@@ -16,6 +16,22 @@
       "categories": ["prohlídka", "historie", "rodiny"],
       "price": {"type": "free", "text": "Zdarma"},
       "source": {"type": "official", "url": "https://www.chrudim.eu/vydejte-se-za-historii-mestskeho-opevneni/"},
+      "cancelled": false
+    },
+    {
+      "id": "stredecni-pohadka-knihovna-usti-nad-orlici-2026-08-12",
+      "week": "2026-W33",
+      "title": "Středeční pohádka v knihovně",
+      "description": "Dopolední pohádka doplněná malým tvořením nebo hraním pro děti.",
+      "start_at": "2026-08-12T10:00:00+02:00",
+      "end_at": null,
+      "all_day": false,
+      "venue": "Městská knihovna",
+      "municipality": "Ústí nad Orlicí",
+      "categories": ["děti", "rodiny", "knihovna"],
+      "price": {"type": "unknown", "text": "Neuvedeno"},
+      "source": {"type": "official-calendar", "url": "https://www.ustinadorlici.cz/cs/turista-a-volny-cas/kalendar-akci?cal_limitstart=110"},
+      "last_verified_at": "2026-08-01T19:20:00+02:00",
       "cancelled": false
     },
     {
@@ -82,6 +98,22 @@
       "cancelled": false
     },
     {
+      "id": "galerie-chuti-usti-nad-orlici-2026-08-15",
+      "week": "2026-W33",
+      "title": "Galerie chutí",
+      "description": "Gastronomická část Ústeckého salonu s nabídkou světových kuchyní ve spolupráci se značkou Jablonský gurmán.",
+      "start_at": "2026-08-15T10:00:00+02:00",
+      "end_at": null,
+      "all_day": false,
+      "venue": "Galerie pod radnicí a okolí",
+      "municipality": "Ústí nad Orlicí",
+      "categories": ["gastro", "festival", "trhy"],
+      "price": {"type": "unknown", "text": "Neuvedeno"},
+      "source": {"type": "official-calendar", "url": "https://www.ustinadorlici.cz/cs/turista-a-volny-cas/kalendar-akci?cal_limitstart=140&limit=10"},
+      "last_verified_at": "2026-08-01T19:20:00+02:00",
+      "cancelled": false
+    },
+    {
       "id": "czech-tour-etapa-3-pardubice-2026",
       "week": "2026-W33",
       "title": "Czech Tour 2026 – start 3. etapy",
@@ -126,6 +158,38 @@
       "price": {"type": "unknown", "text": "Liší se podle programu"},
       "source": {"type": "official", "url": "https://www.litomysl.cz/top_akce/?rok=2026"},
       "last_verified_at": "2026-08-01T19:05:00+02:00",
+      "cancelled": false
+    },
+    {
+      "id": "poutni-den-farnost-usti-nad-orlici-2026-08-16",
+      "week": "2026-W33",
+      "title": "Poutní den s farností Ústí nad Orlicí",
+      "description": "Setkání u příležitosti Ústecké pouti v parku u kostela a v prostorách děkanství.",
+      "start_at": "2026-08-16T00:00:00+02:00",
+      "end_at": null,
+      "all_day": true,
+      "venue": "Park u kostela a děkanství",
+      "municipality": "Ústí nad Orlicí",
+      "categories": ["duchovní", "komunitní-akce", "pouť"],
+      "price": {"type": "unknown", "text": "Neuvedeno"},
+      "source": {"type": "official-calendar", "url": "https://ustinadorlici.cz/cs/turista-a-volny-cas/kalendar-akci?cal_limitstart=120"},
+      "last_verified_at": "2026-08-01T19:20:00+02:00",
+      "cancelled": false
+    },
+    {
+      "id": "ustecka-staroceska-pout-2026-08-16",
+      "week": "2026-W33",
+      "title": "Ústecká staročeská pouť",
+      "description": "Tradiční srpnová pouť s atrakcemi, stánkovým prodejem a programem pro rodiny v parku Kociánka.",
+      "start_at": "2026-08-16T00:00:00+02:00",
+      "end_at": null,
+      "all_day": true,
+      "venue": "Park Kociánka",
+      "municipality": "Ústí nad Orlicí",
+      "categories": ["pouť", "slavnosti", "rodiny", "trhy"],
+      "price": {"type": "unknown", "text": "Vstupné neuvedeno; atrakce jsou placené jednotlivě"},
+      "source": {"type": "official", "url": "https://ustinadorlici.cz/cs/turista-a-volny-cas/kultura/ustecka-pout"},
+      "last_verified_at": "2026-08-01T19:20:00+02:00",
       "cancelled": false
     },
     {
