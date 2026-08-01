@@ -1,7 +1,7 @@
 import { renderCalendar, resolveCalendarWeek } from './calendar.js';
 import { loadEventData } from './data.js';
 import { createEventDetail } from './detail.js';
-import { createFilters, filterEvents } from './filters.js';
+import { createFilters, eventsForWeek, filterEvents } from './filters.js';
 import { eventCountLabel, formatUpdated } from './format.js';
 import { renderList } from './list.js';
 
@@ -45,23 +45,28 @@ function setView(view) {
 
 function render() {
   const filterValues = state.filters.values();
-  const filteredEvents = filterEvents(state.events, filterValues);
-  elements.count.textContent = eventCountLabel(filteredEvents.length);
+  const filteredEvents = filterEvents(state.events, filterValues, { weeks: state.manifest.weeks });
 
   if (state.view === 'list') {
+    elements.count.textContent = eventCountLabel(filteredEvents.length);
     renderList(elements.events, filteredEvents);
     return;
   }
 
   const weekId = resolveCalendarWeek(state.manifest.weeks, filterValues.week || state.calendarWeek);
+  const week = state.manifest.weeks.find(item => item.id === weekId);
+  const calendarEvents = eventsForWeek(filteredEvents, week);
   state.calendarWeek = weekId;
+  elements.count.textContent = eventCountLabel(calendarEvents.length);
+
   renderCalendar(elements.calendar, {
-    events: filteredEvents,
+    events: calendarEvents,
     weeks: state.manifest.weeks,
     weekId,
     onWeekChange: nextWeek => {
       state.calendarWeek = nextWeek;
-      render();
+      if (filterValues.week) state.filters.setWeek(nextWeek);
+      else render();
     },
     onEventOpen: state.detail.open,
   });
