@@ -43,6 +43,24 @@ function makeCalendarWeek(value) {
   return { id: 'selected-date', from: dateKey(monday), to: dateKey(addDays(monday, 6)) };
 }
 
+function eventFromUrl() {
+  const eventId = new URL(window.location.href).searchParams.get('event');
+  return eventId ? state.events.find(event => event.id === eventId) : null;
+}
+
+function updateEventUrl(eventId, { replace = false } = {}) {
+  const url = new URL(window.location.href);
+  if (eventId) url.searchParams.set('event', eventId);
+  else url.searchParams.delete('event');
+  history[replace ? 'replaceState' : 'pushState']({}, '', url);
+}
+
+function openEvent(event, { updateUrl = true } = {}) {
+  if (!event) return;
+  if (updateUrl) updateEventUrl(event.id);
+  state.detail.open(event);
+}
+
 function render() {
   const filterValues = state.filters.values();
   const filteredEvents = filterEvents(state.events, filterValues, { weeks: state.manifest.weeks });
@@ -78,7 +96,7 @@ function render() {
       if (filterValues.week) state.filters.setWeek(nextWeek);
       else render();
     },
-    onEventOpen: state.detail.open,
+    onEventOpen: event => openEvent(event),
   });
 }
 
@@ -89,11 +107,24 @@ async function init() {
     state.events = events;
     state.calendarWeek = resolveCalendarWeek(manifest.weeks, '');
     state.filters = createFilters({ events, weeks: manifest.weeks, onChange: render });
-    state.detail = createEventDetail();
+    state.detail = createEventDetail(document.getElementById('eventDetail'), {
+      onClose: () => {
+        if (new URL(window.location.href).searchParams.has('event')) updateEventUrl('');
+      },
+    });
     elements.updated.textContent = manifest.generated_at ? `Aktualizováno ${formatUpdated(manifest.generated_at)}` : '';
     elements.listView.addEventListener('click', () => setView('list'));
     elements.calendarView.addEventListener('click', () => setView('calendar'));
+    window.addEventListener('popstate', () => {
+      const event = eventFromUrl();
+      if (event) openEvent(event, { updateUrl: false });
+      else state.detail.close();
+    });
     setView('calendar');
+
+    const linkedEvent = eventFromUrl();
+    if (linkedEvent) openEvent(linkedEvent, { updateUrl: false });
+    else if (new URL(window.location.href).searchParams.has('event')) updateEventUrl('', { replace: true });
   } catch (error) { showError(error); }
 }
 
