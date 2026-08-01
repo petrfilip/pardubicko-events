@@ -1,4 +1,4 @@
-import { eventStart, formatWeekLabel, isFuture } from './format.js';
+import { dateKey, eventEnd, eventStart, formatWeekLabel, isFuture } from './format.js';
 
 const collator = new Intl.Collator('cs');
 
@@ -26,6 +26,15 @@ function appendOptions(select, values, label = value => value) {
     option.textContent = label(value);
     select.appendChild(option);
   }
+}
+
+function eventOverlapsWeek(event, week) {
+  if (!week) return false;
+  return dateKey(eventStart(event)) <= week.to && dateKey(eventEnd(event)) >= week.from;
+}
+
+export function eventsForWeek(events, week) {
+  return week ? events.filter(event => eventOverlapsWeek(event, week)) : [];
 }
 
 export function createFilters({ events, weeks, onChange }) {
@@ -69,10 +78,14 @@ export function createFilters({ events, weeks, onChange }) {
   return { values, setWeek };
 }
 
-export function filterEvents(events, filters, now = new Date()) {
+export function filterEvents(events, filters, { weeks = [], now = new Date() } = {}) {
+  const selectedWeek = filters.week ? weeks.find(week => week.id === filters.week) : null;
+
   return events
     .filter(event => !filters.query || searchableText(event).includes(filters.query))
-    .filter(event => !filters.week || event.week === filters.week)
+    .filter(event => !filters.week || (selectedWeek
+      ? eventOverlapsWeek(event, selectedWeek)
+      : (event._week_ids || [event.week]).includes(filters.week)))
     .filter(event => !filters.municipality || event.municipality === filters.municipality)
     .filter(event => !filters.category || (event.categories || []).includes(filters.category))
     .filter(event => !filters.price || (event.price?.type || 'unknown') === filters.price)
