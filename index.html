@@ -55,14 +55,14 @@
         <span id="updated" class="updated"></span>
       </div>
       <div class="view-switch" role="group" aria-label="Zobrazení akcí">
-        <button id="listView" class="active" type="button" aria-pressed="true">Seznam</button>
-        <button id="calendarView" type="button" aria-pressed="false">Kalendář</button>
+        <button id="listView" type="button" aria-pressed="false">Seznam</button>
+        <button id="calendarView" class="active" type="button" aria-pressed="true">Kalendář</button>
       </div>
     </section>
 
     <div id="error" class="message message-error" role="alert" hidden></div>
-    <section id="events" class="events" aria-live="polite" aria-label="Seznam akcí"></section>
-    <section id="calendar" class="calendar" aria-live="polite" aria-label="Týdenní kalendář" hidden></section>
+    <section id="events" class="events" aria-live="polite" aria-label="Seznam akcí" hidden></section>
+    <section id="calendar" class="calendar" aria-live="polite" aria-label="Týdenní kalendář"></section>
 
     <noscript>
       <p class="message">Pro zobrazení katalogu je nutné povolit JavaScript.</p>
@@ -74,7 +74,7 @@
       <div class="event-date"></div>
       <div class="event-body">
         <div class="event-topline">
-          <span class="event-category"></span>
+          <div class="event-category category-badges"></div>
           <span class="event-price"></span>
         </div>
         <h2 class="event-title"></h2>
@@ -87,6 +87,25 @@
       </div>
     </article>
   </template>
+
+  <dialog id="eventDetail" class="event-detail" aria-labelledby="eventDetailTitle">
+    <article class="event-detail-card">
+      <button class="event-detail-close" type="button" data-detail-close aria-label="Zavřít detail akce">×</button>
+      <p class="event-detail-when"></p>
+      <div class="event-detail-categories category-badges"></div>
+      <h2 id="eventDetailTitle" class="event-detail-title"></h2>
+      <p class="event-detail-place"></p>
+      <p class="event-detail-description"></p>
+      <dl class="event-detail-meta">
+        <div><dt>Vstupné</dt><dd class="event-detail-price"></dd></div>
+        <div><dt>Zdroj</dt><dd class="event-detail-source-type"></dd></div>
+      </dl>
+      <div class="event-detail-actions">
+        <a class="event-detail-source" target="_blank" rel="noopener noreferrer">Přejít na stránku události</a>
+        <button type="button" class="secondary-button" data-detail-close>Zavřít</button>
+      </div>
+    </article>
+  </dialog>
 
   <script type="module" src="js/app.js"></script>
 </body>
