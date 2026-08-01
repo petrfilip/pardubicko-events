@@ -34,6 +34,15 @@ function validateWeekData(week, data) {
   }
 }
 
+function validateEventIds(events) {
+  const ids = new Set();
+  for (const event of events) {
+    if (!event.id) throw new Error('Nalezena akce bez ID.');
+    if (ids.has(event.id)) throw new Error(`Duplicitní ID akce: ${event.id}.`);
+    ids.add(event.id);
+  }
+}
+
 export async function loadEventData() {
   const manifest = await fetchJson(MANIFEST_URL);
   validateManifest(manifest);
@@ -45,9 +54,8 @@ export async function loadEventData() {
       return data.events;
     }),
   );
+  const events = weekFiles.flat();
+  validateEventIds(events);
 
-  return {
-    manifest,
-    events: weekFiles.flat(),
-  };
+  return { manifest, events };
 }
