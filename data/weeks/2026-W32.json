@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "week": "2026-W32",
-  "generated_at": "2026-08-01T14:10:00+02:00",
+  "generated_at": "2026-08-01T18:40:00+02:00",
   "events": [
     {
       "id": "komentovana-prohlidka-opevneni-chrudim-2026-08-03",
@@ -49,6 +49,22 @@
       "cancelled": false
     },
     {
+      "id": "letni-kino-hlinsko-2026-08-06",
+      "week": "2026-W32",
+      "title": "Letní kino 2026",
+      "description": "Večerní projekce letního kina; konkrétní film není v dostupném kalendářovém záznamu uveden.",
+      "start_at": "2026-08-06T20:30:00+02:00",
+      "end_at": null,
+      "all_day": false,
+      "venue": "Parkoviště u MFC",
+      "municipality": "Hlinsko",
+      "categories": ["kino", "venkovní-akce"],
+      "price": {"type": "unknown", "text": "Neuvedeno"},
+      "source": {"type": "official-calendar", "url": "https://www.hlinsko.cz/volny-cas/prehled-kulturnich-akci/?page=all"},
+      "last_verified_at": "2026-08-01T18:35:00+02:00",
+      "cancelled": false
+    },
+    {
       "id": "salvatorska-pout-chrudim-2026-08-07",
       "week": "2026-W32",
       "title": "Salvátorská pouť",
@@ -64,6 +80,22 @@
       "cancelled": false
     },
     {
+      "id": "hlinecky-folkovy-spekacek-2026-08-07",
+      "week": "2026-W32",
+      "title": "Hlinecký folkový Špekáček",
+      "description": "První den folkového festivalu na letním parketu Cihelka.",
+      "start_at": "2026-08-07T19:00:00+02:00",
+      "end_at": null,
+      "all_day": false,
+      "venue": "Letní parket Cihelka",
+      "municipality": "Hlinsko",
+      "categories": ["koncert", "festival", "folk"],
+      "price": {"type": "unknown", "text": "Neuvedeno"},
+      "source": {"type": "official-calendar", "url": "https://www.hlinsko.cz/volny-cas/prehled-kulturnich-akci/"},
+      "last_verified_at": "2026-08-01T18:35:00+02:00",
+      "cancelled": false
+    },
+    {
       "id": "salvatorska-pout-chrudim-2026-08-08",
       "week": "2026-W32",
       "title": "Salvátorská pouť",
@@ -76,6 +108,54 @@
       "categories": ["pouť", "rodiny", "trhy"],
       "price": {"type": "unknown", "text": "Vstupné neuvedeno; atrakce jsou placené jednotlivě"},
       "source": {"type": "official", "url": "https://www.chrudimskabeseda.cz/akce/salvatorska-pout-7/"},
+      "cancelled": false
+    },
+    {
+      "id": "letni-prohlidka-litomysl-2026-08-08",
+      "week": "2026-W32",
+      "title": "Letní komentovaná prohlídka Litomyšle",
+      "description": "Komentovaná procházka historickým centrem Litomyšle se srazem u morového sloupu.",
+      "start_at": "2026-08-08T11:00:00+02:00",
+      "end_at": null,
+      "all_day": false,
+      "venue": "Sraz u morového sloupu",
+      "municipality": "Litomyšl",
+      "categories": ["prohlídka", "historie"],
+      "price": {"type": "paid", "text": "100 Kč"},
+      "source": {"type": "official", "url": "https://www.litomysl.cz/kalendar_akci/2026_07_18_letni_komentovana_prohlidka_litomysle"},
+      "last_verified_at": "2026-08-01T18:35:00+02:00",
+      "cancelled": false
+    },
+    {
+      "id": "litomyslsky-pivni-festivalek-2026-08-08",
+      "week": "2026-W32",
+      "title": "Litomyšlský pivní festiválek",
+      "description": "Pivní festival na Toulovcově náměstí s nabídkou regionálních pivovarů a doprovodným programem.",
+      "start_at": "2026-08-08T12:00:00+02:00",
+      "end_at": null,
+      "all_day": false,
+      "venue": "Toulovcovo náměstí",
+      "municipality": "Litomyšl",
+      "categories": ["gastro", "festival", "hudba"],
+      "price": {"type": "unknown", "text": "Neuvedeno"},
+      "source": {"type": "official", "url": "https://www.litomysl.cz/top_akce/2026/litomyslsky_pivni_festivalek3"},
+      "last_verified_at": "2026-08-01T18:35:00+02:00",
+      "cancelled": false
+    },
+    {
+      "id": "hlinecky-folkovy-spekacek-2026-08-08",
+      "week": "2026-W32",
+      "title": "Hlinecký folkový Špekáček",
+      "description": "Druhý den folkového festivalu na letním parketu Cihelka.",
+      "start_at": "2026-08-08T13:30:00+02:00",
+      "end_at": null,
+      "all_day": false,
+      "venue": "Letní parket Cihelka",
+      "municipality": "Hlinsko",
+      "categories": ["koncert", "festival", "folk"],
+      "price": {"type": "unknown", "text": "Neuvedeno"},
+      "source": {"type": "official-calendar", "url": "https://www.hlinsko.cz/volny-cas/prehled-kulturnich-akci/"},
+      "last_verified_at": "2026-08-01T18:35:00+02:00",
       "cancelled": false
     },
     {
