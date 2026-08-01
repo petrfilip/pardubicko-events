@@ -56,10 +56,9 @@ function resolveQuickDateRange(mode, now = new Date()) {
     to = from;
   } else if (mode === 'weekend') {
     const day = today.getUTCDay();
-    from = day === 0
-      ? addDays(today, -1)
-      : addDays(today, day === 6 ? 0 : 6 - day);
-    to = addDays(from, 1);
+    const daysToFriday = day === 0 ? -2 : 5 - day;
+    from = addDays(today, daysToFriday);
+    to = addDays(from, 2);
   }
 
   return { from: dateKey(from), to: dateKey(to) };
