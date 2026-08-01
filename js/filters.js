@@ -1,4 +1,12 @@
-import { dateKey, eventEnd, eventStart, formatWeekLabel, isFuture } from './format.js';
+import {
+  addDays,
+  dateKey,
+  eventEnd,
+  eventStart,
+  formatWeekLabel,
+  isFuture,
+  parseLocalDate,
+} from './format.js';
 
 const collator = new Intl.Collator('cs');
 
@@ -28,9 +36,33 @@ function appendOptions(select, values, label = value => value) {
   }
 }
 
+function eventOverlapsRange(event, from, to) {
+  return dateKey(eventStart(event)) <= to && dateKey(eventEnd(event)) >= from;
+}
+
 function eventOverlapsWeek(event, week) {
-  if (!week) return false;
-  return dateKey(eventStart(event)) <= week.to && dateKey(eventEnd(event)) >= week.from;
+  return Boolean(week) && eventOverlapsRange(event, week.from, week.to);
+}
+
+function resolveQuickDateRange(mode, now = new Date()) {
+  if (!mode) return null;
+
+  const today = parseLocalDate(dateKey(now));
+  let from = today;
+  let to = today;
+
+  if (mode === 'tomorrow') {
+    from = addDays(today, 1);
+    to = from;
+  } else if (mode === 'weekend') {
+    const day = today.getUTCDay();
+    from = day === 0
+      ? addDays(today, -1)
+      : addDays(today, day === 6 ? 0 : 6 - day);
+    to = addDays(from, 1);
+  }
+
+  return { from: dateKey(from), to: dateKey(to) };
 }
 
 export function eventsForWeek(events, week) {
@@ -45,20 +77,54 @@ export function createFilters({ events, weeks, onChange }) {
     category: document.getElementById('category'),
     price: document.getElementById('price'),
     futureOnly: document.getElementById('futureOnly'),
+    quickDateButtons: [...document.querySelectorAll('[data-date-range]')],
+    advancedToggle: document.getElementById('advancedToggle'),
+    advancedFilters: document.getElementById('advancedFilters'),
   };
+  let activeDateRange = '';
 
   appendOptions(elements.week, weeks, formatWeekLabel);
   appendOptions(elements.municipality, unique(events.map(event => event.municipality)));
   appendOptions(elements.category, unique(events.flatMap(event => event.categories || [])));
 
+  function updateQuickDateButtons() {
+    for (const button of elements.quickDateButtons) {
+      const active = button.dataset.dateRange === activeDateRange;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+    }
+  }
+
+  function setDateRange(value, notify = true) {
+    activeDateRange = value;
+    if (value) elements.week.value = '';
+    updateQuickDateButtons();
+    if (notify) onChange();
+  }
+
   elements.search.addEventListener('input', onChange);
-  elements.week.addEventListener('change', onChange);
+  elements.week.addEventListener('change', () => {
+    if (elements.week.value && activeDateRange) setDateRange('', false);
+    onChange();
+  });
   elements.municipality.addEventListener('change', onChange);
   elements.category.addEventListener('change', onChange);
   elements.price.addEventListener('change', onChange);
   elements.futureOnly.addEventListener('change', onChange);
 
-  function values() {
+  for (const button of elements.quickDateButtons) {
+    button.addEventListener('click', () => setDateRange(button.dataset.dateRange || ''));
+  }
+
+  elements.advancedToggle?.addEventListener('click', () => {
+    const open = elements.advancedFilters.classList.toggle('is-open');
+    elements.advancedToggle.setAttribute('aria-expanded', String(open));
+  });
+
+  updateQuickDateButtons();
+
+  function values(now = new Date()) {
+    const quickRange = resolveQuickDateRange(activeDateRange, now);
     return {
       query: elements.search.value.trim().toLocaleLowerCase('cs'),
       week: elements.week.value,
@@ -66,16 +132,23 @@ export function createFilters({ events, weeks, onChange }) {
       category: elements.category.value,
       price: elements.price.value,
       futureOnly: elements.futureOnly.checked,
+      dateRange: activeDateRange,
+      dateFrom: quickRange?.from || '',
+      dateTo: quickRange?.to || '',
     };
   }
 
   function setWeek(weekId) {
-    if (elements.week.value === weekId) return;
+    if (activeDateRange) setDateRange('', false);
+    if (elements.week.value === weekId) {
+      onChange();
+      return;
+    }
     elements.week.value = weekId;
     onChange();
   }
 
-  return { values, setWeek };
+  return { values, setWeek, setDateRange };
 }
 
 export function filterEvents(events, filters, { weeks = [], now = new Date() } = {}) {
@@ -86,6 +159,7 @@ export function filterEvents(events, filters, { weeks = [], now = new Date() } =
     .filter(event => !filters.week || (selectedWeek
       ? eventOverlapsWeek(event, selectedWeek)
       : (event._week_ids || [event.week]).includes(filters.week)))
+    .filter(event => !filters.dateFrom || eventOverlapsRange(event, filters.dateFrom, filters.dateTo))
     .filter(event => !filters.municipality || event.municipality === filters.municipality)
     .filter(event => !filters.category || (event.categories || []).includes(filters.category))
     .filter(event => !filters.price || (event.price?.type || 'unknown') === filters.price)
