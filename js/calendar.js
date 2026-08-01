@@ -1,3 +1,4 @@
+import { renderCategoryBadges } from './badges.js';
 import {
   addDays,
   dateKey,
@@ -16,13 +17,16 @@ function eventTouchesDay(event, day) {
   return startKey <= dayKey && endKey >= dayKey;
 }
 
-function createEventLink(event, day) {
-  const link = document.createElement('a');
-  link.className = 'calendar-event';
-  link.href = event.source?.url || '#';
-  link.target = '_blank';
-  link.rel = 'noopener noreferrer';
-  link.title = [event.title, event.venue, event.municipality].filter(Boolean).join(' — ');
+function createEventButton(event, day, onEventOpen) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'calendar-event';
+  button.title = [event.title, event.venue, event.municipality].filter(Boolean).join(' — ');
+  button.addEventListener('click', () => onEventOpen(event));
+
+  const badges = document.createElement('span');
+  badges.className = 'calendar-event-badges';
+  renderCategoryBadges(badges, event.categories, { limit: 1 });
 
   const time = document.createElement('span');
   time.className = 'calendar-event-time';
@@ -32,8 +36,8 @@ function createEventLink(event, day) {
   title.className = 'calendar-event-title';
   title.textContent = event.cancelled ? `${event.title} — ZRUŠENO` : event.title;
 
-  link.append(time, title);
-  return link;
+  button.append(badges, time, title);
+  return button;
 }
 
 export function resolveCalendarWeek(weeks, selectedWeekId, now = new Date()) {
@@ -42,7 +46,7 @@ export function resolveCalendarWeek(weeks, selectedWeekId, now = new Date()) {
   return weeks.find(week => week.from <= today && week.to >= today)?.id || weeks[0]?.id || '';
 }
 
-export function renderCalendar(root, { events, weeks, weekId, onWeekChange }) {
+export function renderCalendar(root, { events, weeks, weekId, onWeekChange, onEventOpen }) {
   root.replaceChildren();
   const weekIndex = weeks.findIndex(week => week.id === weekId);
   const week = weeks[weekIndex];
@@ -96,7 +100,7 @@ export function renderCalendar(root, { events, weeks, weekId, onWeekChange }) {
       column.appendChild(empty);
     } else {
       for (const event of dayEvents) {
-        column.appendChild(createEventLink(event, day));
+        column.appendChild(createEventButton(event, day, onEventOpen));
       }
     }
 
