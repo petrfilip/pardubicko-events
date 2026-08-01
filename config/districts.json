@@ -1,0 +1,13 @@
+{
+  "districts": [
+    {"id":"chrudim","name":"Chrudim","region":"pardubicky-kraj"},
+    {"id":"pardubice","name":"Pardubice","region":"pardubicky-kraj"},
+    {"id":"svitavy","name":"Svitavy","region":"pardubicky-kraj"},
+    {"id":"usti-nad-orlici","name":"Ústí nad Orlicí","region":"pardubicky-kraj"},
+    {"id":"hradec-kralove","name":"Hradec Králové","region":"kralovehradecky-kraj"},
+    {"id":"jicin","name":"Jičín","region":"kralovehradecky-kraj"},
+    {"id":"nachod","name":"Náchod","region":"kralovehradecky-kraj"},
+    {"id":"rychnov-nad-kneznou","name":"Rychnov nad Kněžnou","region":"kralovehradecky-kraj"},
+    {"id":"trutnov","name":"Trutnov","region":"kralovehradecky-kraj"}
+  ]
+}
