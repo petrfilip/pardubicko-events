@@ -1,11 +1,53 @@
-export async function loadEventData(){
-  const manifestResponse=await fetch('data/manifest.json',{cache:'no-store'});
-  if(!manifestResponse.ok)throw new Error(`Manifest: HTTP ${manifestResponse.status}`);
-  const manifest=await manifestResponse.json();
-  const weeks=await Promise.all(manifest.weeks.map(async week=>{
-    const response=await fetch(week.file,{cache:'no-store'});
-    if(!response.ok)throw new Error(`${week.file}: HTTP ${response.status}`);
-    return response.json();
-  }));
-  return {manifest,events:weeks.flatMap(week=>week.events||[])};
+const MANIFEST_URL = 'data/manifest.json';
+
+async function fetchJson(url) {
+  const response = await fetch(url, { cache: 'no-store' });
+  if (!response.ok) {
+    throw new Error(`${url}: HTTP ${response.status}`);
+  }
+  return response.json();
+}
+
+function validateManifest(manifest) {
+  if (!manifest || !Array.isArray(manifest.weeks) || manifest.weeks.length === 0) {
+    throw new Error('Manifest neobsahuje žádné týdny.');
+  }
+
+  const ids = new Set();
+  for (const week of manifest.weeks) {
+    if (!week.id || !week.from || !week.to || !week.file) {
+      throw new Error(`Neúplná položka týdne ${week.id || '(bez ID)'}.`);
+    }
+    if (ids.has(week.id)) {
+      throw new Error(`Duplicitní týden v manifestu: ${week.id}.`);
+    }
+    ids.add(week.id);
+  }
+}
+
+function validateWeekData(week, data) {
+  if (data.week && data.week !== week.id) {
+    throw new Error(`${week.file}: očekáván týden ${week.id}, nalezen ${data.week}.`);
+  }
+  if (!Array.isArray(data.events)) {
+    throw new Error(`${week.file}: pole events chybí nebo není platné.`);
+  }
+}
+
+export async function loadEventData() {
+  const manifest = await fetchJson(MANIFEST_URL);
+  validateManifest(manifest);
+
+  const weekFiles = await Promise.all(
+    manifest.weeks.map(async week => {
+      const data = await fetchJson(week.file);
+      validateWeekData(week, data);
+      return data.events;
+    }),
+  );
+
+  return {
+    manifest,
+    events: weekFiles.flat(),
+  };
 }
