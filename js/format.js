@@ -38,7 +38,8 @@ export function eventEnd(event) {
 }
 
 export function isFuture(event, now = new Date()) {
-  return eventEnd(event) >= now;
+  if (event.end_at) return eventEnd(event) >= now;
+  return dateKey(eventStart(event)) >= dateKey(now);
 }
 
 export function dateKey(date) {
