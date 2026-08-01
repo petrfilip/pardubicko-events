@@ -1,0 +1,335 @@
+# Vize a provozní filozofie projektu Pardubicko Events
+
+Tento dokument je hlavní přehled záměru, architektury a provozních pravidel projektu `petrfilip/pardubicko-events`. Slouží jako podklad pro další AI agenty, lidské revizory a budoucí správce projektu.
+
+## 1. Účel projektu
+
+Cílem je vytvořit otevřenou, průběžně aktualizovanou a auditovatelnou databázi veřejných akcí pro celý Pardubický a Královéhradecký kraj.
+
+HTML stránka na GitHub Pages je pouze referenční prohlížeč. Hlavním produktem jsou strukturovaná, verzovaná a ověřitelná data v repozitáři.
+
+Projekt má pokrývat nejen velká města, ale také jednotlivé obce, městyse, místní části, spolky, kluby, farnosti, SDH, sportovní areály, kempy, koupaliště, restaurace, kulturní prostory a jednorázové lokální pořadatele.
+
+## 2. Geografický rozsah
+
+Projekt pokrývá:
+
+- celý Pardubický kraj,
+- celý Královéhradecký kraj.
+
+Organizační hierarchie:
+
+- kraj,
+- okres,
+- obec nebo městys,
+- případně místní část nebo konkrétní lokalita.
+
+Kraje a okresy jsou organizační vrstva. Samotné vyhledávání a měření pokrytí musí probíhat až na úroveň jednotlivých obcí a městysů.
+
+Agent nemá hledat jen „v okrese Chrudim“ nebo „v Královéhradeckém kraji“. Musí systematicky rotovat konkrétní obce a pro každou z nich používat více typů dotazů.
+
+Oficiální seznam obcí má vycházet z důvěryhodného veřejného číselníku, ideálně ČSÚ nebo RÚIAN. Ručně psaný seznam nemá být dlouhodobým zdrojem pravdy.
+
+## 3. Základní architektura
+
+Repozitář má čtyři hlavní vrstvy:
+
+### `data/`
+
+Finální, ověřené události používané frontendem.
+
+### `research/`
+
+Pracovní výstupy agentů, kandidáti, úspěšné vyhledávací dotazy, poznatky a metriky objevování.
+
+### `config/`
+
+Dlouhodobá konfigurace: kraje, okresy, obce, registry zdrojů, kategorie a provozní nastavení.
+
+### `stats/`
+
+Metriky kvality, pokrytí, poslední kontroly, úspěšnost zdrojů a pravidelné reporty.
+
+## 4. Agentní model
+
+Projekt používá oddělené role.
+
+### Discovery Agent
+
+Úkolem je maximalizovat počet nalezených kandidátů.
+
+Prochází zejména:
+
+- Google nebo jiný obecný vyhledávač,
+- veřejně dostupné Facebook Events,
+- Kudy z nudy,
+- GoOut,
+- ticketingové portály,
+- městské a obecní weby,
+- lokální organizátory,
+- spolky,
+- sportovní kluby,
+- kulturní instituce,
+- restaurace,
+- kempy,
+- koupaliště,
+- areály,
+- místní média a agregátory.
+
+Discovery Agent smí být agresivní v objevování, ale nesmí neověřené kandidáty zapisovat přímo do finálních týdenních JSONů.
+
+### Curator Agent
+
+Úkolem je maximalizovat přesnost.
+
+U každého kandidáta ověřuje:
+
+- přesný rok,
+- datum,
+- čas začátku,
+- čas konce, pokud je zveřejněn,
+- místo,
+- obec,
+- vstupné,
+- konkrétní zdroj,
+- duplicity,
+- případné zrušení.
+
+Do `data/weeks/*.json` zapisuje pouze ověřené akce.
+
+### Quality Agent
+
+Kontroluje:
+
+- nefunkční odkazy,
+- obecné odkazy místo konkrétních detailů,
+- duplicity,
+- neplatný JSON,
+- špatný rok,
+- nesprávné týdenní zařazení,
+- `end_at` před `start_at`,
+- chybějící povinná pole,
+- nekonzistentní kategorie,
+- chyby manifestu,
+- funkčnost GitHub Pages,
+- seznamový a kalendářový pohled.
+
+## 5. Vyhledávací filozofie
+
+Projekt nesmí záviset pouze na pevném seznamu známých webů.
+
+Každý discovery běh má kombinovat:
+
+1. široké objevovací dotazy,
+2. dotazy podle data,
+3. dotazy podle kategorií,
+4. dotazy podle konkrétní obce nebo městyse,
+5. vyhledávání na Facebooku,
+6. vyhledávání na Kudy z nudy,
+7. vyhledávání na ticketingových portálech,
+8. pravidelnou kontrolu již známých kvalitních zdrojů.
+
+Důležitá je kombinace obecného hledání a následného ověření na primárním zdroji.
+
+Agent má ukládat vyhledávací vzory, které skutečně vedly k novým relevantním akcím, aby se budoucí běhy zlepšovaly.
+
+## 6. Registr zdrojů a učení
+
+Agent si průběžně buduje vlastní znalostní bázi.
+
+Doporučené soubory:
+
+- `config/source-registry.json`
+- `research/query-patterns.md`
+- `research/findings.md`
+- `research/discovery-score.json`
+- `stats/coverage.json`
+- `stats/reports/`
+
+Registr zdrojů má uchovávat například:
+
+- identifikátor zdroje,
+- název,
+- URL,
+- typ,
+- obec,
+- okres,
+- kraj,
+- kategorie,
+- prioritu,
+- datum poslední kontroly,
+- počet kontrol,
+- počet nalezených akcí,
+- datum posledního úspěšného nálezu,
+- poznámky.
+
+Skóre zdroje nebo dotazu je pomocná provozní metrika, ne důkaz kvality konkrétní akce.
+
+## 7. Pokrytí obcí
+
+Každá obec nebo městys má být v čase pravidelně kontrolována.
+
+Agent má prioritizovat zejména:
+
+- dlouho nekontrolované obce,
+- obce s nízkým pokrytím,
+- obce s historicky vysokým počtem nových akcí,
+- obce před víkendem, svátkem, poutí, posvícením nebo sezónní událostí,
+- obce, kde se objevil nový lokální zdroj.
+
+Priorita nemá být pouze statická. Má se vypočítávat podle poslední kontroly, historické úspěšnosti, sezónnosti a aktuálního pokrytí.
+
+Denní běh nemusí zkontrolovat všechny obce. Musí ale používat rotační plán, aby žádná obec dlouhodobě nevypadla.
+
+## 8. Pravidla finálních dat
+
+Každá akce musí mít konkrétní ověřitelný zdroj.
+
+Preferované pořadí:
+
+1. konkrétní oficiální stránka akce,
+2. konkrétní stránka pořadatele nebo místa konání,
+3. konkrétní veřejný Facebook Event,
+4. konkrétní ticketingová stránka,
+5. konkrétní stránka města nebo obce,
+6. konkrétní stránka Kudy z nudy nebo jiného agregátoru.
+
+Obecná homepage není vhodný zdroj, pokud existuje konkrétnější detail.
+
+Agent nesmí domýšlet:
+
+- datum,
+- rok,
+- čas,
+- cenu,
+- konec akce,
+- místo,
+- GPS,
+- popis,
+- každoroční opakování.
+
+Pokud není znám konec, použije `end_at: null`.
+
+Pokud je znám pouze den, použije `all_day: true`.
+
+Vícedenní akce se ukládá jako jeden časový rozsah, pokud nejde o samostatné opakované termíny.
+
+Stav `past`, `future` nebo `ongoing` se neukládá; odvozuje se z času. Explicitně lze uložit `cancelled`.
+
+## 9. Týdenní JSON model
+
+Současná první fáze používá:
+
+- `data/manifest.json`,
+- `data/weeks/YYYY-Www.json`.
+
+Tento model je záměrně jednoduchý pro GitHub Pages.
+
+Dlouhodobé akce mohou být v první fázi uvedeny ve více týdenních souborech, pokud jsou kopie konzistentní a mají stabilní základ ID.
+
+Migrace na centrální katalog událostí nebo SQLite je možná později, ale není součástí aktuální fáze.
+
+## 10. Frontend
+
+Frontend je statické GitHub Pages preview.
+
+Má podporovat:
+
+- seznamový pohled,
+- kalendářový pohled,
+- fulltext,
+- filtr týdne,
+- filtr kraje,
+- filtr okresu,
+- filtr obce,
+- filtr kategorie,
+- filtr vstupného,
+- pouze budoucí akce,
+- zobrazení času,
+- vícedenní rozsahy,
+- přímý odkaz na zdroj.
+
+JavaScript má být modulární. HTML nemá obsahovat aplikační logiku a `app.js` má být pouze orchestrace.
+
+## 11. Automatizace
+
+Aktuálně jsou plánovány:
+
+- denní Discovery Agent,
+- denní Curator Agent,
+- týdenní Quality Agent.
+
+GitHub repozitář slouží jako sdílená paměť mezi jednotlivými běhy.
+
+Facebook je významný zdroj, ale agent smí pracovat pouze s veřejně dostupnými událostmi a indexovaným obsahem. Nemá obcházet ochrany, přihlášení ani omezení platformy.
+
+## 12. Metriky kvality
+
+Projekt má postupně měřit:
+
+- počet zkontrolovaných zdrojů,
+- počet nových zdrojů,
+- počet přidaných akcí,
+- počet aktualizovaných akcí,
+- počet zamítnutých kandidátů,
+- počet zrušených akcí,
+- pokrytí podle kraje,
+- pokrytí podle okresu,
+- pokrytí podle obce,
+- dobu od poslední kontroly obce,
+- úspěšnost dotazů,
+- úspěšnost zdrojů,
+- počet nefunkčních odkazů,
+- počet duplicit.
+
+Metriky mají pomáhat řídit práci agentů. Nemají nahrazovat faktické ověření konkrétní události.
+
+## 13. Co projekt zatím není
+
+Aktuální fáze neobsahuje:
+
+- backend,
+- SQLite,
+- PHP,
+- Next.js,
+- přihlašování,
+- administrační rozhraní,
+- neveřejný Facebook scraper,
+- automatické publikování neověřených kandidátů,
+- AI doporučení uložená ve finálních datech.
+
+## 14. Otevřené otázky k nezávislé revizi
+
+Další agent nebo lidský revizor má zejména posoudit:
+
+1. Je rozdělení Discovery / Curator / Quality dostatečné?
+2. Je týdenní JSON model vhodný pro současnou fázi?
+3. Jak nejlépe reprezentovat dlouhodobé akce bez nekonzistentních kopií?
+4. Jak importovat a průběžně aktualizovat úplný oficiální seznam obcí?
+5. Jak navrhnout rotační plán kontrol obcí, aby byl efektivní a spravedlivý?
+6. Které metriky jsou skutečně užitečné a které by vytvářely zbytečnou administrativu?
+7. Jak bezpečně a legálně maximalizovat pokrytí veřejných Facebook Events?
+8. Jak validovat konkrétnost a životnost zdrojových odkazů?
+9. Kdy má smysl přejít z týdenních JSONů na centrální katalog a SQLite?
+10. Jak rozšířit frontend o filtr kraje a okresu bez zbytečné složitosti?
+
+## 15. Pokyny pro revizního agenta
+
+Revizní agent má nejprve načíst skutečný stav repozitáře a porovnat ho s tímto dokumentem.
+
+Má rozlišit:
+
+- již implementované části,
+- částečně implementované části,
+- pouze navržené části,
+- rozpory mezi dokumentací a kódem,
+- rizika kvality dat,
+- rizika provozní složitosti.
+
+Výstup revize má obsahovat:
+
+- hlavní silné stránky,
+- hlavní nedostatky,
+- konkrétní doporučené změny,
+- priority P0 / P1 / P2,
+- návrh nejbližšího realistického pracovního balíku.
