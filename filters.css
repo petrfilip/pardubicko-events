@@ -1,0 +1,77 @@
+.controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.primary-filters {
+  display: grid;
+  grid-template-columns: minmax(260px, 2fr) minmax(190px, 1fr);
+  gap: 12px;
+}
+.quick-date-filter {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--chip) 62%, var(--card));
+}
+.quick-date-filter button,
+.advanced-toggle {
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text);
+  font-weight: 750;
+  cursor: pointer;
+}
+.quick-date-filter button.active {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 4px 12px rgb(15 23 42 / 14%);
+}
+.quick-date-filter button:hover:not(.active),
+.advanced-toggle:hover { background: var(--chip); }
+.advanced-toggle {
+  display: none;
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+.advanced-toggle::after {
+  content: "⌄";
+  float: right;
+  transition: transform .18s ease;
+}
+.advanced-toggle[aria-expanded="true"]::after { transform: rotate(180deg); }
+.advanced-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(150px, 1fr)) auto;
+  gap: 12px;
+}
+
+@media (max-width: 980px) {
+  .primary-filters { grid-template-columns: 1fr 1fr; }
+  .advanced-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+  .primary-filters { grid-template-columns: 1fr; gap: 9px; }
+  .quick-date-filter {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+  }
+  .quick-date-filter button { min-height: 40px; padding-inline: 8px; }
+  .advanced-toggle { display: block; }
+  .advanced-filters {
+    display: none;
+    grid-template-columns: 1fr;
+    gap: 9px;
+    padding-top: 2px;
+  }
+  .advanced-filters.is-open { display: grid; }
+  .advanced-filters .checkbox-control { padding-block: 6px; }
+}
