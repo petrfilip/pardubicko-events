@@ -1,5 +1,6 @@
 import { renderCalendar, resolveCalendarWeek } from './calendar.js';
 import { loadEventData } from './data.js';
+import { createEventDetail } from './detail.js';
 import { createFilters, filterEvents } from './filters.js';
 import { eventCountLabel, formatUpdated } from './format.js';
 import { renderList } from './list.js';
@@ -8,7 +9,8 @@ const state = {
   manifest: null,
   events: [],
   filters: null,
-  view: 'list',
+  detail: null,
+  view: 'calendar',
   calendarWeek: '',
 };
 
@@ -38,19 +40,11 @@ function setView(view) {
   elements.calendarView.classList.toggle('active', !listActive);
   elements.listView.setAttribute('aria-pressed', String(listActive));
   elements.calendarView.setAttribute('aria-pressed', String(!listActive));
-
-  if (!listActive && !state.filters.values().week) {
-    const weekId = resolveCalendarWeek(state.manifest.weeks, state.calendarWeek);
-    state.calendarWeek = weekId;
-    state.filters.setWeek(weekId);
-    return;
-  }
   render();
 }
 
 function render() {
   const filterValues = state.filters.values();
-  if (filterValues.week) state.calendarWeek = filterValues.week;
   const filteredEvents = filterEvents(state.events, filterValues);
   elements.count.textContent = eventCountLabel(filteredEvents.length);
 
@@ -60,11 +54,20 @@ function render() {
   }
 
   const weekId = resolveCalendarWeek(state.manifest.weeks, filterValues.week || state.calendarWeek);
+  state.calendarWeek = weekId;
+  const calendarEvents = filterValues.week
+    ? filteredEvents
+    : filteredEvents.filter(event => event.week === weekId || event.start_at.slice(0, 10) <= state.manifest.weeks.find(week => week.id === weekId).to);
+
   renderCalendar(elements.calendar, {
-    events: filteredEvents,
+    events: calendarEvents,
     weeks: state.manifest.weeks,
     weekId,
-    onWeekChange: nextWeek => state.filters.setWeek(nextWeek),
+    onWeekChange: nextWeek => {
+      state.calendarWeek = nextWeek;
+      render();
+    },
+    onEventOpen: state.detail.open,
   });
 }
 
@@ -75,13 +78,14 @@ async function init() {
     state.events = events;
     state.calendarWeek = resolveCalendarWeek(manifest.weeks, '');
     state.filters = createFilters({ events, weeks: manifest.weeks, onChange: render });
+    state.detail = createEventDetail();
 
     elements.updated.textContent = manifest.generated_at
       ? `Aktualizováno ${formatUpdated(manifest.generated_at)}`
       : '';
     elements.listView.addEventListener('click', () => setView('list'));
     elements.calendarView.addEventListener('click', () => setView('calendar'));
-    render();
+    setView('calendar');
   } catch (error) {
     showError(error);
   }
