@@ -43,6 +43,45 @@ function validateEventIds(events) {
   }
 }
 
+function identityPart(value) {
+  return String(value || '').trim().toLocaleLowerCase('cs');
+}
+
+function eventIdentity(event) {
+  return [
+    identityPart(event.title),
+    event.start_at || '',
+    event.end_at || '',
+    identityPart(event.venue),
+    identityPart(event.municipality),
+    event.source?.url || '',
+  ].join('\u001f');
+}
+
+function deduplicateEvents(events) {
+  const uniqueEvents = new Map();
+
+  for (const event of events) {
+    const key = eventIdentity(event);
+    const existing = uniqueEvents.get(key);
+
+    if (existing) {
+      existing._week_ids = [...new Set([...existing._week_ids, event.week].filter(Boolean))];
+      existing._source_ids = [...new Set([...existing._source_ids, event.id])];
+      existing.categories = [...new Set([...(existing.categories || []), ...(event.categories || [])])];
+      continue;
+    }
+
+    uniqueEvents.set(key, {
+      ...event,
+      _week_ids: event.week ? [event.week] : [],
+      _source_ids: [event.id],
+    });
+  }
+
+  return [...uniqueEvents.values()];
+}
+
 export async function loadEventData() {
   const manifest = await fetchJson(MANIFEST_URL);
   validateManifest(manifest);
@@ -54,8 +93,8 @@ export async function loadEventData() {
       return data.events;
     }),
   );
-  const events = weekFiles.flat();
-  validateEventIds(events);
+  const rawEvents = weekFiles.flat();
+  validateEventIds(rawEvents);
 
-  return { manifest, events };
+  return { manifest, events: deduplicateEvents(rawEvents) };
 }
