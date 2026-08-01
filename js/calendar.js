@@ -6,9 +6,13 @@ import {
   eventStart,
   formatCalendarDay,
   formatCalendarTime,
+  formatEventWhen,
   formatWeekLabel,
   parseLocalDate,
 } from './format.js';
+
+const LONG_RUNNING_CATEGORIES = new Set(['výstava', 'umění', 'muzeum', 'expozice']);
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 function eventTouchesDay(event, day) {
   const startKey = dateKey(eventStart(event));
@@ -17,7 +21,20 @@ function eventTouchesDay(event, day) {
   return startKey <= dayKey && endKey >= dayKey;
 }
 
-function createEventButton(event, day, onEventOpen) {
+function eventCalendarDaySpan(event) {
+  if (!event.end_at) return 1;
+  const start = parseLocalDate(dateKey(eventStart(event)));
+  const end = parseLocalDate(dateKey(eventEnd(event)));
+  return Math.round((end - start) / DAY_MS) + 1;
+}
+
+function isLongRunningExhibition(event) {
+  const categories = (event.categories || []).map(category => category.toLocaleLowerCase('cs'));
+  return categories.some(category => LONG_RUNNING_CATEGORIES.has(category))
+    && eventCalendarDaySpan(event) >= 7;
+}
+
+function createEventButton(event, day, onEventOpen, timeLabel = '') {
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'calendar-event';
@@ -26,7 +43,7 @@ function createEventButton(event, day, onEventOpen) {
 
   const time = document.createElement('span');
   time.className = 'calendar-event-time';
-  time.textContent = formatCalendarTime(event, day);
+  time.textContent = timeLabel || formatCalendarTime(event, day);
 
   const heading = document.createElement('span');
   heading.className = 'calendar-event-heading';
@@ -42,6 +59,32 @@ function createEventButton(event, day, onEventOpen) {
   heading.append(title, badges);
   button.append(time, heading);
   return button;
+}
+
+function renderOngoingEvents(events, onEventOpen) {
+  if (events.length === 0) return null;
+
+  const section = document.createElement('section');
+  section.className = 'calendar-ongoing';
+  section.setAttribute('aria-labelledby', 'calendarOngoingTitle');
+
+  const heading = document.createElement('h3');
+  heading.id = 'calendarOngoingTitle';
+  heading.textContent = 'Probíhá tento týden';
+
+  const description = document.createElement('p');
+  description.textContent = 'Dlouhodobé výstavy a expozice zobrazené pouze jednou.';
+
+  const list = document.createElement('div');
+  list.className = 'calendar-ongoing-list';
+
+  for (const event of events) {
+    const label = formatEventWhen(event).split('\n')[0];
+    list.appendChild(createEventButton(event, eventStart(event), onEventOpen, label));
+  }
+
+  section.append(heading, description, list);
+  return section;
 }
 
 export function resolveCalendarWeek(weeks, selectedWeekId, now = new Date()) {
@@ -83,13 +126,17 @@ export function renderCalendar(root, { events, weeks, weekId, onWeekChange, onEv
 
   navigation.append(previous, heading, next);
 
+  const ongoingEvents = events.filter(isLongRunningExhibition);
+  const datedEvents = events.filter(event => !isLongRunningExhibition(event));
+  const ongoing = renderOngoingEvents(ongoingEvents, onEventOpen);
+
   const grid = document.createElement('div');
   grid.className = 'calendar-grid';
   const firstDay = parseLocalDate(week.from);
 
   for (let offset = 0; offset < 7; offset += 1) {
     const day = addDays(firstDay, offset);
-    const dayEvents = events.filter(event => eventTouchesDay(event, day));
+    const dayEvents = datedEvents.filter(event => eventTouchesDay(event, day));
     const column = document.createElement('article');
     column.className = 'calendar-day';
 
@@ -111,5 +158,7 @@ export function renderCalendar(root, { events, weeks, weekId, onWeekChange, onEv
     grid.appendChild(column);
   }
 
-  root.append(navigation, grid);
+  root.append(navigation);
+  if (ongoing) root.appendChild(ongoing);
+  root.appendChild(grid);
 }
