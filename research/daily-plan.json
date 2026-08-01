@@ -1,0 +1,35 @@
+{
+  "date": "2026-08-01",
+  "generated_at": "2026-08-01T18:10:00+02:00",
+  "limits": {
+    "max_municipalities": 30,
+    "max_queries": 180,
+    "max_candidates": 120
+  },
+  "backlog": {
+    "new_candidates": 0,
+    "needs_verification": 0,
+    "pressure": "low"
+  },
+  "municipalities": [
+    {"name":"Pardubice","district":"Pardubice","region":"pardubicky-kraj","tier":"tier-1","priority_score":100,"reasons":["denní kontrola","vysoká výtěžnost"],"query_budget":12},
+    {"name":"Chrudim","district":"Chrudim","region":"pardubicky-kraj","tier":"tier-1","priority_score":98,"reasons":["denní kontrola","vysoká výtěžnost"],"query_budget":10},
+    {"name":"Litomyšl","district":"Svitavy","region":"pardubicky-kraj","tier":"tier-1","priority_score":94,"reasons":["bohatý oficiální kalendář","mezera v produkčních datech"],"query_budget":10},
+    {"name":"Hlinsko","district":"Chrudim","region":"pardubicky-kraj","tier":"tier-2","priority_score":88,"reasons":["regionální priorita","menší město"],"query_budget":8},
+    {"name":"Hradec Králové","district":"Hradec Králové","region":"kralovehradecky-kraj","tier":"tier-1","priority_score":100,"reasons":["denní kontrola","vysoká výtěžnost"],"query_budget":12},
+    {"name":"Jičín","district":"Jičín","region":"kralovehradecky-kraj","tier":"tier-2","priority_score":84,"reasons":["okresní pokrytí"],"query_budget":7},
+    {"name":"Náchod","district":"Náchod","region":"kralovehradecky-kraj","tier":"tier-2","priority_score":82,"reasons":["okresní pokrytí"],"query_budget":7},
+    {"name":"Trutnov","district":"Trutnov","region":"kralovehradecky-kraj","tier":"tier-2","priority_score":82,"reasons":["okresní pokrytí"],"query_budget":7}
+  ],
+  "sources": [
+    {"id":"pardubice-calendar","priority_score":100,"reason":"prioritní městský kalendář"},
+    {"id":"chrudimska-beseda","priority_score":100,"reason":"prioritní kulturní kalendář"},
+    {"id":"litomysl-city","priority_score":96,"reason":"bohatý oficiální kalendář a mezera v datech"},
+    {"id":"kultura-hk-official","priority_score":100,"reason":"prioritní městský kalendář"},
+    {"id":"kudyznudy-pardubicky","priority_score":90,"reason":"discovery kanál"},
+    {"id":"kudyznudy-kralovehradecky","priority_score":90,"reason":"discovery kanál"},
+    {"id":"facebook-public-events","priority_score":90,"reason":"lokální discovery kanál"}
+  ],
+  "required_passes": ["known-sources", "google", "facebook", "kudyznudy"],
+  "notes": ["Ruční iniciační běh; první dávka je záměrně menší a zaměřená na ověřitelnost."]
+}
