@@ -1,0 +1,14 @@
+{
+  "benchmark_version": 1,
+  "date": "2026-08-02",
+  "regions": ["pardubicky-kraj", "kralovehradecky-kraj"],
+  "expected_events": [
+    {"event_id":"sportovni-park-pardubice-2026-w31","title":"Sportovní park Pardubice 2026","municipality":"Pardubice"},
+    {"event_id":"gladiator-race-pardubice-2026-08-02","title":"Gladiator Race Pardubice","municipality":"Pardubice"},
+    {"event_id":"koncert-zvonohry-hradec-kralove-2026-08-02","title":"Koncert zvonohry – Wojciech Kowal","municipality":"Hradec Králové"},
+    {"event_id":"podkovenka-hradec-kralove-2026-08-02","title":"Podkověnka – promenádní koncert","municipality":"Hradec Králové"},
+    {"event_id":"divotvornosti-kostel-sv-mikulase-2026-08-02","title":"Divotvornosti – prohlídka kostela sv. Mikuláše","municipality":"Hradec Králové"},
+    {"event_id":"karibik-social-hradec-kralove-2026-08-02","title":"Karibik Social","municipality":"Hradec Králové"},
+    {"event_id":"mozartissimo-hradek-u-nechanic-2026-08-02","title":"Mozartissimo – Dvořákův festival na Hrádku","municipality":"Hrádek u Nechanic"}
+  ]
+}
