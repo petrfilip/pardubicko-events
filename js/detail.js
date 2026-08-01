@@ -2,7 +2,10 @@ import { renderCategoryBadges } from './badges.js';
 import { buildGoogleCalendarUrl, downloadIcs, eventShareUrl } from './calendar-export.js';
 import { formatEventWhen, sourceLabel } from './format.js';
 
-export function createEventDetail(dialog = document.getElementById('eventDetail')) {
+export function createEventDetail(
+  dialog = document.getElementById('eventDetail'),
+  { onClose = () => {} } = {},
+) {
   const elements = {
     when: dialog.querySelector('.event-detail-when'),
     categories: dialog.querySelector('.event-detail-categories'),
@@ -72,6 +75,10 @@ export function createEventDetail(dialog = document.getElementById('eventDetail'
 
   dialog.addEventListener('click', event => {
     if (event.target === dialog) close();
+  });
+  dialog.addEventListener('close', () => {
+    currentEvent = null;
+    onClose();
   });
 
   function open(event) {
