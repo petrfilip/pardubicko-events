@@ -1,3 +1,4 @@
+import { renderCategoryBadges } from './badges.js';
 import { formatEventWhen, sourceLabel } from './format.js';
 
 export function renderList(root, events) {
@@ -17,7 +18,7 @@ export function renderList(root, events) {
   for (const event of events) {
     const card = template.content.cloneNode(true);
     card.querySelector('.event-date').textContent = formatEventWhen(event);
-    card.querySelector('.event-category').textContent = (event.categories || []).join(' · ') || 'Bez kategorie';
+    renderCategoryBadges(card.querySelector('.event-category'), event.categories);
     card.querySelector('.event-price').textContent = event.price?.text || 'Vstupné neuvedeno';
     card.querySelector('.event-title').textContent = event.cancelled ? `${event.title} — ZRUŠENO` : event.title;
     card.querySelector('.event-place').textContent = [event.venue, event.municipality].filter(Boolean).join(', ');
