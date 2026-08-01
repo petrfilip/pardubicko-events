@@ -55,12 +55,8 @@ function render() {
 
   const weekId = resolveCalendarWeek(state.manifest.weeks, filterValues.week || state.calendarWeek);
   state.calendarWeek = weekId;
-  const calendarEvents = filterValues.week
-    ? filteredEvents
-    : filteredEvents.filter(event => event.week === weekId || event.start_at.slice(0, 10) <= state.manifest.weeks.find(week => week.id === weekId).to);
-
   renderCalendar(elements.calendar, {
-    events: calendarEvents,
+    events: filteredEvents,
     weeks: state.manifest.weeks,
     weekId,
     onWeekChange: nextWeek => {
