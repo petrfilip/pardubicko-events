@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "agent": "quality",
+  "run_id": "2026-08-01-1925-quality",
+  "started_at": "2026-08-01T19:20:00+02:00",
+  "finished_at": "2026-08-01T19:25:00+02:00",
+  "duration_seconds": 300,
+  "status": "success",
+  "partial_reason": null,
+  "commit_sha": null,
+  "metrics": {
+    "json_files_checked": 1,
+    "events_checked": 14,
+    "broken_links_found": 0,
+    "generic_links_found": 3,
+    "duplicate_events_found": 0,
+    "schema_errors_found": 0,
+    "issues_fixed": 0,
+    "issues_deferred": 3,
+    "pages_check": "not-run"
+  },
+  "coverage": {
+    "regions": ["pardubicky-kraj"],
+    "districts": ["Ústí nad Orlicí", "Chrudim", "Svitavy", "Pardubice"],
+    "municipalities": ["Ústí nad Orlicí", "Hlinsko", "Litomyšl", "Pardubice", "Chrudim"]
+  },
+  "errors": [],
+  "notes": [
+    "Nejnovější W33 již obsahoval bezpečně sloučené akce z Ústí nad Orlicí.",
+    "Tři záznamy používají obecnější oficiální kalendářové URL; ponecháno k pozdějšímu dohledání konkrétního detailu.",
+    "Nebyla nalezena duplicitní ID ani syntaktická chyba v kontrolované dávce."
+  ]
+}
