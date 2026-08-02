@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "week": "2026-W34",
-  "generated_at": "2026-08-01T14:10:00+02:00",
+  "generated_at": "2026-08-02T08:34:00+02:00",
   "events": [
     {
       "id": "komentovana-prohlidka-opevneni-chrudim-2026-08-17",
@@ -28,7 +28,7 @@
       "all_day": false,
       "venue": "Rozhledna Bára, Podhůra",
       "municipality": "Chrudim",
-      "categories": ["kino", "rodiny", "venkovní akce"],
+      "categories": ["kino", "rodiny", "venkovní-akce"],
       "price": {"type": "free", "text": "Vstup volný"},
       "source": {"type": "official", "url": "https://www.chrudimskabeseda.cz/akce/filmova-noc-na-bare/"},
       "cancelled": false
@@ -41,11 +41,12 @@
       "start_at": "2026-08-21T19:00:00+02:00",
       "end_at": "2026-08-21T22:00:00+02:00",
       "all_day": false,
-      "venue": "Dubina",
+      "venue": "Městský obvod III – Dubina, Jana Zajíce 983",
       "municipality": "Pardubice",
-      "categories": ["sousedská akce", "rodiny", "gastro", "hudba"],
+      "categories": ["sousedská-akce", "rodiny", "gastro", "hudba"],
       "price": {"type": "free", "text": "Zdarma"},
-      "source": {"type": "official", "url": "https://pardubice.eu/opekani-burtu-na-drazce-41956"},
+      "source": {"type": "official", "url": "https://pardubice.eu/en/roasting-a-pig-on-a-spit-in-dubina"},
+      "last_verified_at": "2026-08-02T08:34:00+02:00",
       "cancelled": false
     },
     {
@@ -58,7 +59,7 @@
       "all_day": false,
       "venue": "Rozhledna Bára, Podhůra",
       "municipality": "Chrudim",
-      "categories": ["kino", "rodiny", "venkovní akce"],
+      "categories": ["kino", "rodiny", "venkovní-akce"],
       "price": {"type": "free", "text": "Vstup volný"},
       "source": {"type": "official", "url": "https://www.chrudimskabeseda.cz/akce/filmova-noc-na-bare-2/"},
       "cancelled": false
@@ -76,6 +77,7 @@
       "categories": ["festival", "hudba", "duchovní"],
       "price": {"type": "free", "text": "Vstup volný"},
       "source": {"type": "official", "url": "https://www.zpfestival.cz/"},
+      "last_verified_at": "2026-08-02T08:34:00+02:00",
       "cancelled": false
     },
     {
@@ -94,7 +96,7 @@
       "cancelled": false
     },
     {
-      "id": "bienale-ve-veci-umeni-nezbytna-prani-2026-w34",
+      "id": "bienale-ve-veci-umeni-nezbytna-prani-2026",
       "week": "2026-W34",
       "title": "Bienále Ve věci umění: Nezbytná přání",
       "description": "Mezinárodní výstava současného umění v Galerii města Pardubic. Akce probíhá od 12. června do 26. září 2026.",
