@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="calendar.css">
   <link rel="stylesheet" href="detail-actions.css">
   <link rel="stylesheet" href="display-enhancements.css">
+  <link rel="stylesheet" href="fullscreen-detail.css">
 </head>
 <body>
   <header class="hero">
@@ -111,42 +112,52 @@
 
   <dialog id="eventDetail" class="event-detail" aria-labelledby="eventDetailTitle">
     <article class="event-detail-card">
-      <button class="event-detail-close" type="button" data-detail-close aria-label="Zavřít detail akce">×</button>
-      <p class="event-detail-when"></p>
-      <div class="event-detail-categories category-badges"></div>
-      <h2 id="eventDetailTitle" class="event-detail-title"></h2>
-      <p class="event-detail-place"></p>
-      <p class="event-detail-description"></p>
-      <dl class="event-detail-meta">
-        <div><dt>Vstupné</dt><dd class="event-detail-price"></dd></div>
-        <div><dt>Zdroj</dt><dd class="event-detail-source-type"></dd></div>
-      </dl>
-      <div class="event-detail-calendar-actions" aria-label="Kalendář a sdílení">
-        <a class="event-detail-google event-detail-icon-button" target="_blank" rel="noopener noreferrer" aria-label="Přidat do Google Kalendáře" title="Přidat do Google Kalendáře">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M7 2v3M17 2v3M3.5 9h17M5 4h14a1.5 1.5 0 0 1 1.5 1.5v14A1.5 1.5 0 0 1 19 21H5a1.5 1.5 0 0 1-1.5-1.5v-14A1.5 1.5 0 0 1 5 4Z"/>
-            <path d="M12 12v6M9 15h6"/>
-          </svg>
-        </a>
-        <button type="button" class="secondary-button event-detail-ics event-detail-icon-button" aria-label="Stáhnout událost jako ICS" title="Stáhnout .ics">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M7 2v3M17 2v3M3.5 9h17M5 4h14a1.5 1.5 0 0 1 1.5 1.5v14A1.5 1.5 0 0 1 19 21H5a1.5 1.5 0 0 1-1.5-1.5v-14A1.5 1.5 0 0 1 5 4Z"/>
-            <path d="M12 12v6M9.5 15.5 12 18l2.5-2.5"/>
-          </svg>
-        </button>
-        <button type="button" class="secondary-button event-detail-share event-detail-icon-button" aria-label="Sdílet akci" title="Sdílet akci">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <circle cx="18" cy="5" r="2.5"/>
-            <circle cx="6" cy="12" r="2.5"/>
-            <circle cx="18" cy="19" r="2.5"/>
-            <path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"/>
-          </svg>
-        </button>
-      </div>
-      <p class="event-detail-action-status" role="status" aria-live="polite"></p>
-      <div class="event-detail-actions">
-        <a class="event-detail-source" target="_blank" rel="noopener noreferrer">Přejít na stránku události</a>
-        <button type="button" class="secondary-button" data-detail-close>Zavřít</button>
+      <header class="event-detail-header">
+        <div class="event-detail-header-inner">
+          <button class="event-detail-back" type="button" data-detail-close aria-label="Zpět na přehled akcí">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg>
+            <span>Zpět</span>
+          </button>
+
+          <div class="event-detail-calendar-actions" aria-label="Kalendář a sdílení">
+            <a class="event-detail-google event-detail-icon-button" target="_blank" rel="noopener noreferrer" aria-label="Přidat do Google Kalendáře" title="Přidat do Google Kalendáře">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M7 2v3M17 2v3M3.5 9h17M5 4h14a1.5 1.5 0 0 1 1.5 1.5v14A1.5 1.5 0 0 1 19 21H5a1.5 1.5 0 0 1-1.5-1.5v-14A1.5 1.5 0 0 1 5 4Z"/>
+                <path d="M12 12v6M9 15h6"/>
+              </svg>
+            </a>
+            <button type="button" class="secondary-button event-detail-ics event-detail-icon-button" aria-label="Stáhnout událost jako ICS" title="Stáhnout .ics">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M7 2v3M17 2v3M3.5 9h17M5 4h14a1.5 1.5 0 0 1 1.5 1.5v14A1.5 1.5 0 0 1 19 21H5a1.5 1.5 0 0 1-1.5-1.5v-14A1.5 1.5 0 0 1 5 4Z"/>
+                <path d="M12 12v6M9.5 15.5 12 18l2.5-2.5"/>
+              </svg>
+            </button>
+            <button type="button" class="secondary-button event-detail-share event-detail-icon-button" aria-label="Sdílet akci" title="Sdílet akci">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <circle cx="18" cy="5" r="2.5"/>
+                <circle cx="6" cy="12" r="2.5"/>
+                <circle cx="18" cy="19" r="2.5"/>
+                <path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div class="event-detail-content">
+        <p class="event-detail-when"></p>
+        <div class="event-detail-categories category-badges"></div>
+        <h2 id="eventDetailTitle" class="event-detail-title"></h2>
+        <p class="event-detail-place"></p>
+        <p class="event-detail-description"></p>
+        <dl class="event-detail-meta">
+          <div><dt>Vstupné</dt><dd class="event-detail-price"></dd></div>
+          <div><dt>Zdroj</dt><dd class="event-detail-source-type"></dd></div>
+        </dl>
+        <p class="event-detail-action-status" role="status" aria-live="polite"></p>
+        <div class="event-detail-actions">
+          <a class="event-detail-source" target="_blank" rel="noopener noreferrer">Přejít na stránku události</a>
+        </div>
       </div>
     </article>
   </dialog>
