@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "week": "2026-W36",
-  "generated_at": "2026-08-01T14:10:00+02:00",
+  "generated_at": "2026-08-02T08:40:00+02:00",
   "events": [
     {
       "id": "siebeneichener-quartett-peckova-pavlica-dropp-2026-08-31",
@@ -13,9 +13,10 @@
       "all_day": false,
       "venue": "Muzeum barokních soch",
       "municipality": "Chrudim",
-      "categories": ["koncert", "festival", "klasická hudba"],
-      "price": {"type": "paid", "text": "Dle ceníku pořadatele"},
+      "categories": ["koncert", "festival", "klasická-hudba"],
+      "price": {"type": "unknown", "text": "Cena není v dostupném oficiálním detailu uvedena"},
       "source": {"type": "official", "url": "https://www.chrudimskabeseda.cz/akce/siebeneichener-quartett-dagmar-peckova-jiri-pavlica-martin-dropp/"},
+      "last_verified_at": "2026-08-02T08:40:00+02:00",
       "cancelled": false
     },
     {
@@ -29,8 +30,9 @@
       "venue": "Velká scéna Divadla Karla Pippicha",
       "municipality": "Chrudim",
       "categories": ["divadlo", "festival"],
-      "price": {"type": "paid", "text": "Dle ceníku pořadatele"},
+      "price": {"type": "unknown", "text": "Cena není v dostupném oficiálním detailu uvedena"},
       "source": {"type": "official", "url": "https://www.chrudimskabeseda.cz/akce/william-shakespeare-kral-lear/"},
+      "last_verified_at": "2026-08-02T08:40:00+02:00",
       "cancelled": false
     },
     {
@@ -79,7 +81,7 @@
       "cancelled": false
     },
     {
-      "id": "rodinna-anamneza-chrudim-2026-w36",
+      "id": "rodinna-anamneza-chrudim-2026",
       "week": "2026-W36",
       "title": "Rodinná anamnéza",
       "description": "Výstava Jaroslava Korečka, Markéty Korečkové a Juliany Mackové probíhající do 13. září 2026.",
@@ -91,6 +93,7 @@
       "categories": ["výstava", "umění"],
       "price": {"type": "paid", "text": "20 Kč"},
       "source": {"type": "official", "url": "https://www.chrudimskabeseda.cz/akce/rodinna-anamneza-jaroslav-korecek-marketa-koreckova-juliana-mackova/"},
+      "last_verified_at": "2026-08-02T08:40:00+02:00",
       "cancelled": false
     }
   ]
