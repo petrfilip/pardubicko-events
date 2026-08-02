@@ -21,3 +21,15 @@ Sem AI agent průběžně zapisuje vyhledávací dotazy, které vedly k nalezen�
 
 ### akce dnes Pardubice
 - Nové akce: několik komunitních akcí.
+
+## 2026-08-02
+
+### site:litomysl.cz/kalendar_akci srpen 2026 Litomyšl
+- Nové kandidáty: 5
+- Litomyšlský filmový festival; komentovaná prohlídka výstavy Variant je více; Garage & Tony Ducháček, The Prostitutes; Fotr je lotr; Vzpomínková jízda na Elišku a Čeňka Junkovy.
+- Úspěšný vzor pro oficiální kalendář; před importem dohledat konkrétní detailové stránky.
+
+### site:hlinsko.cz srpen 2026 přehled kulturních akcí Hlinsko
+- Nové kandidáty: 1
+- Letní kino 2026.
+- Úspěšný vzor pro městský kulturní kalendář; kandidát vyžaduje doplnění konkrétního filmu a vstupného.
