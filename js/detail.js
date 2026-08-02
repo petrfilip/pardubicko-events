@@ -2,6 +2,14 @@ import { renderCategoryBadges } from './badges.js';
 import { buildGoogleCalendarUrl, downloadIcs, eventShareUrl } from './calendar-export.js';
 import { formatEventWhen, sourceLabel } from './format.js';
 
+function mapySearchUrl(event) {
+  const query = [event.venue, event.municipality].filter(Boolean).join(', ');
+  if (!query) return '';
+  const url = new URL('https://mapy.com/cs/zakladni');
+  url.searchParams.set('q', query);
+  return url.toString();
+}
+
 export function createEventDetail(
   dialog = document.getElementById('eventDetail'),
   { onClose = () => {} } = {},
@@ -85,7 +93,20 @@ export function createEventDetail(
     elements.when.textContent = formatEventWhen(event);
     renderCategoryBadges(elements.categories, event.categories);
     elements.title.textContent = event.cancelled ? `${event.title} — ZRUŠENO` : event.title;
-    elements.place.textContent = [event.venue, event.municipality].filter(Boolean).join(', ');
+
+    const place = [event.venue, event.municipality].filter(Boolean).join(', ');
+    const mapUrl = mapySearchUrl(event);
+    elements.place.textContent = place;
+    if (mapUrl) {
+      elements.place.href = mapUrl;
+      elements.place.hidden = false;
+      elements.place.setAttribute('aria-label', `Otevřít místo ${place} na Mapy.cz`);
+    } else {
+      elements.place.removeAttribute('href');
+      elements.place.removeAttribute('aria-label');
+      elements.place.hidden = true;
+    }
+
     elements.description.textContent = event.description || '';
     elements.description.hidden = !event.description;
     elements.price.textContent = event.price?.text || 'Vstupné neuvedeno';
