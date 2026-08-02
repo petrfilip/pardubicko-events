@@ -103,8 +103,24 @@ body.event-detail-open {
 }
 
 .event-detail-content .event-detail-place {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   margin-top: 14px;
+  color: var(--accent-strong);
   font-size: 1.08rem;
+  font-weight: 800;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.event-detail-content .event-detail-place::after {
+  content: "↗";
+  font-size: .9em;
+}
+
+.event-detail-content .event-detail-place:hover {
+  text-decoration-thickness: 2px;
 }
 
 .event-detail-content .event-detail-description {
