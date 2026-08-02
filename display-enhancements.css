@@ -1,0 +1,24 @@
+.event-location {
+  min-width: 0;
+}
+
+.event-municipality {
+  display: block;
+  color: var(--accent-strong);
+  font-size: .78rem;
+  font-weight: 850;
+  letter-spacing: .035em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.event-place {
+  margin-top: 2px;
+}
+
+.calendar-event-municipality {
+  color: var(--muted);
+  font-size: .68rem;
+  font-weight: 750;
+  line-height: 1.25;
+}
