@@ -73,10 +73,8 @@ export function createEventDetail(
   });
   elements.share.addEventListener('click', shareCurrentEvent);
 
-  dialog.addEventListener('click', event => {
-    if (event.target === dialog) close();
-  });
   dialog.addEventListener('close', () => {
+    document.body.classList.remove('event-detail-open');
     currentEvent = null;
     onClose();
   });
@@ -102,7 +100,9 @@ export function createEventDetail(
       elements.source.hidden = true;
     }
 
+    document.body.classList.add('event-detail-open');
     if (!dialog.open) dialog.showModal();
+    dialog.scrollTop = 0;
   }
 
   return { open, close };
