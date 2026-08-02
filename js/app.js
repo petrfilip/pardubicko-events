@@ -123,7 +123,9 @@ async function init() {
     state.filters = createFilters({ events, weeks: manifest.weeks, onChange: render });
     state.detail = createEventDetail(document.getElementById('eventDetail'), {
       onClose: () => {
-        if (new URL(window.location.href).searchParams.has('event')) updateEventUrl('');
+        if (new URL(window.location.href).searchParams.has('event')) {
+          updateEventUrl('', { replace: true });
+        }
       },
     });
     elements.updated.textContent = manifest.generated_at ? `Aktualizováno ${formatUpdated(manifest.generated_at)}` : '';
