@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "week": "2026-W35",
-  "generated_at": "2026-08-01T14:10:00+02:00",
+  "generated_at": "2026-08-02T08:35:00+02:00",
   "events": [
     {
       "id": "slavnost-shakespearova-chrudim-2026-08-24",
@@ -11,11 +11,12 @@
       "start_at": "2026-08-24T19:00:00+02:00",
       "end_at": null,
       "all_day": false,
-      "venue": "Muzeum Chrudim",
+      "venue": "Fibichův sál, Muzeum Chrudim",
       "municipality": "Chrudim",
-      "categories": ["koncert", "festival", "klasická hudba"],
-      "price": {"type": "paid", "text": "Dle ceníku pořadatele"},
+      "categories": ["koncert", "festival", "klasická-hudba"],
+      "price": {"type": "unknown", "text": "Cena není v dostupném oficiálním detailu uvedena"},
       "source": {"type": "official", "url": "https://www.chrudimskabeseda.cz/akce/slavnost-shakespearova-zahajovaci-koncert-festivalu/"},
+      "last_verified_at": "2026-08-02T08:35:00+02:00",
       "cancelled": false
     },
     {
@@ -26,11 +27,12 @@
       "start_at": "2026-08-27T19:00:00+02:00",
       "end_at": null,
       "all_day": false,
-      "venue": "Muzeum Chrudim",
+      "venue": "Fibichův sál, Muzeum Chrudim",
       "municipality": "Chrudim",
-      "categories": ["koncert", "festival", "klasická hudba"],
-      "price": {"type": "paid", "text": "Dle ceníku pořadatele"},
+      "categories": ["koncert", "festival", "klasická-hudba"],
+      "price": {"type": "unknown", "text": "Cena není v dostupném oficiálním detailu uvedena"},
       "source": {"type": "official", "url": "https://www.chrudimskabeseda.cz/akce/pevissimo-4/"},
+      "last_verified_at": "2026-08-02T08:35:00+02:00",
       "cancelled": false
     },
     {
@@ -43,9 +45,10 @@
       "all_day": false,
       "venue": "Institut Paměti národa, třída Míru 60",
       "municipality": "Pardubice",
-      "categories": ["výstava", "historie", "interaktivní expozice"],
+      "categories": ["výstava", "historie", "interaktivní-expozice"],
       "price": {"type": "unknown", "text": "Neuvedeno"},
       "source": {"type": "official", "url": "https://pardubice.eu/ticha-hrdinstvi-pardubice-pribehy-z-padesatych-let"},
+      "last_verified_at": "2026-08-02T08:35:00+02:00",
       "cancelled": false
     },
     {
@@ -58,9 +61,10 @@
       "all_day": false,
       "venue": "Institut Paměti národa, třída Míru 60",
       "municipality": "Pardubice",
-      "categories": ["výstava", "historie", "interaktivní expozice"],
+      "categories": ["výstava", "historie", "interaktivní-expozice"],
       "price": {"type": "unknown", "text": "Neuvedeno"},
       "source": {"type": "official", "url": "https://pardubice.eu/ticha-hrdinstvi-pardubice-pribehy-z-padesatych-let"},
+      "last_verified_at": "2026-08-02T08:35:00+02:00",
       "cancelled": false
     },
     {
@@ -88,9 +92,10 @@
       "all_day": false,
       "venue": "Institut Paměti národa, třída Míru 60",
       "municipality": "Pardubice",
-      "categories": ["výstava", "historie", "interaktivní expozice"],
+      "categories": ["výstava", "historie", "interaktivní-expozice"],
       "price": {"type": "unknown", "text": "Neuvedeno"},
       "source": {"type": "official", "url": "https://pardubice.eu/ticha-hrdinstvi-pardubice-pribehy-z-padesatych-let"},
+      "last_verified_at": "2026-08-02T08:35:00+02:00",
       "cancelled": false
     },
     {
@@ -118,13 +123,14 @@
       "all_day": false,
       "venue": "Institut Paměti národa, třída Míru 60",
       "municipality": "Pardubice",
-      "categories": ["výstava", "historie", "interaktivní expozice"],
+      "categories": ["výstava", "historie", "interaktivní-expozice"],
       "price": {"type": "unknown", "text": "Neuvedeno"},
       "source": {"type": "official", "url": "https://pardubice.eu/ticha-hrdinstvi-pardubice-pribehy-z-padesatych-let"},
+      "last_verified_at": "2026-08-02T08:35:00+02:00",
       "cancelled": false
     },
     {
-      "id": "rodinna-anamneza-chrudim-2026-w35",
+      "id": "rodinna-anamneza-chrudim-2026",
       "week": "2026-W35",
       "title": "Rodinná anamnéza",
       "description": "Výstava Jaroslava Korečka, Markéty Korečkové a Juliany Mackové probíhající od 16. července do 13. září 2026.",
@@ -136,6 +142,7 @@
       "categories": ["výstava", "umění"],
       "price": {"type": "paid", "text": "20 Kč"},
       "source": {"type": "official", "url": "https://www.chrudimskabeseda.cz/akce/rodinna-anamneza-jaroslav-korecek-marketa-koreckova-juliana-mackova/"},
+      "last_verified_at": "2026-08-02T08:35:00+02:00",
       "cancelled": false
     }
   ]
