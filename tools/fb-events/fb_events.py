@@ -25,6 +25,7 @@ import asyncio
 import json
 import re
 import subprocess
+import unicodedata
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -46,8 +47,9 @@ USER_AGENT = "PardubickoEventsBot/0.1 (+https://github.com/petrfilip/pardubicko-
 PRIORITY_HORIZON_DAYS = 14
 
 EVENT_ID_RE = re.compile(r"/events/(\d{6,})")
-# Adresu poznáme podle PSČ ve tvaru "530 02" následovaného názvem obce.
-ADDRESS_RE = re.compile(r"\d{3}\s?\d{2}\s+[^\d,]{2,}")
+# Adresu poznáme podle PSČ ve tvaru "530 02" následovaného názvem obce. Řádek musí
+# obsahovat i čárku, jinak by prošlo i "Vstupné 10000 Kč v předprodeji".
+ADDRESS_RE = re.compile(r"\d{3}\s\d{2}\s+[^\d,]{2,}")
 
 # Vytáhne z výpisu událostí bloky textu patřící jednotlivým akcím. Nespoléhá na
 # konkrétní CSS třídy — ty Facebook mění — ale na odkaz na událost a nejbližšího
@@ -159,12 +161,14 @@ def scope_for(start_at: str | None, now: datetime) -> str:
     except ValueError:
         return "opportunistic-future"
     delta = (start - now).days
+    if delta < 0:
+        return "opportunistic-future"  # akce v minulosti nepatří do prioritního okna
     return "priority-14-days" if delta <= PRIORITY_HORIZON_DAYS else "opportunistic-future"
 
 
 def find_address(lines: list[str]) -> str | None:
     for line in lines:
-        if ADDRESS_RE.search(line) and len(line) < 160:
+        if "," in line and ADDRESS_RE.search(line) and len(line) < 160:
             return line
     return None
 
@@ -199,8 +203,8 @@ def find_organizers(lines: list[str]) -> list[str]:
         if name:
             summary.append(name)
         if line.strip() == "Pořadatelé":
-            for follow in lines[index + 1:index + 8]:
-                if follow in ("Navrhované události", "Podrobnosti", "Transparentnost události"):
+            for follow in lines[index + 1:index + 21]:
+                if follow in STOP_LINES:
                     break
                 if follow and len(follow) < 80:
                     explicit.append(follow)
@@ -219,6 +223,14 @@ def find_organizers(lines: list[str]) -> list[str]:
             unique.append(name)
     return unique
 
+
+# Řádky, na kterých končí výčet pořadatelů. Bez nich by se do jmen dostaly
+# ovládací prvky stránky ("Zobrazit víc", "Sdílet", "Zajímá mě").
+STOP_LINES = frozenset({
+    "Navrhované události", "Podrobnosti", "Transparentnost události", "Zobrazit víc",
+    "Zajímá mě", "Sdílet", "Pozvat", "Koupit vstupenky", "Diskuse", "Diskuze",
+    "Zúčastním se", "Hosté", "Další", "Informace", "Místo konání",
+})
 
 EMPTY_MARKERS = (
     "Žádný obsah (události) k zobrazení",
@@ -241,15 +253,30 @@ async def fetch_listing(page, source: dict, args, now: datetime) -> tuple[list[d
     # Facebook vypíše bez scrollování jen prvních 8 akcí. Bez dorolování by se
     # výpis tiše ořezal a stránka s dvaceti akcemi by vypadala jako stránka s osmi.
     raw_blocks = await page.evaluate(LISTING_JS)
-    previous = -1
-    for _ in range(args.max_scrolls):
+    previous = None
+    stable_rounds = 0
+    scrolls_used = 0
+    for _ in range(max(0, args.max_scrolls)):
         if len(raw_blocks) == previous:
-            break
+            # Lazy load občas nestihne dodat nic za jedno kolo. Jedno prázdné kolo
+            # proto konec neznamená — teprve dvě po sobě.
+            stable_rounds += 1
+            if stable_rounds >= 2:
+                break
+        else:
+            stable_rounds = 0
         previous = len(raw_blocks)
+        scrolls_used += 1
         await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-        await page.wait_for_timeout(2000)
+        await page.wait_for_timeout(int(args.scroll_wait * 1000))
         raw_blocks = await page.evaluate(LISTING_JS)
-    truncated = len(raw_blocks) > previous  # dorolování ještě přidávalo, když došly pokusy
+    # Nedorolováno = došly pokusy, zatímco poslední kolo ještě přidávalo.
+    truncated = scrolls_used >= max(0, args.max_scrolls) and len(raw_blocks) != previous
+    # Kontrola prázdné stránky patří PŘED parsování. Kdyby byla za ním, zahodila by
+    # už naparsované akce, kdyby se hláška na stránce objevila spolu s nimi.
+    if not raw_blocks and any(marker in body for marker in EMPTY_MARKERS):
+        return [], None  # stránka existuje, jen nemá nadcházející akce
+
     parsed: list[dict] = []
     for block in raw_blocks:
         try:
@@ -259,8 +286,6 @@ async def fetch_listing(page, source: dict, args, now: datetime) -> tuple[list[d
         parsed.append({**fields, "facebook_event_id": block["id"],
                        "source_url": block["url"], "time_ids": block.get("time_ids", []),
                        "listing_truncated": truncated, "blocks_seen": len(raw_blocks)})
-    if any(marker in body for marker in EMPTY_MARKERS):
-        return [], None  # stránka existuje, jen nemá nadcházející akce
     if not raw_blocks:
         # Prázdno bez příslušné hlášky znamená spíš nedorenderovanou stránku než
         # stránku bez akcí. Nesmí projít jako „nemá akce“.
@@ -300,6 +325,15 @@ async def fetch_detail(page, event_id: str, wait: float, now: datetime) -> dict:
     return detail
 
 
+def _same_text(a: str | None, b: str | None) -> bool:
+    """Porovnání názvů bez emoji, diakritiky a přebytečných mezer."""
+    def norm(s):
+        s = unicodedata.normalize("NFKD", (s or "").lower())
+        s = "".join(c for c in s if not unicodedata.combining(c))
+        return re.sub(r"[^a-z0-9]+", " ", s).strip()
+    return norm(a) == norm(b)
+
+
 def build_candidate(row: dict, source: dict, detail: dict | None, now: datetime) -> dict:
     # Právě běžící akce nemá ve výpisu datum; bere se z detailu. Když ani ten
     # datum nedá, zůstane null — dopočítávat "od dneška" by byl výmysl.
@@ -308,8 +342,14 @@ def build_candidate(row: dict, source: dict, detail: dict | None, now: datetime)
     all_day = row.get("all_day")
     if start_at is None and detail and detail.get("start_at"):
         start_at = detail["start_at"]
+        end_at = detail.get("end_at") or end_at
         all_day = detail.get("all_day")
-    organizers = row.get("organizers") or []
+    elif detail and detail.get("end_at"):
+        # Konec z detailu se smí přilepit k začátku ze seznamu jen tehdy, když
+        # dvojice dává smysl. Jinak jsou to údaje ze dvou různých akcí.
+        if start_at and detail["end_at"] > start_at:
+            end_at = detail["end_at"]
+    organizers = list(row.get("organizers") or [])  # kopie, ať se nemutuje vstup
     if detail:
         for name in detail.get("organizers", []):
             if name not in organizers:
@@ -333,7 +373,7 @@ def build_candidate(row: dict, source: dict, detail: dict | None, now: datetime)
     # og:title z detailu je nezávislý zdroj názvu. Když se rozchází s názvem
     # ze seznamu, je to podezření, že se k odkazu přiřadil špatný blok textu.
     og_title = (detail or {}).get("og_title")
-    if og_title and og_title.strip().lower() != row["title"].strip().lower():
+    if og_title and not _same_text(og_title, row["title"]):
         notes.append(f"Název v detailu se liší od názvu v seznamu: „{og_title}“ — ověřit.")
 
     if detail and detail.get("detail_ok") and not detail.get("public"):
@@ -343,17 +383,26 @@ def build_candidate(row: dict, source: dict, detail: dict | None, now: datetime)
     # úsudek (opakovaná prohlídka není totéž co festivalový program), proto to kód
     # nedělá a jen to označí pro Curatora.
     time_ids = row.get("time_ids") or []
-    recurring = len(time_ids) > 1
+    # Facebook uvádí celkový počet termínů v textu ("a 23 dalších"), zatímco odkazů
+    # s event_time_id vydá jen část. Autoritativní je počet ze zdroje, seznam ID je
+    # dolní odhad — proto se ukládají obě čísla.
+    total_dates = row.get("total_dates")
+    recurring = bool(total_dates and total_dates > 1) or len(time_ids) > 1
     if recurring:
-        notes.append(f"Akce má {len(time_ids)} termínů (event_time_id) — opakovaný program, "
-                     "rozpad na jednotlivé termíny posoudit ručně.")
+        if total_dates and total_dates > len(time_ids):
+            notes.append(f"Opakovaná akce: zdroj uvádí {total_dates} termínů, zachyceno "
+                         f"{len(time_ids)} identifikátorů — zbytek dohledat u pořadatele. "
+                         "Rozpad na jednotlivé termíny posoudit ručně.")
+        else:
+            notes.append(f"Opakovaná akce s {len(time_ids)} termíny (event_time_id) — "
+                         "rozpad na jednotlivé termíny posoudit ručně.")
 
     return {
         "id": f"fb-{row['facebook_event_id']}",
         "title": row["title"],
         "date_text": row["date_text"],
         "start_at": start_at,
-        "end_at": (detail or {}).get("end_at") or end_at,
+        "end_at": end_at,
         "all_day": all_day,
         "ongoing": bool(row.get("ongoing")),
         "municipality": row.get("municipality"),
@@ -377,6 +426,7 @@ def build_candidate(row: dict, source: dict, detail: dict | None, now: datetime)
         "programme_title": None,
         "expandable": recurring,
         "facebook_time_ids": time_ids,
+        "facebook_total_dates": total_dates,
         "status": "needs-verification",
         "notes": " ".join(notes),
     }
@@ -401,15 +451,16 @@ async def run(args) -> int:
     metrics = dict(facebook_pages_checked=0, facebook_events_extracted=0,
                    facebook_details_fetched=0, facebook_blocked=0,
                    facebook_duplicates=0, facebook_suggested_events_seen=0,
-                   facebook_blocks_unparsed=0)
+                   facebook_blocks_unparsed=0, facebook_details_failed=0)
     errors: list[dict] = []
     notes: list[str] = []
     candidates: list[dict] = []
+    checked_sources: list[dict] = []
     truncated_pages: list[str] = []
     unparsed_pages: list[str] = []
     suggested: set[str] = set()
     seen_ids: set[str] = set()
-    by_title_time: dict[tuple, str] = {}
+    by_title_time: dict[tuple, dict] = {}
 
     async with async_playwright() as playwright:
         browser = await playwright.chromium.launch(headless=True)
@@ -428,12 +479,15 @@ async def run(args) -> int:
                     errors.append({"source": slug, "error": f"{type(exc).__name__}: {exc}"})
                     log(f"  {slug}: CHYBA {type(exc).__name__}")
                     continue
-                metrics["facebook_pages_checked"] += 1
                 if blocked:
+                    # Blokovaná stránka NENÍ zkontrolovaná stránka. Kdyby se sem
+                    # počítala, úplně neúspěšný běh by se tvářil jako "no-change".
                     metrics["facebook_blocked"] += 1
                     errors.append({"source": slug, "error": blocked})
                     log(f"  {slug}: nedostupné ({blocked})")
                     continue
+                metrics["facebook_pages_checked"] += 1
+                checked_sources.append(source)
                 # Bloky, které se nepodařilo naparsovat, jsou potenciálně ztracené akce.
                 # Bez téhle kontroly by úbytek nebyl nikde vidět.
                 unparsed = (rows[0]["blocks_seen"] - len(rows)) if rows else 0
@@ -463,8 +517,13 @@ async def run(args) -> int:
                             if detail["detail_ok"]:
                                 metrics["facebook_details_fetched"] += 1
                                 for sid in detail["suggested_event_ids"]:
-                                    if sid not in already_known:
-                                        suggested.add(sid)
+                                    suggested.add(sid)
+                            else:
+                                # Bez tohohle by blokované detaily nebyly vidět nikde:
+                                # kandidáti by jen tiše přišli o adresu a konec.
+                                metrics["facebook_details_failed"] += 1
+                                errors.append({"event": event_id,
+                                               "error": "detail nedostupný (login nebo blokace)"})
                         except Exception as exc:  # noqa: BLE001
                             errors.append({"event": event_id,
                                            "error": f"detail: {type(exc).__name__}: {exc}"})
@@ -475,26 +534,38 @@ async def run(args) -> int:
                     # různými ID. Kód je nespojuje, jen na to upozorní Curatora.
                     key = (candidate["title"].strip().lower(), candidate["start_at"])
                     if key in by_title_time:
+                        twin = by_title_time[key]
                         candidate["notes"] += (
-                            f" Pozor: stejný název i čas jako {by_title_time[key]} —"
+                            f" Pozor: stejný název i čas jako {twin['id']} —"
+                            " možná duplicita přímo na Facebooku."
+                        )
+                        # Upozornění patří na obě kopie, jinak si Curator všimne
+                        # jen té druhé a první projde bez povšimnutí.
+                        twin["notes"] += (
+                            f" Pozor: stejný název i čas jako {candidate['id']} —"
                             " možná duplicita přímo na Facebooku."
                         )
                     else:
-                        by_title_time[key] = candidate["id"]
+                        by_title_time[key] = candidate
                     candidates.append(candidate)
                 await asyncio.sleep(args.delay)
         finally:
             await browser.close()
 
+    # Návrhy, které jsme si sebrali sami v tomhle běhu, nejsou "mimo seed list".
+    suggested -= seen_ids
+    suggested -= already_known
     metrics["facebook_suggested_events_seen"] = len(suggested)
     finished_at = datetime.now(TZ)
 
     if metrics["facebook_blocked"] and metrics["facebook_pages_checked"] == 0:
         status = "failed"
+    elif errors or metrics["facebook_blocked"] or metrics["facebook_blocks_unparsed"]:
+        # Dokumentace slibuje při nenulovém facebook_blocked nejméně "partial";
+        # prázdný výsledek to nesmí přebít na "no-change".
+        status = "partial"
     elif not candidates:
         status = "no-change"
-    elif errors:
-        status = "partial"
     else:
         status = "success"
 
@@ -534,10 +605,13 @@ async def run(args) -> int:
         "partial_reason": "část stránek se nepodařilo načíst" if status == "partial" else None,
         "commit_sha": git_sha(),
         "metrics": metrics,
+        # Jen skutečně načtené stránky — dokumentace to výslovně vyžaduje a jinak
+        # by se pokrytí nadhodnocovalo o obce, kam se běh vůbec nedostal.
         "coverage": {
-            "regions": sorted({s.get("region") for s in sources if s.get("region")}),
-            "districts": sorted({s.get("district") for s in sources if s.get("district")}),
-            "municipalities": sorted({s.get("municipality") for s in sources if s.get("municipality")}),
+            "regions": sorted({s["region"] for s in checked_sources if s.get("region")}),
+            "districts": sorted({s["district"] for s in checked_sources if s.get("district")}),
+            "municipalities": sorted({s["municipality"] for s in checked_sources
+                                      if s.get("municipality")}),
         },
         "errors": errors,
         "notes": notes,
@@ -553,8 +627,10 @@ async def run(args) -> int:
         log(json.dumps(payload, ensure_ascii=False, indent=2)[:2000])
         return 0
 
+    # Jméno nese i čas. Bez toho druhý běh téhož dne označí vlastní předchozí
+    # kandidáty za duplicity, vyrobí prázdný seznam a přepíše jím původní soubor.
     out_dir = REPO_ROOT / "research"
-    out_path = out_dir / f"candidates-{started_at:%Y-%m-%d}-facebook.json"
+    out_path = out_dir / f"candidates-{started_at:%Y-%m-%d-%H%M}-facebook.json"
     out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     stats_dir = REPO_ROOT / "stats" / "runs" / f"{started_at:%Y-%m}"
@@ -583,6 +659,8 @@ def main() -> int:
                         help="čekání na vykreslení detailu akce")
     parser.add_argument("--max-scrolls", type=int, default=8,
                         help="kolikrát dorolovat výpis; Facebook zobrazí bez scrollování jen 8 akcí")
+    parser.add_argument("--scroll-wait", type=float, default=2.5,
+                        help="čekání na dotažení dalších položek po scrollu")
     parser.add_argument("--dry-run", action="store_true", help="nic nezapisovat, jen vypsat")
     parser.add_argument("--ignore-known", action="store_true",
                         help="nepřeskakovat už známé akce (obnova dat, ladění parsování)")

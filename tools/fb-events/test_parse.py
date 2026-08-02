@@ -144,9 +144,72 @@ check("probíhající akce – název", block["title"], "Sportovní park Pardubi
 check("probíhající akce – místo", block["venue"], "Park Na Špici")
 check("probíhající akce – obec", block["municipality"], "Pardubice")
 
+# Opakovaná akce: počet termínů je v textu zdroje, nesmí se dopočítávat z odkazů.
+block = parse_listing_block([
+    "Út, 4. 8. ve 9:00 CEST a 23 dalších",
+    "Za skřítky do Slatiňan",
+    "Zámek Slatiňany",
+    "Událost vytvořena Zámek Slatiňany",
+], today=TODAY)
+check("opakovaná akce – počet termínů", block["total_dates"], 24)
+check("opakovaná akce – první termín", block["start_at"], "2026-08-04T09:00:00+02:00")
+check("opakovaná akce – „ve 9:00“ se přečte", block["all_day"], False)
+check("jednorázová akce nemá total_dates",
+      parse_listing_block(["Čt, 13. 8. v 20:30 CEST", "Něco", "Událost vytvořena Kdosi"],
+                          today=TODAY)["total_dates"], None)
+
 check("běžná akce nemá příznak ongoing",
       parse_listing_block(["Čt, 13. 8. v 20:30 CEST", "Něco", "Událost vytvořena Kdosi"],
                           today=TODAY)["ongoing"], False)
+
+# --- regrese z revize ---------------------------------------------------------
+
+# Dlouhá akce, která už běží: rok začátku se musí odvodit od konce, ne samostatně.
+# Dřív z toho vycházel začátek 2027 a konec 2026-09-01.
+r = parse_datetime_line("1. 7. v 9:00 až 31. 8. v 17:00", today=TODAY)
+check("dlouhý rozsah – začátek", r["start_at"], "2026-07-01T09:00:00+02:00")
+check("dlouhý rozsah – konec", r["end_at"], "2026-08-31T17:00:00+02:00")
+
+# Rozsah přes Nový rok: konec je v příštím roce, začátek musí zůstat v letošním.
+r = parse_datetime_line("28. 12. v 18:00 až 2. 1. v 2:00", today=date(2026, 12, 1))
+check("rozsah přes Nový rok – začátek", r["start_at"], "2026-12-28T18:00:00+01:00")
+check("rozsah přes Nový rok – konec", r["end_at"], "2027-01-02T02:00:00+01:00")
+
+# Neexistující datum musí být ParseError, ne holý ValueError, který shodí stránku.
+for bad in ("Ne, 29. 2. v 20:00", "St, 31. 4. v 18:00", "Pá, 31. 11."):
+    try:
+        parse_datetime_line(bad, today=TODAY)
+        failures.append(f"neexistující datum {bad!r} mělo vyhodit ParseError")
+    except ParseError:
+        pass
+    except Exception as exc:  # noqa: BLE001
+        failures.append(f"{bad!r} vyhodilo {type(exc).__name__} místo ParseError")
+
+# 29. 2. v přestupném roce existovat musí.
+check("přestupný rok projde",
+      parse_datetime_line("So, 29. 2. v 20:00", today=date(2028, 1, 1))["start_at"],
+      "2028-02-29T20:00:00+01:00")
+
+# Pomlčka bez mezer kolem se dřív nerozdělila a konec tiše mizel.
+r = parse_datetime_line("Pá, 7. 8.–9. 8.", today=TODAY)
+check("rozsah bez mezer kolem pomlčky", r["end_at"], "2026-08-09T00:00:00+02:00")
+
+# Konec před začátkem při uvedeném datu konce je chyba zdroje, ne rozsah přes půlnoc.
+try:
+    parse_datetime_line("15. 8. v 20:00 až 10. 8. v 17:00", today=TODAY)
+    failures.append("konec před začátkem měl vyhodit ParseError")
+except ParseError:
+    pass
+
+# Probíhající akce s uvedeným koncem.
+block = parse_listing_block([
+    "Právě probíhá do 10. 8.",
+    "Výstava něčeho",
+    "Událost vytvořena Galerie",
+], today=TODAY)
+check("probíhající s koncem – ongoing", block["ongoing"], True)
+check("probíhající s koncem – start zůstává None", block["start_at"], None)
+check("probíhající s koncem – konec", block["end_at"], "2026-08-10T00:00:00+02:00")
 
 if failures:
     print(f"NEPROŠLO {len(failures)} kontrol:\n")

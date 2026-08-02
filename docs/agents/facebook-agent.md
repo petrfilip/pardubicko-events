@@ -129,15 +129,22 @@ Každý kandidát má tento tvar; neznámé hodnoty ukládej jako `null`, nevyne
     "start_at": "2026-08-29T14:00:00+02:00",
     "end_at": null,
     "all_day": false,
+    "ongoing": false,
     "municipality": "Hlinsko",
     "venue": "Pivovar Rychtář",
-    "address": null,
+    "address": "Resslova 260, 539 01 Hlinsko, Česko",
     "discovered_at": "2026-08-02T10:00:00+02:00",
     "discovery_method": "facebook",
     "discovery_scope": "priority-14-days",
     "source_url": "https://www.facebook.com/events/731076819968144/",
     "facebook_event_id": "731076819968144",
     "facebook_page": "letosrychtarem",
+    "facebook_public": true,
+    "facebook_time_ids": [],
+    "facebook_total_dates": null,
+    "source_id": "leto-s-rychtarem",
+    "district": "Chrudim",
+    "region": "pardubicky-kraj",
     "organizers": ["RockIn"],
     "price_text": null,
     "requires_primary_source": true,
@@ -160,7 +167,7 @@ Pozor na obec: `municipality` je geoznačka Facebooku a bývá nepřesná. Ově�
 ### Klíčová pravidla
 
 - **`facebook_event_id` je dedup klíč napříč běhy.** Stejné ID znamená stejnou akci bez ohledu na to, přes kterou stránku byla nalezena, jak je přeložený název nebo jaké URL vedlo k detailu. Kandidátní `id` má tvar `fb-<facebook_event_id>`.
-- **Opakovaná akce má jedno ID a mnoho termínů.** Termíny rozlišuje parametr `event_time_id` v URL. Zámek Slatiňany má takto pod jediným ID akce *Za skřítky do Slatiňan* 24 termínů — počítání unikátních ID by tam program podhodnotilo na dvacetinu. Skript termíny ukládá do `facebook_time_ids`, kandidáta označí `candidate_kind: programme` a `expandable: true`, ale **sám ho nerozpadá**: rozlišit opakovanou prohlídku od festivalového programu vyžaduje úsudek. Rozpad posoudí Curator podle pravidel v `discovery-agent.md`.
+- **Opakovaná akce má jedno ID a mnoho termínů.** Termíny rozlišuje parametr `event_time_id` v URL. Zámek Slatiňany má takto pod jediným ID akce *Za skřítky do Slatiňan* 24 termínů — počítání unikátních ID by tam program podhodnotilo na dvacetinu. Pozor, obě čísla se liší a obě jsou potřeba: `facebook_total_dates` je počet, který uvádí sám zdroj v textu (`Út, 4. 8. ve 9:00 CEST a 23 dalších` → 24), zatímco `facebook_time_ids` obsahuje jen ty identifikátory, které se z výpisu podařilo zachytit, a je proto **dolní odhad** — u Slatiňan 7 z 24. Skript kandidáta označí `candidate_kind: programme` a `expandable: true`, ale **sám ho nerozpadá**: rozlišit opakovanou prohlídku od festivalového programu vyžaduje úsudek. Rozpad posoudí Curator podle pravidel v `discovery-agent.md`.
 - **Shodné ID ale nestačí.** Pořadatelé běžně založí tutéž akci dvakrát pod různými ID — ověřeno u Chrudimské besedy, která měla koncert *Il fratricidio di Caino* 15. 8. ve 20:00 vedený dvakrát. Skript takové kandidáty **nespojuje**, protože rozlišit dvojí založení od dvou skutečných představení ve stejný čas vyžaduje úsudek. Místo toho oba ponechá a do `notes` připíše upozornění na možnou duplicitu. Rozhodnutí dělá Curator.
 - **`price_text` je skoro vždy `null`.** Facebook cenu jako strukturované pole nemá. Vyplň ji jen tehdy, je-li v popisu doslova uvedena, a vždy jako přesný text zdroje. Proto je `requires_primary_source` vždy `true` — vstupné a ostatní detaily musí ověřit Curator na primárním zdroji.
 - **`status` je vždy `needs-verification`, nikdy `verified`.** Ani úplně vypadající Facebook událost není ověřená akce. Stav `verified`, `imported` ani `rejected` tento kanál nenastavuje.

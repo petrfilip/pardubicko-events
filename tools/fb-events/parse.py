@@ -47,7 +47,7 @@ WEEKDAY_PREFIX = re.compile(
 )
 
 TZ_SUFFIX = re.compile(r"\b(CEST|CET|GMT[+-]\d+|UTC[+-]\d+)\b", re.IGNORECASE)
-RANGE_SPLIT = re.compile(r"\s+(?:až|do)\s+|\s+[–—-]\s+")
+RANGE_SPLIT = re.compile(r"\s+(?:až|do)\s+|\s*[–—]\s*|\s+-\s+", re.IGNORECASE)
 
 NUMERIC_DATE = re.compile(r"(\d{1,2})\.\s*(\d{1,2})\.(?:\s*(\d{4}))?")
 NAMED_DATE = re.compile(r"(\d{1,2})\.\s*([a-záčďéěíňóřšťúůýž]+)(?:\s+(\d{4}))?", re.IGNORECASE)
@@ -56,7 +56,10 @@ TIME = re.compile(r"(?:\bv\s*)?(\d{1,2}):(\d{2})")
 ORGANIZER_PREFIX = re.compile(r"^\s*(Událost vytvořena|Událost pořádá)\s*", re.IGNORECASE)
 # U právě běžících akcí Facebook místo data napíše "Právě probíhá". Datum se pak
 # musí vzít z detailu; odhadovat ho ze slova „probíhá“ nelze.
-ONGOING_MARKER = re.compile(r"^\s*(právě probíhá|probíhá(\s+právě)?)\s*$", re.IGNORECASE)
+ONGOING_MARKER = re.compile(r"^\s*(právě probíhá|probíhá\s+právě|probíhá)\b", re.IGNORECASE)
+# "Út, 4. 8. ve 9:00 CEST a 23 dalších" — Facebook u opakované akce uvádí počet
+# zbývajících termínů rovnou v textu. Je to údaj zdroje, ne odhad.
+MORE_DATES = re.compile(r"\ba\s+(\d+)\s+dal[šs]í(?:ch|mi|m)?\b", re.IGNORECASE)
 # "RockIn a TRAKTOR spolu s 4 dalšími" je souhrn, ne jméno pořadatele.
 COHOST_SUMMARY = re.compile(r"\s+spolu s\s+\d+\s+dalšími\s*$", re.IGNORECASE)
 
@@ -104,9 +107,21 @@ def _extract_date(part: str, today: date, prefer: str):
         year = int(m.group(3)) if m.group(3) else None
     if not 1 <= day <= 31 or not 1 <= month <= 12:
         raise ParseError(f"nesmyslné datum {day}.{month}. v {part!r}")
-    if year is None:
-        year = resolve_year(day, month, today, prefer)
+    # Rok se tu záměrně nedoplňuje — o něj se stará až parse_datetime_line, která
+    # vidí i případný konec rozsahu a umí roky sladit.
     return day, month, year
+
+
+def _valid(year: int, month: int, day: int) -> date:
+    """Sestaví datum a neexistující kombinaci ohlásí jako ParseError, ne ValueError.
+
+    Bez tohohle by 31. 4. nebo 29. 2. v nepřestupném roce vyhodily holý ValueError,
+    který volající nechytá, a jeden vadný blok by shodil celou stránku.
+    """
+    try:
+        return date(year, month, day)
+    except ValueError as exc:
+        raise ParseError(f"neexistující datum {day}.{month}.{year}: {exc}") from exc
 
 
 def _extract_time(part: str):
@@ -139,33 +154,58 @@ def parse_datetime_line(line: str, today: date | None = None, prefer: str = "fut
     start_date = _extract_date(parts[0], today, prefer)
     if start_date is None:
         raise ParseError(f"nenalezeno datum v {raw!r}")
-    day, month, year = start_date
+    s_day, s_month, s_year = start_date
     start_time = _extract_time(parts[0])
     all_day = start_time is None
 
-    start = datetime(year, month, day, *(start_time or (0, 0)), tzinfo=TZ)
+    end_date = end_time = None
+    if len(parts) > 1:
+        end_date = _extract_date(parts[1], today, prefer)
+        end_time = _extract_time(parts[1])
+
+    # Roky se doplňují společně. U rozsahu se nejdřív usadí konec — ten do budoucna
+    # míří vždycky — a začátek se pak přilepí k němu. Bez toho by dlouhá akce typu
+    # „1. 7. až 31. 8.“ dostala 2. srpna začátek v roce 2027, protože 1. 7. už je
+    # dávno za námi.
+    if end_date is not None:
+        e_day, e_month, e_year = end_date
+        if e_year is None:
+            e_year = resolve_year(e_day, e_month, today, prefer)
+        if s_year is None:
+            if (s_month, s_day) <= (e_month, e_day):
+                s_year = e_year
+            else:
+                # Začátek je v kalendáři za koncem. Buď jde o rozsah přes Nový rok
+                # (28. 12. až 2. 1.), nebo je řádek pokažený. Rozlišit to lze jen
+                # podle délky: krátký přesah bereme, roční ne — a raději ohlásíme
+                # chybu, než abychom tiše uložili nesmyslný rozsah.
+                if (date(e_year, e_month, e_day) - date(e_year - 1, s_month, s_day)).days > 60:
+                    raise ParseError(f"nejednoznačný rozsah, začátek leží za koncem: {raw!r}")
+                s_year = e_year - 1
+    else:
+        e_day = e_month = e_year = None
+        if s_year is None:
+            s_year = resolve_year(s_day, s_month, today, prefer)
+
+    _valid(s_year, s_month, s_day)
+    start = datetime(s_year, s_month, s_day, *(start_time or (0, 0)), tzinfo=TZ)
 
     end = None
-    if len(parts) > 1:
-        tail = parts[1]
-        end_date = _extract_date(tail, today, prefer)
-        end_time = _extract_time(tail)
-        if end_date is None and end_time is None:
-            end = None
+    if end_date is not None or end_time is not None:
+        if end_date is None:
+            # "30. 4. v 18:00 až 1. 5. v 5:00" má datum konce, "… až 22:00" nemá
+            e_day, e_month, e_year = s_day, s_month, s_year
+        _valid(e_year, e_month, e_day)
+        if end_time is None:
+            end = datetime(e_year, e_month, e_day, 0, 0, tzinfo=TZ)
+            all_day = True
         else:
+            end = datetime(e_year, e_month, e_day, *end_time, tzinfo=TZ)
+        if end < start:
             if end_date is None:
-                # "30. 4. v 18:00 až 1. 5. v 5:00" má datum, "… až 22:00" nemá
-                ed_day, ed_month, ed_year = day, month, year
+                end += timedelta(days=1)  # rozsah přes půlnoc bez data konce
             else:
-                ed_day, ed_month, ed_year = end_date
-            if end_time is None:
-                end = datetime(ed_year, ed_month, ed_day, 0, 0, tzinfo=TZ)
-                all_day = True
-            else:
-                end = datetime(ed_year, ed_month, ed_day, *end_time, tzinfo=TZ)
-            if end < start:
-                # rozsah přes půlnoc bez uvedeného data konce
-                end += timedelta(days=1)
+                raise ParseError(f"konec před začátkem v {raw!r}")
 
     return {
         "start_at": start.isoformat(),
@@ -215,11 +255,24 @@ def parse_listing_block(lines: list[str], today: date | None = None,
     if len(rows) < 2:
         raise ParseError(f"blok má málo řádků: {lines!r}")
 
+    more = MORE_DATES.search(rows[0])
+    # Celkový počet termínů = uvedený první + počet dalších.
+    total_dates = int(more.group(1)) + 1 if more else None
+
     if ONGOING_MARKER.match(rows[0]):
-        # Akce právě běží a Facebook u ní datum nezobrazuje. Blok se nezahazuje —
-        # jde o platnou akci, jen se termín musí doplnit z detailu.
-        when = {"start_at": None, "end_at": None, "all_day": None, "date_text": rows[0],
-                "ongoing": True}
+        # Akce právě běží a Facebook u ní začátek nezobrazuje. Blok se nezahazuje —
+        # jde o platnou akci, jen se termín musí doplnit z detailu. Někdy je za
+        # markerem uvedený konec („Právě probíhá do 10. 8.“), ten si vezmeme.
+        # Zleva se ořežou oddělovače, zprava NE — koncová tečka je součástí "10. 8.".
+        rest = ONGOING_MARKER.sub("", rows[0]).lstrip(" .–—-").strip()
+        end_at = None
+        if rest:
+            try:
+                end_at = parse_datetime_line(rest, today=today, prefer=prefer)["start_at"]
+            except ParseError:
+                end_at = None
+        when = {"start_at": None, "end_at": end_at, "all_day": None,
+                "date_text": rows[0], "ongoing": True}
     else:
         when = {**parse_datetime_line(rows[0], today=today, prefer=prefer), "ongoing": False}
 
@@ -243,4 +296,5 @@ def parse_listing_block(lines: list[str], today: date | None = None,
         "venue": venue,
         "municipality": municipality,
         "organizers": organizers,
+        "total_dates": total_dates,
     }
