@@ -1,6 +1,6 @@
 # Pardubicko Events
 
-Veřejný statický katalog akcí pro Pardubice, Chrudim a okolí. Web běží bez serveru a databáze jako GitHub Pages a načítá data z týdenních JSON souborů v repozitáři.
+Veřejný statický katalog akcí pro Pardubický a Královéhradecký kraj. Web běží bez serveru a databáze jako GitHub Pages a načítá data z týdenních JSON souborů v repozitáři.
 
 ## Struktura
 
@@ -14,7 +14,9 @@ Veřejný statický katalog akcí pro Pardubice, Chrudim a okolí. Web běží b
 - `js/format.js` – formátování data, času a popisků
 - `data/manifest.json` – seznam dostupných týdnů
 - `data/weeks/YYYY-Www.json` – akce pro konkrétní ISO týden
-- `config/sources.json` – kurátorovaný seznam zdrojů ke kontrole
+- `config/source-registry.json` – jediný kurátorovaný registr zdrojů ke kontrole
+- `config/facebook-sources.json` – veřejné facebookové stránky pořadatelů pro discovery kanál
+- `tools/fb-events/` – deterministický sběr veřejných událostí z Facebooku (mimo web, viz `docs/agents/facebook-agent.md`)
 
 ## Lokální spuštění
 

@@ -1,0 +1,5 @@
+# Python artefakty nástrojů v tools/
+__pycache__/
+*.py[cod]
+.venv/
+venv/

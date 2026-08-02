@@ -144,7 +144,7 @@ Doporučené soubory:
 - `research/findings.md`
 - `research/discovery-score.json`
 - `stats/coverage.json`
-- `stats/reports/`
+- `stats/runs/YYYY-MM/`
 
 Registr zdrojů má uchovávat například:
 
@@ -263,6 +263,10 @@ GitHub repozitář slouží jako sdílená paměť mezi jednotlivými běhy.
 
 Facebook je významný zdroj, ale agent smí pracovat pouze s veřejně dostupnými událostmi a indexovaným obsahem. Nemá obcházet ochrany, přihlášení ani omezení platformy.
 
+Do tohoto rozsahu patří i čtení veřejných stránek pořadatelů, které platforma servíruje nepřihlášenému návštěvníkovi, včetně veřejných seznamů nadcházejících událostí. Podmínkou je, že se nepoužije žádný účet ani session, neklikne se cookie lišta ani přihlašovací dialog a agent se identifikuje vlastním user-agentem. Jakmile by obsah vyžadoval přihlášení nebo obejití ochrany, kanál končí a hlásí to jako blokaci. Provozní pravidla popisuje `docs/agents/facebook-agent.md`.
+
+Facebook nepokrývá malé venkovské pořadatele — ti události nezakládají. Kanál je doplněk pro městské kulturní instituce, ne cesta k pokrytí obcí.
+
 ## 12. Metriky kvality
 
 Projekt má postupně měřit:
@@ -294,7 +298,7 @@ Aktuální fáze neobsahuje:
 - Next.js,
 - přihlašování,
 - administrační rozhraní,
-- neveřejný Facebook scraper,
+- přihlášený nebo neveřejný Facebook scraper,
 - automatické publikování neověřených kandidátů,
 - AI doporučení uložená ve finálních datech.
 

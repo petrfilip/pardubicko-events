@@ -17,6 +17,8 @@ Příklady:
 
 Každý běh má vlastní soubor a nepřepisuje historii.
 
+Pokud by v jedné minutě vznikly dva reporty stejného agenta, použij v názvu pozdějšího reportu přesnější čas nebo jednoznačný suffix. Existující report nikdy nepřepisuj.
+
 ## Společný formát
 
 ```json
@@ -71,6 +73,31 @@ Pokud přesnou dobu běhu nelze změřit, použije agent `duration_seconds: null
 - `kudyznudy_candidates`
 - `known_source_candidates`
 
+## Facebook metriky
+
+Kanál veřejných Facebook stránek je specializovaný discovery průchod. Jeho report používá společný formát a doplňuje vlastní metriky:
+
+- `facebook_pages_checked`
+- `facebook_events_extracted`
+- `facebook_details_fetched`
+- `facebook_blocked`
+- `facebook_duplicates`
+- `facebook_suggested_events_seen`
+
+Význam:
+
+- `facebook_pages_checked` — počet veřejných stránek, jejichž seznam událostí byl skutečně načten. Stránka, která se nenačetla, se sem nepočítá.
+- `facebook_events_extracted` — počet událostí vytěžených ze seznamů, před deduplikací.
+- `facebook_details_fetched` — počet otevřených detailů událostí. Detail se otevírá až po deduplikaci, takže tato hodnota bývá výrazně nižší než `facebook_events_extracted`.
+- `facebook_blocked` — počet stránek, ze kterých se nepodařilo vytěžit očekávanou strukturu.
+- `facebook_blocks_unparsed` — počet jednotlivých bloků výpisu, které se nepodařilo naparsovat, přestože zbytek stránky prošel. Jsou to potenciálně ztracené akce. Metrika vznikla poté, co se ukázalo, že Facebook u právě běžících akcí místo data píše „Právě probíhá“ a takové akce tiše propadaly. Nenulová hodnota znamená neznámý formát, ne prázdnou stránku — vždy ji prověř na konkrétní stránce.
+- `facebook_duplicates` — počet vytěžených událostí zahozených jako duplicita podle `facebook_event_id` nebo podle shody s existujícím kandidátem či produkční akcí.
+- `facebook_suggested_events_seen` — počet akcí viděných v bloku „Navrhované události“ na detailech. Měří přínos tohoto discovery vektoru za hranice seed listu. Report k tomu nese pole `suggested_event_ids` s úplným seznamem ID; seznam se nikdy neořezává, aby se z něj dal sestavit další běh.
+
+`facebook_blocked` není běžná chyba načtení. Stránky nemají JSON-LD a parsuje se z nich viditelný text, takže tato metrika je hlavní detektor dvou různých problémů: změny UI Facebooku, která rozbila parsování, nebo omezení ze strany platformy. V obou případech kanál tiše přestane vracet akce, aniž by cokoli spadlo — proto se nenulová hodnota vždy uvádí v `errors` a běh se označí nejméně jako `partial`.
+
+Nulová výtěžnost sama o sobě chyba není. Malí venkovští pořadatelé Facebook události nezakládají, takže očekávaná výtěžnost je zhruba 3,5 akce na městskou kulturní instituci a blízká nule u obcí. Rozlišuj proto `facebook_blocked` (technický problém) od nulového `facebook_events_extracted` při úspěšně načtené stránce (běžný a očekávaný stav).
+
 ## Curator metriky
 
 - `candidates_reviewed`
@@ -81,6 +108,8 @@ Pokud přesnou dobu běhu nelze změřit, použije agent `duration_seconds: null
 - `duplicates_removed`
 - `deferred_candidates`
 - `backlog_after`
+
+`backlog_after` je počet unikátních kandidátů napříč všemi `research/candidates*.json`, jejichž stav je po běhu `new`, `needs-verification` nebo přechodový starší stav `verified`. Stavy `imported` a `rejected` jsou uzavřené.
 
 ## Quality metriky
 
@@ -105,6 +134,8 @@ Sekce `coverage` má obsahovat jen údaje skutečně zkontrolované v daném bě
   "municipalities": ["Pardubice", "Hlinsko", "Hradec Králové"]
 }
 ```
+
+U Planner Agenta obsahuje `coverage` naplánované lokality. U Discovery a Curator Agenta obsahuje pouze lokality, jejichž zdroj nebo kandidát byl skutečně otevřen a zpracován.
 
 ## Udržitelnost
 
