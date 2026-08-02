@@ -36,10 +36,22 @@
 .quick-date-filter button:hover:not(.active),
 .advanced-toggle:hover { background: var(--chip); }
 .advanced-toggle {
+  position: relative;
   display: none;
   width: 100%;
   border: 1px solid var(--line);
   background: var(--card);
+}
+.advanced-toggle.has-active-filters::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+  vertical-align: 1px;
 }
 .advanced-toggle::after {
   content: "⌄";
