@@ -122,9 +122,26 @@
         <div><dt>Zdroj</dt><dd class="event-detail-source-type"></dd></div>
       </dl>
       <div class="event-detail-calendar-actions" aria-label="Kalendář a sdílení">
-        <a class="event-detail-google" target="_blank" rel="noopener noreferrer">Google Kalendář</a>
-        <button type="button" class="secondary-button event-detail-ics">Stáhnout .ics</button>
-        <button type="button" class="secondary-button event-detail-share">Sdílet</button>
+        <a class="event-detail-google event-detail-icon-button" target="_blank" rel="noopener noreferrer" aria-label="Přidat do Google Kalendáře" title="Přidat do Google Kalendáře">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M7 2v3M17 2v3M3.5 9h17M5 4h14a1.5 1.5 0 0 1 1.5 1.5v14A1.5 1.5 0 0 1 19 21H5a1.5 1.5 0 0 1-1.5-1.5v-14A1.5 1.5 0 0 1 5 4Z"/>
+            <path d="M12 12v6M9 15h6"/>
+          </svg>
+        </a>
+        <button type="button" class="secondary-button event-detail-ics event-detail-icon-button" aria-label="Stáhnout událost jako ICS" title="Stáhnout .ics">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M7 2v3M17 2v3M3.5 9h17M5 4h14a1.5 1.5 0 0 1 1.5 1.5v14A1.5 1.5 0 0 1 19 21H5a1.5 1.5 0 0 1-1.5-1.5v-14A1.5 1.5 0 0 1 5 4Z"/>
+            <path d="M12 12v6M9.5 15.5 12 18l2.5-2.5"/>
+          </svg>
+        </button>
+        <button type="button" class="secondary-button event-detail-share event-detail-icon-button" aria-label="Sdílet akci" title="Sdílet akci">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="18" cy="5" r="2.5"/>
+            <circle cx="6" cy="12" r="2.5"/>
+            <circle cx="18" cy="19" r="2.5"/>
+            <path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"/>
+          </svg>
+        </button>
       </div>
       <p class="event-detail-action-status" role="status" aria-live="polite"></p>
       <div class="event-detail-actions">
