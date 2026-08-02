@@ -34,15 +34,6 @@ function validateWeekData(week, data) {
   }
 }
 
-function validateEventIds(events) {
-  const ids = new Set();
-  for (const event of events) {
-    if (!event.id) throw new Error('Nalezena akce bez ID.');
-    if (ids.has(event.id)) throw new Error(`Duplicitní ID akce: ${event.id}.`);
-    ids.add(event.id);
-  }
-}
-
 function identityPart(value) {
   return String(value || '').trim().toLocaleLowerCase('cs');
 }
@@ -56,6 +47,23 @@ function eventIdentity(event) {
     identityPart(event.municipality),
     event.source?.url || '',
   ].join('\u001f');
+}
+
+function validateEventIds(events) {
+  const identitiesById = new Map();
+
+  for (const event of events) {
+    if (!event.id) throw new Error('Nalezena akce bez ID.');
+
+    const identity = eventIdentity(event);
+    const existingIdentity = identitiesById.get(event.id);
+
+    if (existingIdentity && existingIdentity !== identity) {
+      throw new Error(`Konfliktní záznamy se stejným ID akce: ${event.id}.`);
+    }
+
+    identitiesById.set(event.id, identity);
+  }
 }
 
 function deduplicateEvents(events) {
