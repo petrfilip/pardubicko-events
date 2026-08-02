@@ -94,6 +94,26 @@ export function createFilters({ events, weeks, onChange }) {
     }
   }
 
+  function updateAdvancedFilterIndicator() {
+    const count = [
+      elements.municipality.value,
+      elements.category.value,
+      elements.price.value,
+      elements.futureOnly.checked,
+    ].filter(Boolean).length;
+
+    elements.advancedToggle?.classList.toggle('has-active-filters', count > 0);
+    elements.advancedToggle?.setAttribute(
+      'aria-label',
+      count > 0 ? `Další filtry, aktivní: ${count}` : 'Další filtry',
+    );
+  }
+
+  function notifyAdvancedFilterChange() {
+    updateAdvancedFilterIndicator();
+    onChange();
+  }
+
   function setDateRange(value, notify = true) {
     activeDateRange = value;
     if (value) elements.week.value = '';
@@ -106,10 +126,10 @@ export function createFilters({ events, weeks, onChange }) {
     if (elements.week.value && activeDateRange) setDateRange('', false);
     onChange();
   });
-  elements.municipality.addEventListener('change', onChange);
-  elements.category.addEventListener('change', onChange);
-  elements.price.addEventListener('change', onChange);
-  elements.futureOnly.addEventListener('change', onChange);
+  elements.municipality.addEventListener('change', notifyAdvancedFilterChange);
+  elements.category.addEventListener('change', notifyAdvancedFilterChange);
+  elements.price.addEventListener('change', notifyAdvancedFilterChange);
+  elements.futureOnly.addEventListener('change', notifyAdvancedFilterChange);
 
   for (const button of elements.quickDateButtons) {
     button.addEventListener('click', () => setDateRange(button.dataset.dateRange || ''));
@@ -121,6 +141,7 @@ export function createFilters({ events, weeks, onChange }) {
   });
 
   updateQuickDateButtons();
+  updateAdvancedFilterIndicator();
 
   function values(now = new Date()) {
     const quickRange = resolveQuickDateRange(activeDateRange, now);
