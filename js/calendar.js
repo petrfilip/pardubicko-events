@@ -58,6 +58,14 @@ function createEventButton(event, day, onEventOpen, timeLabel = '') {
 
   heading.append(title, badges);
   button.append(time, heading);
+
+  if (event.municipality) {
+    const municipality = document.createElement('span');
+    municipality.className = 'calendar-event-municipality';
+    municipality.textContent = event.municipality;
+    button.appendChild(municipality);
+  }
+
   return button;
 }
 
