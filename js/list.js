@@ -21,7 +21,14 @@ export function renderList(root, events) {
     renderCategoryBadges(card.querySelector('.event-category'), event.categories, { limit: 1 });
     card.querySelector('.event-price').textContent = event.price?.text || 'Vstupné neuvedeno';
     card.querySelector('.event-title').textContent = event.cancelled ? `${event.title} — ZRUŠENO` : event.title;
-    card.querySelector('.event-place').textContent = [event.venue, event.municipality].filter(Boolean).join(', ');
+
+    const municipality = card.querySelector('.event-municipality');
+    municipality.textContent = event.municipality || '';
+    municipality.hidden = !event.municipality;
+
+    const place = card.querySelector('.event-place');
+    place.textContent = event.venue || '';
+    place.hidden = !event.venue;
 
     const description = card.querySelector('.event-description');
     description.textContent = event.description || '';
