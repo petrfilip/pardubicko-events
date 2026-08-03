@@ -7,6 +7,7 @@ import { renderList } from './list.js';
 
 const state = {
   manifest: null,
+  categories: null,
   events: [],
   filters: null,
   detail: null,
@@ -77,11 +78,14 @@ function render() {
   }
   state.previousDateRange = filterValues.dateRange;
 
-  const filteredEvents = filterEvents(state.events, filterValues, { weeks: state.manifest.weeks });
+  const filteredEvents = filterEvents(state.events, filterValues, {
+    weeks: state.manifest.weeks,
+    categories: state.categories,
+  });
 
   if (state.view === 'list') {
     elements.count.textContent = eventCountLabel(filteredEvents.length);
-    renderList(elements.events, filteredEvents);
+    renderList(elements.events, filteredEvents, state.categories);
     return;
   }
 
@@ -104,6 +108,7 @@ function render() {
 
   renderCalendar(elements.calendar, {
     events: calendarEvents, weeks: calendarWeeks, weekId,
+    categories: state.categories,
     onWeekChange: nextWeek => {
       state.calendarWeek = nextWeek;
       if (filterValues.dateRange) state.filters.setDateRange('', false);
@@ -116,12 +121,19 @@ function render() {
 
 async function init() {
   try {
-    const { manifest, events } = await loadEventData();
+    const { manifest, categories, events } = await loadEventData();
     state.manifest = manifest;
+    state.categories = categories;
     state.events = events;
     state.calendarWeek = resolveCalendarWeek(manifest.weeks, '');
-    state.filters = createFilters({ events, weeks: manifest.weeks, onChange: render });
+    state.filters = createFilters({
+      events,
+      weeks: manifest.weeks,
+      categories,
+      onChange: render,
+    });
     state.detail = createEventDetail(document.getElementById('eventDetail'), {
+      categories,
       onClose: () => {
         if (new URL(window.location.href).searchParams.has('event')) {
           updateEventUrl('', { replace: true });

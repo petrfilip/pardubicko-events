@@ -61,7 +61,7 @@
 .advanced-toggle[aria-expanded="true"]::after { transform: rotate(180deg); }
 .advanced-filters {
   display: grid;
-  grid-template-columns: repeat(3, minmax(150px, 1fr)) auto;
+  grid-template-columns: repeat(4, minmax(130px, 1fr)) auto;
   gap: 12px;
 }
 

@@ -11,7 +11,6 @@ import {
   parseLocalDate,
 } from './format.js';
 
-const LONG_RUNNING_CATEGORIES = new Set(['výstava', 'umění', 'muzeum', 'expozice']);
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 function eventTouchesDay(event, day) {
@@ -28,13 +27,11 @@ function eventCalendarDaySpan(event) {
   return Math.round((end - start) / DAY_MS) + 1;
 }
 
-function isLongRunningExhibition(event) {
-  const categories = (event.categories || []).map(category => category.toLocaleLowerCase('cs'));
-  return categories.some(category => LONG_RUNNING_CATEGORIES.has(category))
-    && eventCalendarDaySpan(event) >= 7;
+export function isLongRunningExhibition(event) {
+  return (event.categories || []).includes('vystavy') && eventCalendarDaySpan(event) >= 7;
 }
 
-function createEventButton(event, day, onEventOpen, timeLabel = '') {
+function createEventButton(event, day, onEventOpen, categories, timeLabel = '') {
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'calendar-event';
@@ -54,7 +51,7 @@ function createEventButton(event, day, onEventOpen, timeLabel = '') {
 
   const badges = document.createElement('span');
   badges.className = 'calendar-event-badges category-badges';
-  renderCategoryBadges(badges, event.categories, { limit: 1 });
+  renderCategoryBadges(badges, event.categories, { limit: 1, dictionary: categories });
 
   heading.append(title, badges);
   button.append(time, heading);
@@ -69,7 +66,7 @@ function createEventButton(event, day, onEventOpen, timeLabel = '') {
   return button;
 }
 
-function renderOngoingEvents(events, onEventOpen) {
+function renderOngoingEvents(events, onEventOpen, categories) {
   if (events.length === 0) return null;
 
   const section = document.createElement('section');
@@ -88,7 +85,8 @@ function renderOngoingEvents(events, onEventOpen) {
 
   for (const event of events) {
     const label = formatEventWhen(event).split('\n')[0];
-    list.appendChild(createEventButton(event, eventStart(event), onEventOpen, label));
+    list.appendChild(createEventButton(
+      event, eventStart(event), onEventOpen, categories, label));
   }
 
   section.append(heading, description, list);
@@ -101,7 +99,10 @@ export function resolveCalendarWeek(weeks, selectedWeekId, now = new Date()) {
   return weeks.find(week => week.from <= today && week.to >= today)?.id || weeks[0]?.id || '';
 }
 
-export function renderCalendar(root, { events, weeks, weekId, onWeekChange, onEventOpen }) {
+export function renderCalendar(
+  root,
+  { events, weeks, weekId, onWeekChange, onEventOpen, categories },
+) {
   root.replaceChildren();
   const weekIndex = weeks.findIndex(week => week.id === weekId);
   const week = weeks[weekIndex];
@@ -136,7 +137,7 @@ export function renderCalendar(root, { events, weeks, weekId, onWeekChange, onEv
 
   const ongoingEvents = events.filter(isLongRunningExhibition);
   const datedEvents = events.filter(event => !isLongRunningExhibition(event));
-  const ongoing = renderOngoingEvents(ongoingEvents, onEventOpen);
+  const ongoing = renderOngoingEvents(ongoingEvents, onEventOpen, categories);
 
   const grid = document.createElement('div');
   grid.className = 'calendar-grid';
@@ -159,7 +160,7 @@ export function renderCalendar(root, { events, weeks, weekId, onWeekChange, onEv
       column.appendChild(empty);
     } else {
       for (const event of dayEvents) {
-        column.appendChild(createEventButton(event, day, onEventOpen));
+        column.appendChild(createEventButton(event, day, onEventOpen, categories));
       }
     }
 

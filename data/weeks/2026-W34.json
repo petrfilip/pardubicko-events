@@ -13,7 +13,7 @@
       "all_day": false,
       "venue": "Turistické informační centrum, Resselovo náměstí",
       "municipality": "Chrudim",
-      "categories": ["prohlídka", "historie", "rodiny"],
+      "categories": ["pamatky", "rodiny"],
       "price": {"type": "free", "text": "Zdarma"},
       "source": {"type": "official", "url": "https://www.chrudim.eu/vydejte-se-za-historii-mestskeho-opevneni/"},
       "cancelled": false
@@ -28,7 +28,7 @@
       "all_day": false,
       "venue": "Rozhledna Bára, Podhůra",
       "municipality": "Chrudim",
-      "categories": ["kino", "rodiny", "venkovní-akce"],
+      "categories": ["film", "rodiny"],
       "price": {"type": "free", "text": "Vstup volný"},
       "source": {"type": "official", "url": "https://www.chrudimskabeseda.cz/akce/filmova-noc-na-bare/"},
       "cancelled": false
@@ -43,7 +43,7 @@
       "all_day": false,
       "venue": "Městský obvod III – Dubina, Jana Zajíce 983",
       "municipality": "Pardubice",
-      "categories": ["sousedská-akce", "rodiny", "gastro", "hudba"],
+      "categories": ["komunitni", "rodiny", "gastro", "hudba"],
       "price": {"type": "free", "text": "Zdarma"},
       "source": {"type": "official", "url": "https://pardubice.eu/en/roasting-a-pig-on-a-spit-in-dubina"},
       "last_verified_at": "2026-08-02T08:34:00+02:00",
@@ -59,7 +59,7 @@
       "all_day": false,
       "venue": "Rozhledna Bára, Podhůra",
       "municipality": "Chrudim",
-      "categories": ["kino", "rodiny", "venkovní-akce"],
+      "categories": ["film", "rodiny"],
       "price": {"type": "free", "text": "Vstup volný"},
       "source": {"type": "official", "url": "https://www.chrudimskabeseda.cz/akce/filmova-noc-na-bare-2/"},
       "cancelled": false
@@ -74,9 +74,9 @@
       "all_day": false,
       "venue": "Kostel Nanebevzetí Panny Marie",
       "municipality": "Chrudim",
-      "categories": ["festival", "hudba", "duchovní"],
+      "categories": ["festivaly", "hudba", "duchovni"],
       "price": {"type": "free", "text": "Vstup volný"},
-      "source": {"type": "official", "url": "https://www.zpfestival.cz/"},
+      "source": {"type": "regional", "url": "https://www.chrudimka.cz/festival-zlata-pecka-vstoupi-do-jubilejniho-rocnku-slavnosti-shakespearovou"},
       "last_verified_at": "2026-08-02T08:34:00+02:00",
       "cancelled": false
     },
@@ -90,7 +90,7 @@
       "all_day": false,
       "venue": "Městské kino Chrudim",
       "municipality": "Chrudim",
-      "categories": ["kino", "hudba", "festival"],
+      "categories": ["film", "hudba", "festivaly"],
       "price": {"type": "paid", "text": "240 Kč"},
       "source": {"type": "official", "url": "https://www.chrudimskabeseda.cz/akce/carmen-story/"},
       "cancelled": false
@@ -105,7 +105,7 @@
       "all_day": false,
       "venue": "GAMPA, Automatické mlýny",
       "municipality": "Pardubice",
-      "categories": ["výstava", "umění"],
+      "categories": ["vystavy"],
       "price": {"type": "paid", "text": "Volné vstupné nebo doporučený příspěvek 60 / 100 Kč"},
       "source": {"type": "official", "url": "https://www.automatickemlyny.eu/udalost/bienale-ve-veci-umeni-nezbytna-prani/"},
       "cancelled": false

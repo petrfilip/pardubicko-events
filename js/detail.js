@@ -12,7 +12,7 @@ function mapySearchUrl(event) {
 
 export function createEventDetail(
   dialog = document.getElementById('eventDetail'),
-  { onClose = () => {} } = {},
+  { onClose = () => {}, categories = null } = {},
 ) {
   const elements = {
     when: dialog.querySelector('.event-detail-when'),
@@ -91,7 +91,7 @@ export function createEventDetail(
     currentEvent = event;
     setStatus();
     elements.when.textContent = formatEventWhen(event);
-    renderCategoryBadges(elements.categories, event.categories);
+    renderCategoryBadges(elements.categories, event.categories, { dictionary: categories });
     elements.title.textContent = event.cancelled ? `${event.title} — ZRUŠENO` : event.title;
 
     const place = [event.venue, event.municipality].filter(Boolean).join(', ');

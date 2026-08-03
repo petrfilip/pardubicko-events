@@ -1,4 +1,7 @@
+import { createCategoryDictionary } from './categories.js';
+
 const MANIFEST_URL = 'data/manifest.json';
+const CATEGORIES_URL = 'config/categories.json';
 
 async function fetchJson(url) {
   const response = await fetch(url, { cache: 'no-store' });
@@ -34,56 +37,79 @@ function validateWeekData(week, data) {
   }
 }
 
-function identityPart(value) {
-  return String(value || '').trim().toLocaleLowerCase('cs');
+function canonical(value) {
+  if (Array.isArray(value)) return value.map(canonical);
+  if (value && typeof value === 'object') {
+    return Object.keys(value).sort().reduce((result, key) => {
+      result[key] = canonical(value[key]);
+      return result;
+    }, {});
+  }
+  return value;
 }
 
+// Kopie jedné akce v různých týdnech se podle ADR 0001 liší pouze polem
+// `week`. Identita je proto celý záznam bez něj, ne vybraný výčet polí.
+// Užší výčet znamenal, že rozdíl v popisu neprošel jako chyba, ale jako
+// nedeterministicky vybraná varianta — a přesně to se v datech stalo.
 function eventIdentity(event) {
-  return [
-    identityPart(event.title),
-    event.start_at || '',
-    event.end_at || '',
-    identityPart(event.venue),
-    identityPart(event.municipality),
-    event.source?.url || '',
-  ].join('\u001f');
+  const rest = { ...event };
+  delete rest.week;
+  return JSON.stringify(canonical(rest));
 }
 
-function validateEventIds(events) {
-  const identitiesById = new Map();
+function differingKeys(first, second) {
+  const keys = new Set([...Object.keys(first), ...Object.keys(second)]);
+  keys.delete('week');
+  return [...keys].filter(key => (
+    JSON.stringify(canonical(first[key])) !== JSON.stringify(canonical(second[key]))
+  ));
+}
+
+function validateEventIds(events, categories) {
+  const seen = new Map();
 
   for (const event of events) {
     if (!event.id) throw new Error('Nalezena akce bez ID.');
-
-    const identity = eventIdentity(event);
-    const existingIdentity = identitiesById.get(event.id);
-
-    if (existingIdentity && existingIdentity !== identity) {
-      throw new Error(`Konfliktní záznamy se stejným ID akce: ${event.id}.`);
+    if (!Array.isArray(event.categories) || event.categories.length === 0) {
+      throw new Error(`Akce ${event.id} nemá kategorii.`);
+    }
+    if (event.categories.some(category => !categories.byId[category])) {
+      throw new Error(`Akce ${event.id} obsahuje nekanonickou kategorii.`);
+    }
+    if (!event.categories.some(category => categories.axis(category) === 'kind')) {
+      throw new Error(`Akce ${event.id} nemá kategorii osy kind.`);
     }
 
-    identitiesById.set(event.id, identity);
+    const previous = seen.get(event.id);
+    if (previous && eventIdentity(previous) !== eventIdentity(event)) {
+      throw new Error(
+        `Konfliktní záznamy se stejným ID akce: ${event.id}. `
+        + `Liší se: ${differingKeys(previous, event).join(', ')}.`,
+      );
+    }
+
+    seen.set(event.id, event);
   }
 }
 
+// Slučuje se podle `id`. Shodnost kopií hlídá validateEventIds; kdyby se
+// slučovalo podle identity, rozdílné kopie by se nesloučily a přežily by
+// jako dvě karty pod jedním ID.
 function deduplicateEvents(events) {
   const uniqueEvents = new Map();
 
   for (const event of events) {
-    const key = eventIdentity(event);
-    const existing = uniqueEvents.get(key);
+    const existing = uniqueEvents.get(event.id);
 
     if (existing) {
       existing._week_ids = [...new Set([...existing._week_ids, event.week].filter(Boolean))];
-      existing._source_ids = [...new Set([...existing._source_ids, event.id])];
-      existing.categories = [...new Set([...(existing.categories || []), ...(event.categories || [])])];
       continue;
     }
 
-    uniqueEvents.set(key, {
+    uniqueEvents.set(event.id, {
       ...event,
       _week_ids: event.week ? [event.week] : [],
-      _source_ids: [event.id],
     });
   }
 
@@ -91,7 +117,11 @@ function deduplicateEvents(events) {
 }
 
 export async function loadEventData() {
-  const manifest = await fetchJson(MANIFEST_URL);
+  const [manifest, categoryConfig] = await Promise.all([
+    fetchJson(MANIFEST_URL),
+    fetchJson(CATEGORIES_URL),
+  ]);
+  const categories = createCategoryDictionary(categoryConfig);
   validateManifest(manifest);
 
   const weekFiles = await Promise.all(
@@ -102,7 +132,7 @@ export async function loadEventData() {
     }),
   );
   const rawEvents = weekFiles.flat();
-  validateEventIds(rawEvents);
+  validateEventIds(rawEvents, categories);
 
-  return { manifest, events: deduplicateEvents(rawEvents) };
+  return { manifest, categories, events: deduplicateEvents(rawEvents) };
 }
