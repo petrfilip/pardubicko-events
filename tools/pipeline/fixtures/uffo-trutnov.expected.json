@@ -1,0 +1,47 @@
+{
+  "items_found": 3,
+  "items_valid": 1,
+  "items_rejected": 2,
+  "items_unparsed": 1,
+  "category_values_rejected": 0,
+  "items": [
+    {
+      "uid": "uffo-100@example.test",
+      "title": "Cirkus, který létá",
+      "date_text": "20260806T190000",
+      "start_at": "2026-08-06T19:00:00+02:00",
+      "end_at": "2026-08-06T21:00:00+02:00",
+      "all_day": false,
+      "venue": "UFFO",
+      "address": null,
+      "municipality": null,
+      "description": "Večer nového cirkusu Pro celou rodinu.",
+      "url": "https://www.uffo.cz/program/cirkus-ktery-leta/",
+      "price_text": null,
+      "categories": ["divadlo", "rodiny"],
+      "organizers": [],
+      "recurring": null,
+      "extra": {"encoding": "ical"},
+      "notes": []
+    },
+    {
+      "uid": "uffo-bez-terminu@example.test",
+      "title": "Položka bez termínu",
+      "date_text": null,
+      "start_at": null,
+      "end_at": null,
+      "all_day": null,
+      "venue": null,
+      "address": null,
+      "municipality": null,
+      "description": null,
+      "url": "https://uffo.cz/data/user-content/calendar/completeCalendar.ics",
+      "price_text": null,
+      "categories": [],
+      "organizers": [],
+      "recurring": null,
+      "extra": {"encoding": "ical"},
+      "notes": []
+    }
+  ]
+}

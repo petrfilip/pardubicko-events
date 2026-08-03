@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-03T00:00:00+02:00",
+  "municipalities_in_catalog": 899,
+  "aliases_in_catalog": 1,
+  "events": {
+    "total": 77,
+    "linked_to_municipality": 76,
+    "unresolved": 1
+  },
+  "parts_of_municipalities": [
+    {
+      "alias": "Janderov",
+      "municipality_id": 571164,
+      "municipality_name": "Chrudim",
+      "events": 0
+    }
+  ],
+  "unresolved_values": [
+    {
+      "municipality_name": "Hrádek u Nechanic",
+      "events": 1
+    }
+  ]
+}

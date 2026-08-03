@@ -1,0 +1,50 @@
+{
+  "items_found": 3,
+  "items_valid": 1,
+  "items_rejected": 2,
+  "items_unparsed": 1,
+  "category_values_rejected": 1,
+  "items": [
+    {
+      "uid": "https://kultura.hradeckralove.cz/letni-koncert-123/",
+      "title": "Letní & jazzový koncert",
+      "date_text": "2026-08-05T19:30:00+02:00",
+      "start_at": "2026-08-05T19:30:00+02:00",
+      "end_at": "2026-08-05T21:00:00+02:00",
+      "all_day": false,
+      "venue": "Letní scéna",
+      "address": "Eliščino nábřeží 1, 500 03, Hradec Králové",
+      "municipality": "Hradec Králové",
+      "description": "Koncert pod širým nebem.",
+      "url": "https://kultura.hradeckralove.cz/letni-koncert-123/",
+      "price_text": null,
+      "categories": ["hudba"],
+      "organizers": [],
+      "recurring": null,
+      "extra": {
+        "encoding": "microdata",
+        "categories_unmapped": ["Neznámé téma"]
+      },
+      "notes": ["Neznámé zdrojové kategorie nebyly namapovány: Neznámé téma."]
+    },
+    {
+      "uid": null,
+      "title": "Položka bez termínu",
+      "date_text": null,
+      "start_at": null,
+      "end_at": null,
+      "all_day": null,
+      "venue": null,
+      "address": null,
+      "municipality": null,
+      "description": null,
+      "url": null,
+      "price_text": null,
+      "categories": [],
+      "organizers": [],
+      "recurring": null,
+      "extra": {"encoding": "microdata"},
+      "notes": []
+    }
+  ]
+}

@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-08-02T18:00:00+02:00",
+  "updated_at": "2026-08-03T19:44:58+02:00",
   "user_agent": "PardubickoEventsBot/0.1 (+https://github.com/petrfilip/pardubicko-events)",
   "notes": [
     "Seznam veřejných facebookových stránek pořadatelů pro deterministický sběr v tools/fb-events.",
     "Kanál cílí na městské kulturní instituce. Malí venkovští pořadatelé Facebook události nezakládají, viz docs/agents/facebook-agent.md.",
     "Města obvykle akce na Facebook nedávají a publikují je na webu; výjimkou jsou Pardubice a Náchod.",
-    "upcoming_events_at_check je naměřená výtěžnost při ověření 2. 8. 2026, ne záruka do budoucna."
+    "Historická měření výtěžnosti byla 3. 8. 2026 jednorázově přesunuta do SQLite source_health; tento soubor drží jen konfiguraci."
   ],
   "pages": [
     {
@@ -19,8 +19,6 @@
       "priority": "high",
       "check_interval_days": 2,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 8,
       "notes": "Převzato z dřívějšího ověření (nepřeověřováno v tomto běhu). Facebook zobrazil prvních 8 akcí bez scrollování – seznam je stránkovaný, reálný počet nadcházejících akcí může být vyšší."
     },
     {
@@ -33,8 +31,6 @@
       "priority": "high",
       "check_interval_days": 2,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 8,
       "notes": "Facebook zobrazil prvních 8 akcí bez scrollování – seznam je stránkovaný, reálný počet nadcházejících akcí může být vyšší. Seznam obsahuje i opakované akce (více termínů pod jedním ID). Na webu města je i profil micnachod (Městské informační centrum) – vhodný jako doplňkový zdroj."
     },
     {
@@ -47,8 +43,6 @@
       "priority": "high",
       "check_interval_days": 2,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 8,
       "notes": "Facebook zobrazil prvních 8 akcí bez scrollování – seznam je stránkovaný, reálný počet nadcházejících akcí může být vyšší."
     },
     {
@@ -61,8 +55,6 @@
       "priority": "high",
       "check_interval_days": 2,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 8,
       "notes": "Facebook zobrazil prvních 8 akcí bez scrollování – seznam je stránkovaný, reálný počet nadcházejících akcí může být vyšší. V patičce uffo.cz je i profil caffeuffo (kavárna) – nepoužívat."
     },
     {
@@ -75,8 +67,6 @@
       "priority": "high",
       "check_interval_days": 2,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 8,
       "notes": "Facebook zobrazil prvních 8 akcí bez scrollování – seznam je stránkovaný, reálný počet nadcházejících akcí může být vyšší. Patička zamek-litomysl.cz odkazuje na starý tvar /pages/Castle-Litomysl/1480803648820838; vanity handle szlitomysl ověřen jako správný (název stránky sedí)."
     },
     {
@@ -89,8 +79,6 @@
       "priority": "high",
       "check_interval_days": 2,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 8,
       "notes": "Facebook zobrazil prvních 8 akcí bez scrollování – seznam je stránkovaný, reálný počet nadcházejících akcí může být vyšší."
     },
     {
@@ -103,8 +91,6 @@
       "priority": "high",
       "check_interval_days": 2,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 6,
       "notes": ""
     },
     {
@@ -117,8 +103,6 @@
       "priority": "high",
       "check_interval_days": 2,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 6,
       "notes": "Seznam se rendruje pomalu – při 3,5 s čekání vracel 0, při 8 s 6 akcí. Pro tento profil použít delší wait."
     },
     {
@@ -131,8 +115,6 @@
       "priority": "high",
       "check_interval_days": 2,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 5,
       "notes": "Nový zdroj – v source-registry.json zatím není. Převzato z dřívějšího ověření."
     },
     {
@@ -145,8 +127,6 @@
       "priority": "normal",
       "check_interval_days": 3,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 4,
       "notes": "Nový zdroj – v source-registry.json zatím není. Převzato z dřívějšího ověření."
     },
     {
@@ -159,8 +139,6 @@
       "priority": "normal",
       "check_interval_days": 3,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 3,
       "notes": "Převzato z dřívějšího ověření (nepřeověřováno v tomto běhu)."
     },
     {
@@ -173,8 +151,6 @@
       "priority": "normal",
       "check_interval_days": 3,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 3,
       "notes": "Web odkazuje na starý tvar /pages/Státní-zámek-Náchod/266756093517424; vanity handle zamek.nachod ověřen."
     },
     {
@@ -187,8 +163,6 @@
       "priority": "normal",
       "check_interval_days": 3,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 2,
       "notes": ""
     },
     {
@@ -201,8 +175,6 @@
       "priority": "normal",
       "check_interval_days": 3,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 1,
       "notes": "Handle obsahuje velká písmena (DrakHK)."
     },
     {
@@ -215,8 +187,6 @@
       "priority": "normal",
       "check_interval_days": 3,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 1,
       "notes": ""
     },
     {
@@ -229,8 +199,6 @@
       "priority": "normal",
       "check_interval_days": 3,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 1,
       "notes": ""
     },
     {
@@ -243,8 +211,6 @@
       "priority": "normal",
       "check_interval_days": 3,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 1,
       "notes": ""
     },
     {
@@ -257,8 +223,6 @@
       "priority": "normal",
       "check_interval_days": 3,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 1,
       "notes": "Divadelní program jede přes web, Facebook je zde slabý zdroj."
     },
     {
@@ -271,8 +235,6 @@
       "priority": "normal",
       "check_interval_days": 3,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 1,
       "notes": "Nový zdroj – v source-registry.json zatím není. Převzato z dřívějšího ověření."
     },
     {
@@ -285,8 +247,6 @@
       "priority": "normal",
       "check_interval_days": 3,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 1,
       "notes": ""
     },
     {
@@ -299,8 +259,6 @@
       "priority": "normal",
       "check_interval_days": 3,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 1,
       "notes": "Web nmvp.cz/vysocina má v patičce i starý tvar facebook.com/Muzeum-v-přírodě-Vysočina-100969419070437 – použit vanity handle."
     },
     {
@@ -313,8 +271,6 @@
       "priority": "normal",
       "check_interval_days": 3,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 1,
       "notes": "Jedno ID akce, ale 24 termínů přes event_time_id (opakovaná akce Za skřítky do Slatiňan). Počítání unikátních ID zde podhodnocuje program. Jde o opakovanou akci „Za skřítky do Slatiňan“ – 1 unikátní event ID, ale 24 termínů (URL s ?event_time_id=...). Při expanzi programu počítat s jednotlivými termíny."
     },
     {
@@ -327,8 +283,6 @@
       "priority": "low",
       "check_interval_days": 7,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 0,
       "notes": "Stránka je veřejně čitelná, ale nemá žádné nadcházející veřejné akce (0). Záložka Nadcházející se vůbec nezobrazuje, jen Uplynulé. Stránka je čitelná, ale nadcházející události nezakládá. Ponecháno kvůli měření."
     },
     {
@@ -341,8 +295,6 @@
       "priority": "low",
       "check_interval_days": 7,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 0,
       "notes": "Stránka je veřejně čitelná, ale nemá žádné nadcházející veřejné akce (0). Stránka je čitelná, ale nadcházející události nezakládá. Ponecháno kvůli měření."
     },
     {
@@ -355,8 +307,6 @@
       "priority": "low",
       "check_interval_days": 7,
       "enabled": false,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 0,
       "notes": "Vypnuto: stránka nemá záložku Události, takže každý běh hlásila blokaci. Handle s nižší jistotou: web na Facebook neodkazuje a stránka nemá záložku Události. Pro Hlinsko preferuj hlinecko, MFC.Hlinsko a letosrychtarem. Stránka je veřejně čitelná, ale nemá žádné nadcházející veřejné akce (0). Profil nemá záložku Události vůbec (jen Příspěvky/Informace/Reels/Fotky) a má jen 921 sledujících. Odkaz na FB není ani na hlinsko.cz – identita potvrzena jen názvem stránky. Pro akce v Hlinsku použít radši hlinecko (TIC), MFC.Hlinsko nebo letosrychtarem."
     },
     {
@@ -369,8 +319,6 @@
       "priority": "low",
       "check_interval_days": 7,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 0,
       "notes": "Sdílená stránka celého portálu Hradec Králové.cz, ne kulturní profil — bude šumět. Kulturně specifický je handle kulturahradec. Stránka je veřejně čitelná, ale nemá žádné nadcházející veřejné akce (0). Stránka je čitelná, ale nadcházející události nezakládá. Ponecháno kvůli měření."
     },
     {
@@ -383,8 +331,6 @@
       "priority": "low",
       "check_interval_days": 7,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 0,
       "notes": "Stránka je veřejně čitelná, ale nemá žádné nadcházející veřejné akce (0). Stránka je čitelná, ale nadcházející události nezakládá. Ponecháno kvůli měření."
     },
     {
@@ -397,8 +343,6 @@
       "priority": "low",
       "check_interval_days": 7,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 0,
       "notes": "Stránka je veřejně čitelná, ale nemá žádné nadcházející veřejné akce (0). Existují i profily mestolitomysl a litomysl.lilie (zpravodaj); oficiální web odkazuje na Litomysl.ofic."
     },
     {
@@ -411,8 +355,6 @@
       "priority": "low",
       "check_interval_days": 7,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 0,
       "notes": "Hlavní kulturní dům Hlinska, ale program dává na web, ne na Facebook. Stránka je veřejně čitelná, ale nemá žádné nadcházející veřejné akce (0)."
     },
     {
@@ -425,8 +367,6 @@
       "priority": "low",
       "check_interval_days": 7,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 0,
       "notes": "Stránka je veřejně čitelná, ale nemá žádné nadcházející veřejné akce (0). Stránka je čitelná, ale nadcházející události nezakládá. Ponecháno kvůli měření."
     },
     {
@@ -439,8 +379,6 @@
       "priority": "low",
       "check_interval_days": 7,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 0,
       "notes": "Stránka je veřejně čitelná, ale nemá žádné nadcházející veřejné akce (0). Sezónní festival (červen) – mimo sezónu prázdno. Stránka je čitelná, ale nadcházející události nezakládá. Ponecháno kvůli měření."
     },
     {
@@ -453,8 +391,6 @@
       "priority": "low",
       "check_interval_days": 7,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 0,
       "notes": "Nový zdroj – v source-registry.json zatím není. Převzato z dřívějšího ověření. Stránka je veřejně čitelná, ale nemá žádné nadcházející veřejné akce (0). Stránka je čitelná, ale nadcházející události nezakládá. Ponecháno kvůli měření."
     },
     {
@@ -467,8 +403,6 @@
       "priority": "low",
       "check_interval_days": 7,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 0,
       "notes": "Stránka je veřejně čitelná, ale nemá žádné nadcházející veřejné akce (0). Stránka je čitelná, ale nadcházející události nezakládá. Ponecháno kvůli měření."
     },
     {
@@ -481,8 +415,6 @@
       "priority": "low",
       "check_interval_days": 7,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 0,
       "notes": "Stránka je veřejně čitelná, ale nemá žádné nadcházející veřejné akce (0). Handle obsahuje velká písmena. Stránka je čitelná, ale nadcházející události nezakládá. Ponecháno kvůli měření."
     },
     {
@@ -495,8 +427,6 @@
       "priority": "low",
       "check_interval_days": 7,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 0,
       "notes": "Stránka je veřejně čitelná, ale nemá žádné nadcházející veřejné akce (0). Stránka je čitelná, ale nadcházející události nezakládá. Ponecháno kvůli měření."
     },
     {
@@ -509,8 +439,6 @@
       "priority": "low",
       "check_interval_days": 7,
       "enabled": true,
-      "verified_at": "2026-08-02",
-      "upcoming_events_at_check": 0,
       "notes": "Stránka je veřejně čitelná, ale nemá žádné nadcházející veřejné akce (0). Stránka je čitelná, ale nadcházející události nezakládá. Ponecháno kvůli měření."
     }
   ]

@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//UFFO//Program//CS
+BEGIN:VEVENT
+UID:uffo-100@example.test
+DTSTART;TZID=Europe/Prague:20260806T190000
+DTEND;TZID=Europe/Prague:20260806T210000
+SUMMARY:Cirkus\, který létá
+LOCATION:UFFO
+DESCRIPTION:Večer nového cirkusu\nPro celou rodinu.
+URL:https://www.uffo.cz/program/cirkus-ktery-leta/
+CATEGORIES:Nový cirkus,Rodina
+END:VEVENT
+BEGIN:VEVENT
+UID:uffo-bez-terminu@example.test
+SUMMARY:Položka bez termínu
+END:VEVENT
+BEGIN:VEVENT
+UID:uffo-necitelne@example.test
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "aliases": [
+    {
+      "alias": "Janderov",
+      "kind": "part-of-municipality",
+      "municipality_code": 571164,
+      "municipality_name": "Chrudim",
+      "evidence_url": "https://www.chrudim.eu/mesto/mistni-casti/janderov/",
+      "note": "Janderov je místní část města Chrudim; alias se používá pro normalizaci, původní text zůstává v raw payloadu."
+    }
+  ]
+}
