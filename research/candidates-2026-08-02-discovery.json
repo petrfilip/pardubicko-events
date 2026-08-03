@@ -22,8 +22,16 @@
       "query": "site:litomysl.cz/kalendar_akci srpen 2026 Litomyšl",
       "source_url": "https://www.litomysl.cz/planovani_akci/kalendar/2026-8-2",
       "source_type": "official-calendar",
-      "status": "needs-verification",
-      "notes": "Oficiální plánovací kalendář potvrzuje termín a čas; před produkčním zápisem dohledat detail, místo a vstupné."
+      "candidate_kind": "single-event",
+      "programme_id": null,
+      "programme_title": null,
+      "expandable": false,
+      "status": "imported",
+      "notes": "Oficiální plánovací kalendář potvrzuje termín a čas; před produkčním zápisem dohledat detail, místo a vstupné.",
+      "reviewed_at": "2026-08-02T17:27:00+02:00",
+      "resolution_notes": "Kandidát odpovídá již existující produkční akci; při tomto běhu nevznikla nová událost.",
+      "production_event_id": "litomyslsky-filmovy-festival-2026-08-02",
+      "verified_source_url": "https://www.litomysl.cz/kalendar_akci/2026_07_30_litomyslsky_filmovy_festival"
     },
     {
       "id": "komentovana-prohlidka-variant-je-vice-litomysl-2026-08-02",
@@ -40,8 +48,16 @@
       "query": "site:litomysl.cz/kalendar_akci srpen 2026 Litomyšl",
       "source_url": "https://www.litomysl.cz/planovani_akci/kalendar/2026-8-2",
       "source_type": "official-calendar",
-      "status": "needs-verification",
-      "notes": "Oficiální kalendář potvrzuje termín, čas a místo; dohledat detail akce a vstupné."
+      "candidate_kind": "single-event",
+      "programme_id": null,
+      "programme_title": null,
+      "expandable": false,
+      "status": "imported",
+      "notes": "Oficiální kalendář potvrzuje termín, čas a místo; dohledat detail akce a vstupné.",
+      "reviewed_at": "2026-08-02T17:27:00+02:00",
+      "resolution_notes": "Kandidát odpovídá již existující produkční akci; při tomto běhu nevznikla nová událost.",
+      "production_event_id": "komentovana-prohlidka-variant-je-vice-litomysl-2026-08-02",
+      "verified_source_url": "https://www.litomysl.cz/kalendar_akci?organizator=M%C4%9Bstsk%C3%A1+galerie+Litomy%C5%A1l&typ=&vyhledat=zobrazit"
     },
     {
       "id": "garage-tony-duchacek-the-prostitutes-litomysl-2026-08-02",
@@ -58,8 +74,16 @@
       "query": "site:litomysl.cz/kalendar_akci srpen 2026 Litomyšl",
       "source_url": "https://www.litomysl.cz/planovani_akci/kalendar/2026-8-2",
       "source_type": "official-calendar",
-      "status": "needs-verification",
-      "notes": "Součást Litomyšl Festu; dohledat detail programu a vstupné."
+      "candidate_kind": "programme-item",
+      "programme_id": "litomysl-fest-2026",
+      "programme_title": "Litomyšl Fest 2026",
+      "expandable": false,
+      "status": "imported",
+      "notes": "Součást Litomyšl Festu; dohledat detail programu a vstupné.",
+      "reviewed_at": "2026-08-02T17:27:00+02:00",
+      "resolution_notes": "Kandidát odpovídá již existující produkční akci; při tomto běhu nevznikla nová událost.",
+      "production_event_id": "garage-tony-duchacek-the-prostitutes-litomysl-2026-08-02",
+      "verified_source_url": "https://www.litomysl.cz/kalendar_akci?festival=Litomy%C5%A1l+Fest+2026&typ=&vyhledat=zobrazit"
     },
     {
       "id": "fotr-je-lotr-letni-kino-litomysl-2026-08-02",
@@ -69,15 +93,23 @@
       "district": "Svitavy",
       "region": "pardubicky-kraj",
       "venue": "Sportovní areál za sokolovnou",
-      "categories": ["kino", "letní-kino", "komedie"],
+      "categories": ["kino", "letní-kino"],
       "discovered_at": "2026-08-02T06:18:00+02:00",
       "discovery_method": "known-source",
       "discovery_scope": "priority-14-days",
       "query": "site:litomysl.cz/kalendar_akci srpen 2026 Litomyšl",
       "source_url": "https://www.litomysl.cz/planovani_akci/kalendar/2026-8-2",
       "source_type": "official-calendar",
-      "status": "needs-verification",
-      "notes": "Oficiální kalendář potvrzuje čas a místo; ověřit podmínky konání a vstupné."
+      "candidate_kind": "single-event",
+      "programme_id": null,
+      "programme_title": null,
+      "expandable": false,
+      "status": "imported",
+      "notes": "Oficiální kalendář potvrzuje čas a místo; ověřit podmínky konání a vstupné.",
+      "reviewed_at": "2026-08-02T17:27:00+02:00",
+      "resolution_notes": "Kandidát odpovídá již existující produkční akci; při tomto běhu nevznikla nová událost.",
+      "production_event_id": "fotr-je-lotr-letni-kino-litomysl-2026-08-02",
+      "verified_source_url": "https://www.litomysl.cz/kalendar_akci/kultura"
     },
     {
       "id": "letni-kino-hlinsko-2026-08-04",
@@ -94,8 +126,16 @@
       "query": "site:hlinsko.cz srpen 2026 přehled kulturních akcí Hlinsko",
       "source_url": "https://www.hlinsko.cz/volny-cas/prehled-kulturnich-akci/?categ=138",
       "source_type": "official-calendar",
-      "status": "needs-verification",
-      "notes": "Oficiální městský kalendář potvrzuje datum, čas a místo; dohledat konkrétní film a vstupné."
+      "candidate_kind": "single-event",
+      "programme_id": null,
+      "programme_title": null,
+      "expandable": false,
+      "status": "imported",
+      "notes": "Oficiální městský kalendář potvrzuje datum, čas a místo; dohledat konkrétní film a vstupné.",
+      "reviewed_at": "2026-08-02T17:27:00+02:00",
+      "resolution_notes": "Kandidát odpovídá již existující produkční akci; při tomto běhu nevznikla nová událost.",
+      "production_event_id": "letni-kino-hlinsko-2026-08-04",
+      "verified_source_url": "https://www.hlinsko.cz/volny-cas/prehled-kulturnich-akci/?categ=59&lang=cs&mapa-webu=1"
     },
     {
       "id": "vzpominkova-jizda-eliska-cenek-junkovi-litomysl-2026-08-08",
@@ -112,8 +152,16 @@
       "query": "site:litomysl.cz/kalendar_akci srpen 2026 Litomyšl",
       "source_url": "https://www.litomysl.cz/planovani_akci/kalendar/2026-8-8",
       "source_type": "official-calendar",
-      "status": "needs-verification",
-      "notes": "Oficiální plánovací kalendář uvádí akci oba dny; dohledat přesný program, časy a detailovou stránku."
+      "candidate_kind": "programme",
+      "programme_id": "vzpominkova-jizda-eliska-cenek-junkovi-2026",
+      "programme_title": "Vzpomínková jízda na Elišku a Čeňka Junkovy",
+      "expandable": false,
+      "status": "imported",
+      "notes": "Oficiální plánovací kalendář uvádí akci oba dny; dohledat přesný program, časy a detailovou stránku.",
+      "reviewed_at": "2026-08-02T17:27:00+02:00",
+      "resolution_notes": "Kandidát odpovídá již existující produkční akci; produkční rozsah 7.–9. 8. 2026 je doložen detailním programem pořadatele.",
+      "production_event_id": "vzpominkova-jizda-eliska-cenek-junkovi-litomysl-2026-08-08",
+      "verified_source_url": "https://www.veteranklublitomysl.cz/clanek/256-program-vzpominkova-jizda-na-elisku-a-cenka-junkovy-2026"
     }
   ]
 }

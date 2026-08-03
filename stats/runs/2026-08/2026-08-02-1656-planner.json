@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "agent": "planner",
+  "run_id": "2026-08-02-1656-planner",
+  "started_at": "2026-08-02T16:53:51+02:00",
+  "finished_at": "2026-08-02T16:58:19+02:00",
+  "duration_seconds": 268,
+  "status": "success",
+  "partial_reason": null,
+  "commit_sha": null,
+  "metrics": {
+    "municipalities_planned": 18,
+    "sources_planned": 13,
+    "districts_planned": 9,
+    "regions_planned": 2,
+    "query_budget": 90,
+    "candidate_limit": 40,
+    "backlog_before": 20,
+    "backlog_pressure": "low"
+  },
+  "coverage": {
+    "regions": ["pardubicky-kraj", "kralovehradecky-kraj"],
+    "districts": ["Pardubice", "Chrudim", "Svitavy", "Ústí nad Orlicí", "Hradec Králové", "Jičín", "Náchod", "Rychnov nad Kněžnou", "Trutnov"],
+    "municipalities": ["Pardubice", "Přelouč", "Sezemice", "Chrudim", "Nasavrky", "Svitavy", "Polička", "Česká Třebová", "Hradec Králové", "Nechanice", "Jičín", "Sobotka", "Náchod", "Jaroměř", "Opočno", "Častolovice", "Trutnov", "Kuks"]
+  },
+  "errors": [],
+  "notes": [
+    "Backlog byl spočítán ze všech tří research/candidates*.json: 0 new, 9 needs-verification, 11 verified a 20 unikátních otevřených ID bez konfliktu.",
+    "Šestnáct stavově otevřených kandidátů má shodné ID v produkčních datech, ale podle stavového modelu zůstávají v backlogu do uzavření Curator Agentem.",
+    "Volitelné vstupy config/municipalities.json, stats/coverage.json a research/discovery-score.json nejsou dostupné.",
+    "Lokální rozpočet činí 90 dotazů a 30 dotazů zůstává jako rezerva do globálního maxima 120."
+  ]
+}

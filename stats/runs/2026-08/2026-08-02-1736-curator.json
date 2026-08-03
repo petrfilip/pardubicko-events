@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "agent": "curator",
+  "run_id": "2026-08-02-1736-curator",
+  "started_at": "2026-08-02T17:27:31+02:00",
+  "finished_at": "2026-08-02T17:36:33+02:00",
+  "duration_seconds": null,
+  "status": "partial",
+  "partial_reason": "Dva z 32 unikátních kandidátů zůstaly otevřené: jeden kvůli rozporu času mezi dvěma oficiálními zdroji a jeden kvůli neprovedenému otevření konkrétního zdroje v časově omezeném běhu. Lokální GitHub Pages kontrola nebyla spuštěna.",
+  "commit_sha": null,
+  "metrics": {
+    "candidates_reviewed": 31,
+    "events_added": 14,
+    "events_updated": 0,
+    "events_cancelled": 0,
+    "candidates_rejected": 0,
+    "duplicates_removed": 0,
+    "deferred_candidates": 2,
+    "backlog_after": 2
+  },
+  "coverage": {
+    "regions": ["pardubicky-kraj", "kralovehradecky-kraj"],
+    "districts": ["Chrudim", "Pardubice", "Svitavy", "Hradec Králové", "Náchod", "Trutnov"],
+    "municipalities": ["Hlinsko", "Hradec Králové", "Kuks", "Lázně Bohdaneč", "Litomyšl", "Náchod", "Pardubice"]
+  },
+  "errors": [
+    "Dvořákův festival – Hudba čtyř kontinentů: městský detail uvádí 19:00, primární web festivalu 19:01.",
+    "Cirk La Putyka – Splash: konkrétní zdroj nebyl v omezené dávce otevřen.",
+    "Lokální GitHub Pages kontrola nebyla spuštěna."
+  ],
+  "notes": [
+    "Šestnáct kandidátů bylo uzavřeno jako imported podle jednoznačné shody s již existujícím produkčním ID; events_added se za ně nezvyšovalo.",
+    "Do 2026-W31 byly přidány 3 události, do 2026-W32 6 událostí a do 2026-W33 5 událostí.",
+    "Všechny kandidátní a produkční JSON soubory prošly syntaktickou validací; 30 imported kandidátů odkazuje na existující produkční ID.",
+    "Kontrola časového pořadí, zdrojových URL, povolených price.type, roku, zařazení 14 nových událostí do týdnů, manifestu a konfliktních duplicit ID prošla bez nové chyby.",
+    "Existující nekonfliktní kopie dlouhodobých akcí se stejným ID byly zachovány."
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "agent": "discovery",
+  "run_id": "2026-08-02-1712-discovery",
+  "started_at": "2026-08-02T17:00:07+02:00",
+  "finished_at": "2026-08-02T17:15:15+02:00",
+  "duration_seconds": 908,
+  "status": "partial",
+  "partial_reason": "Běh byl po prioritních pořadatelích a známých zdrojích záměrně ukončen v explicitně zúženém rozsahu; povinné průchody Google, veřejný Facebook a Kudy z nudy nebyly provedeny.",
+  "commit_sha": null,
+  "metrics": {
+    "municipalities_checked": 6,
+    "sources_checked": 5,
+    "queries_executed": 0,
+    "candidates_found": 12,
+    "unique_candidates": 12,
+    "duplicate_candidates": 2,
+    "new_sources_found": 0,
+    "google_candidates": 0,
+    "facebook_candidates": 0,
+    "kudyznudy_candidates": 0,
+    "known_source_candidates": 12
+  },
+  "coverage": {
+    "regions": ["pardubicky-kraj", "kralovehradecky-kraj"],
+    "districts": ["Chrudim", "Pardubice", "Hradec Králové", "Náchod", "Trutnov"],
+    "municipalities": ["Nasavrky", "Pardubice", "Lázně Bohdaneč", "Hradec Králové", "Jaroměř", "Kuks"]
+  },
+  "errors": [
+    "Povinný průchod Google nebyl v ohraničeném běhu spuštěn.",
+    "Povinný průchod veřejným Facebookem nebyl v ohraničeném běhu spuštěn.",
+    "Povinný průchod Kudy z nudy nebyl v ohraničeném běhu spuštěn."
+  ],
+  "notes": [
+    "Zkontrolováno bylo pět plánovaných zdrojů: Země Keltů, Pevnost Josefov, Hospital Kuks, Pardubice.eu – kalendář akcí a Kultura Hradec Králové.",
+    "V rámci pěti zdrojů bylo otevřeno 18 unikátních kalendářních nebo detailových URL; sources_checked počítá registry/pořadatele, nikoli jednotlivé podstránky téhož zdroje.",
+    "Dvě na seznamech zobrazené akce, Podkověnka a Mozartissimo na Hrádku, byly rozpoznány jako již existující produkční události a znovu uloženy nebyly.",
+    "První browser relace narazila na sandboxové oprávnění pro ~/.agent-browser; po přechodu na schválenou relaci pardubicko-events pokračoval běh bez dalšího blokování.",
+    "Registr zdrojů ani učící soubory nebyly měněny, protože běh nepřinesl nový stabilní zdroj ani neprovedl vyhledávací dotaz."
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "agent": "curator",
+  "run_id": "2026-08-02-2021-curator",
+  "started_at": "2026-08-02T20:20:24+02:00",
+  "finished_at": "2026-08-02T20:21:07+02:00",
+  "duration_seconds": null,
+  "status": "partial",
+  "partial_reason": "Jeden ze dvou cíleně zpracovaných kandidátů zůstal otevřený, protože čas se mezi městským a primárním zdrojem liší o jednu minutu a nezávislý konkrétní zdroj se nepodařilo otevřít.",
+  "commit_sha": null,
+  "metrics": {
+    "candidates_reviewed": 2,
+    "events_added": 1,
+    "events_updated": 0,
+    "events_cancelled": 0,
+    "candidates_rejected": 0,
+    "duplicates_removed": 0,
+    "deferred_candidates": 1,
+    "backlog_after": 83
+  },
+  "coverage": {
+    "regions": ["pardubicky-kraj", "kralovehradecky-kraj"],
+    "districts": ["Pardubice", "Hradec Králové"],
+    "municipalities": ["Lázně Bohdaneč", "Hradec Králové"]
+  },
+  "errors": [
+    "Dvořákův festival – Hudba čtyř kontinentů: městský detail uvádí 19:00 a primární web festivalu 19:01; další nezávislý zdroj nebyl kvůli automatickým bezpečnostním výzvám vyhledávačů dostupný."
+  ],
+  "notes": [
+    "Konkrétní městský detail Cirk La Putyka – Splash potvrdil 10. 8. 2026 v 18:00 a Letní kino Širák; cena nebyla zveřejněna, proto byla uložena jako unknown.",
+    "Do data/weeks/2026-W33.json byla přidána jedna událost a generated_at byl aktualizován pouze v tomto změněném týdenním souboru.",
+    "Kandidát Dvořákova festivalu zůstal needs-verification s aktualizovaným záznamem o posledním pokusu.",
+    "Globální backlog_after zahrnuje také 82 nových otevřených kandidátů ze souběžně vzniklého research/candidates-2026-08-02-facebook.json, které nebyly součástí tohoto dvoupoložkového follow-upu."
+  ]
+}
