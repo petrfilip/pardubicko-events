@@ -1,0 +1,66 @@
+name: pardubicko-events-production
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: deploy/php.Dockerfile
+    restart: unless-stopped
+    environment:
+      PARDUBICKO_DB: /data/pardubicko.db
+      PARDUBICKO_BASE_URL: ${PARDUBICKO_BASE_URL:?set PARDUBICKO_BASE_URL}
+      PARDUBICKO_INBOX_TOKEN: ${PARDUBICKO_INBOX_TOKEN:?set PARDUBICKO_INBOX_TOKEN}
+    volumes:
+      - database:/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test:
+        - CMD
+        - php
+        - -r
+        - "if (!is_file('/data/pardubicko.db')) exit(1); $$pdo = new PDO('sqlite:/data/pardubicko.db'); exit((int) $$pdo->query(\"SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='event'\")->fetchColumn() === 1 ? 0 : 1);"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  nginx:
+    build:
+      context: .
+      dockerfile: deploy/nginx.Dockerfile
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ${PARDUBICKO_TLS_CERT:?set PARDUBICKO_TLS_CERT}:/etc/nginx/tls/fullchain.pem:ro
+      - ${PARDUBICKO_TLS_KEY:?set PARDUBICKO_TLS_KEY}:/etc/nginx/tls/privkey.pem:ro
+      - nginx-logs:/var/log/nginx
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /tmp
+
+  pipeline:
+    build:
+      context: .
+      dockerfile: deploy/pipeline.Dockerfile
+    profiles: ["ops"]
+    environment:
+      PARDUBICKO_DB: /data/pardubicko.db
+      PARDUBICKO_SNAPSHOT_DIR: /snapshots
+    volumes:
+      - database:/data
+      - snapshots:/snapshots
+      - backups:/backups
+
+volumes:
+  database:
+  snapshots:
+  backups:
+  nginx-logs:
