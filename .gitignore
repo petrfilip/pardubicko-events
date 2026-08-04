@@ -3,3 +3,22 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+
+# Editory
+.idea/
+.vscode/
+.env
+.env.*
+!.env.example
+
+# Provozní stav fáze 2: databáze a snapshoty nepatří do gitu.
+# Zdrojem pravdy pro data zůstává export v data/, viz ADR 0002.
+var/
+*.db
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+
+# Výstupy kontrol
+linkcheck.json

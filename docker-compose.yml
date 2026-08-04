@@ -1,0 +1,100 @@
+name: pardubicko-events
+
+# Vývojové prostředí projektu.
+#
+#   docker compose up web                  – statický web fáze 1 na http://localhost:8080
+#   docker compose up app                  – PHP web fáze 2 na http://localhost:8081
+#   docker compose run --rm validate       – kontrola dat, stejná jako v CI
+#   docker compose run --rm --build tests  – Python, Node, PHP a HTTP smoke
+#   docker compose exec tools bash         – shell nad Python nástroji
+#
+# Fáze 1 zůstává jako statický referenční náhled; `app` je serverová vrstva
+# fáze 2 nad SQLite. Vestavěné servery jsou určené jen pro vývoj.
+
+services:
+  web:
+    image: php:8.3-cli
+    working_dir: /app
+    # Vestavěný server je jednovláknový a je určen výhradně pro vývoj.
+    command: php -S 0.0.0.0:8080 -t /app
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+
+  # Serverem renderovaná aplikace fáze 2. PHP je čtenář publikovaných dat;
+  # samostatné rw spojení používá pouze tokenem chráněný URL inbox.
+  app:
+    image: php:8.3-cli
+    working_dir: /app
+    command: php -S 0.0.0.0:8081 -t /app/web/public /app/web/public/router.php
+    ports:
+      - "8081:8081"
+    volumes:
+      - .:/app
+    environment:
+      PARDUBICKO_DB: /app/var/pardubicko.db
+      # Vývojový token pro POST /api/inbox; v provozu se musí změnit.
+      PARDUBICKO_INBOX_TOKEN: dev-token
+      PARDUBICKO_BASE_URL: http://localhost:8081
+
+  tools:
+    image: python:3.12-slim
+    working_dir: /app
+    volumes:
+      - .:/app
+      - pip-cache:/root/.cache/pip
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+      TZ: Europe/Prague
+    command: >
+      sh -c "pip install --quiet --root-user-action=ignore -r tools/validate/requirements.txt
+      && exec sleep infinity"
+
+  validate:
+    image: python:3.12-slim
+    profiles: ["ci"]
+    working_dir: /app
+    volumes:
+      - .:/app
+      - pip-cache:/root/.cache/pip
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+      TZ: Europe/Prague
+    command: >
+      sh -c "pip install --quiet --root-user-action=ignore -r tools/validate/requirements.txt
+      && python3 tools/validate/validate.py"
+
+  tests:
+    build:
+      context: .
+      dockerfile: tools/test-runtime.Dockerfile
+    profiles: ["ci"]
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+      TZ: Europe/Prague
+    command: >
+      sh -c "python3 tools/run_tests.py
+      && python3 tools/validate/validate.py
+      && python3 tools/pipeline/pipeline.py roundtrip --diff"
+
+  # Kontrola odkazů sahá na síť, proto běží odděleně od validace struktury.
+  linkcheck:
+    image: python:3.12-slim
+    profiles: ["net"]
+    working_dir: /app
+    volumes:
+      - .:/app
+      - pip-cache:/root/.cache/pip
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+      TZ: Europe/Prague
+    command: >
+      sh -c "pip install --quiet --root-user-action=ignore -r tools/validate/requirements.txt
+      && python3 tools/validate/linkcheck.py"
+
+volumes:
+  pip-cache:

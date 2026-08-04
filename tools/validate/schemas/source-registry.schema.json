@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "config/source-registry.json",
+  "description": "Jediný registr zdrojů. Statická konfigurace bez provozního stavu — viz ADR 0004.",
+  "type": "object",
+  "required": ["schema_version", "sources"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": 1},
+    "updated_at": {"$ref": "#/$defs/timestamp"},
+    "notes": {"type": ["array", "string", "null"]},
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "url", "type", "region", "priority", "check_interval_days"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "name": {"type": "string", "minLength": 1},
+          "url": {"type": "string", "pattern": "^https?://"},
+          "type": {"type": "string", "minLength": 1},
+          "adapter": {"type": ["string", "null"]},
+          "municipality": {"type": ["string", "null"]},
+          "district": {"type": ["string", "null"]},
+          "region": {
+            "anyOf": [
+              {"enum": ["pardubicky-kraj", "kralovehradecky-kraj"]},
+              {"type": "null"}
+            ],
+            "description": "null jen u nadregionálních kanálů, například veřejných Facebook Events."
+          },
+          "priority": {"enum": ["high", "normal", "low"]},
+          "check_interval_days": {"type": "integer", "minimum": 1},
+          "enabled": {"type": "boolean"},
+          "notes": {"type": ["string", "null"]}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([+-]\\d{2}:\\d{2}|Z)$"
+    }
+  }
+}

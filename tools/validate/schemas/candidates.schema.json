@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "research/candidates*.json",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "candidates"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": 1},
+    "generated_at": {"$ref": "#/$defs/timestamp"},
+    "generator": {
+      "type": "string",
+      "description": "Nástroj, který soubor vytvořil, například tools/fb-events. Chybí u ručně psaných dávek."
+    },
+    "plan_date": {"$ref": "#/$defs/date"},
+    "discovery_window": {
+      "type": "object",
+      "required": ["from", "to"],
+      "additionalProperties": false,
+      "properties": {
+        "from": {"$ref": "#/$defs/date"},
+        "to": {"$ref": "#/$defs/date"}
+      }
+    },
+    "notes": {"type": ["array", "string", "null"]},
+    "candidates": {"type": "array", "items": {"$ref": "#/$defs/candidate"}}
+  },
+  "$defs": {
+    "date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "timestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([+-]\\d{2}:\\d{2}|Z)$"
+    },
+    "candidate": {
+      "type": "object",
+      "required": [
+        "id", "title", "municipality", "region", "discovered_at",
+        "discovery_method", "source_url", "candidate_kind", "status"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "title": {"type": "string", "minLength": 1},
+        "date_text": {"type": ["string", "null"]},
+        "municipality": {"type": ["string", "null"]},
+        "district": {"type": ["string", "null"]},
+        "region": {
+          "anyOf": [
+            {"enum": ["pardubicky-kraj", "kralovehradecky-kraj"]},
+            {"type": "null"}
+          ]
+        },
+        "venue": {"type": ["string", "null"]},
+        "categories": {"type": ["array", "null"], "items": {"type": "string"}},
+        "discovered_at": {"$ref": "#/$defs/timestamp"},
+        "discovery_method": {"type": "string", "minLength": 1},
+        "discovery_scope": {
+          "anyOf": [
+            {"enum": ["priority-14-days", "opportunistic-future"]},
+            {"type": "null"}
+          ]
+        },
+        "query": {"type": ["string", "null"]},
+        "source_url": {"type": "string", "pattern": "^https?://"},
+        "source_type": {"type": ["string", "null"]},
+        "candidate_kind": {"enum": ["single-event", "programme", "programme-item"]},
+        "programme_id": {"type": ["string", "null"]},
+        "programme_title": {"type": ["string", "null"]},
+        "expandable": {"type": ["boolean", "null"]},
+        "status": {
+          "enum": ["new", "needs-verification", "verified", "imported", "rejected"],
+          "description": "verified je přechodový starší stav. imported a rejected jsou uzavřené."
+        },
+        "notes": {"type": ["string", "null"]},
+        "reviewed_at": {
+          "anyOf": [{"$ref": "#/$defs/timestamp"}, {"type": "null"}]
+        },
+        "resolution_notes": {"type": ["string", "null"]},
+        "production_event_id": {"type": ["string", "null"]},
+        "verified_source_url": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

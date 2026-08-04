@@ -1,0 +1,29 @@
+name: Kontrola odkazů
+
+# Sahá na síť, proto běží odděleně od validace struktury.
+# Nefunkční odkaz je skutečný nález, ne přechodná chyba běhu — proto
+# workflow selže a je vidět. Přechodné výpadky se mohou projevit jako falešný
+# poplach; v takovém případě výsledek ručního běhu ověř nebo přidej opakování.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Kontrola zdrojových odkazů
+        run: python3 tools/validate/linkcheck.py --json | tee linkcheck.json
+
+      - name: Uložení výsledku
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linkcheck
+          path: linkcheck.json

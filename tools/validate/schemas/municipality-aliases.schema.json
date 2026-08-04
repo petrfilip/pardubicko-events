@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "aliases"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["alias", "kind", "municipality_code", "municipality_name", "evidence_url"],
+        "properties": {
+          "alias": {"type": "string", "minLength": 1},
+          "kind": {"enum": ["alias", "part-of-municipality", "city-district"]},
+          "municipality_code": {"type": "integer", "minimum": 1},
+          "municipality_name": {"type": "string", "minLength": 1},
+          "evidence_url": {"type": "string", "format": "uri", "pattern": "^https://"},
+          "note": {"type": "string"}
+        }
+      }
+    }
+  }
+}

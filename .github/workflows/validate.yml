@@ -1,0 +1,48 @@
+name: Validace dat
+
+# Deterministická kontrola struktury a vztahů. Nesahá na síť.
+# Kontrola dostupnosti odkazů běží odděleně v links.yml.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: tools/validate/requirements.txt
+
+      # Testy načítací vrstvy frontendu běží v Node. Runner chybějící runtime
+      # odmítne, takže neúplná sada nemůže vypadat jako úspěšná.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Nastavení PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, pdo_sqlite
+          coverage: none
+
+      - name: Instalace závislostí
+        run: pip install -r tools/validate/requirements.txt
+
+      # Runner zahrnuje Python/Node testy, web/tests/test_web.php a HTTP smoke
+      # nad čerstvou databází v dočasném adresáři.
+      - name: Úplná deterministická testovací sada
+        run: python3 tools/run_tests.py
+
+      - name: Kontrola dat
+        run: python3 tools/validate/validate.py
+
+      # Ověří, že import do databáze a export zpět vrátí publikovaná data
+      # beze změny. Bez toho by se databáze a data/ mohly tiše rozejít.
+      - name: Bezeztrátovost migrace
+        run: python3 tools/pipeline/pipeline.py roundtrip --diff
