@@ -14,6 +14,7 @@ Příklady:
 - `stats/runs/2026-08/2026-08-02-0600-discovery.json`
 - `stats/runs/2026-08/2026-08-02-0800-curator.json`
 - `stats/runs/2026-08/2026-08-02-1800-quality.json`
+- `stats/runs/2026-08/2026-08-03-2100-pipeline.json`
 
 Každý běh má vlastní soubor a nepřepisuje historii.
 
@@ -111,6 +112,34 @@ Nulová výtěžnost sama o sobě chyba není. Malí venkovští pořadatelé Fa
 
 `backlog_after` je počet unikátních kandidátů napříč všemi `research/candidates*.json`, jejichž stav je po běhu `new`, `needs-verification` nebo přechodový starší stav `verified`. Stavy `imported` a `rejected` jsou uzavřené.
 
+## Pipeline metriky
+
+Dávkový deterministický runner používá `agent: "pipeline"`. Reportuje:
+
+- `sources_selected`
+- `sources_checked`
+- `sources_succeeded`
+- `sources_failed`
+- `sources_skipped`
+- `items_found`
+- `items_valid`
+- `items_unparsed`
+- `candidates_created`
+- `candidates_existing`
+- `candidates_updated`
+- `candidates_quarantined`
+- `matched_existing`
+- `match_review_queued`
+- `offline`
+- `dry_run`
+
+`sources_skipped` jsou enabled zdroje bez implementovaného deterministického
+adaptéru. Nejde o chybu běhu: zdroj se neotevřel a není zahrnutý do coverage.
+Selhání fetch/extract naopak patří do `errors`; pokud jiný zdroj uspěl, celý
+report má stav `partial`. `matched_existing` znamená pouze bezpečné připojení
+další vazby `event_source` k už publikované jisté shodě. Runner nikdy
+automaticky nevytváří ani nepublikuje novou událost.
+
 ## Quality metriky
 
 - `json_files_checked`
@@ -122,6 +151,12 @@ Nulová výtěžnost sama o sobě chyba není. Malí venkovští pořadatelé Fa
 - `issues_fixed`
 - `issues_deferred`
 - `pages_check`
+
+Část těchto metrik zjišťuje strojová kontrola, ne agent. `schema_errors_found` a `json_files_checked` přebírá Quality Agent z výstupu `tools/validate/validate.py`, `broken_links_found` z `tools/validate/linkcheck.py`. V `notes` uvede, že hodnoty pocházejí z validátoru.
+
+Úsudkové metriky vykazuje agent za sebe. `generic_links_found` počítá odkazy, které formálně projdou, ale nevedou na konkrétní detail akce — typicky stránkovaný výpis kalendáře. `duplicate_events_found` počítá sémantické duplicity bez shodného klíče, tedy ty, které validátor najít nemůže.
+
+Dělbu popisuje `docs/agents/quality-agent.md`. Metrika vykázaná dvakrát, jednou strojem a jednou agentem, je chyba reportu.
 
 ## Pokrytí
 
@@ -144,6 +179,16 @@ U Planner Agenta obsahuje `coverage` naplánované lokality. U Discovery a Curat
 - Reporty se po měsících archivují v samostatných adresářích.
 - Souhrnné ukazatele se mají vypočítávat z reportů, ne ručně kopírovat do každého souboru.
 - Monitoring nesmí výrazně zvyšovat počet dotazů ani velikost kurátorského backlogu.
+
+## Provozní smoke adaptérů
+
+Agentní reporty v `stats/runs/` nejsou totéž co provozní historie zdrojů.
+Živý smoke deterministických adaptérů se spouští odděleně příkazem
+`python3 tools/pipeline/live_smoke.py` a reporty ukládá do ignorovaného
+`var/live-smoke/reports/`. Report obsahuje klasifikaci, health signály a pouze
+při změně zdroje také diff posledního funkčního snapshotu a výstupu proti
+aktuálnímu. Podrobné spuštění a bezpečnostní brána pro opravnou smyčku jsou
+v `tools/pipeline/README.md`.
 
 ## Odvozené ukazatele
 

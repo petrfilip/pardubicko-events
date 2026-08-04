@@ -6,7 +6,10 @@ Tento dokument je hlavní přehled záměru, architektury a provozních pravidel
 
 Cílem je vytvořit otevřenou, průběžně aktualizovanou a auditovatelnou databázi veřejných akcí pro celý Pardubický a Královéhradecký kraj.
 
-HTML stránka na GitHub Pages je pouze referenční prohlížeč. Hlavním produktem jsou strukturovaná, verzovaná a ověřitelná data v repozitáři.
+Hlavním produktem jsou strukturovaná, verzovaná a ověřitelná data. Statický
+GitHub Pages web je aktuální veřejná a kompatibilní plocha nad auditním
+exportem; hotový PHP web je cílová produkční plocha po dokončení bezpečného
+nasazení. Přechod a odpovědnosti vymezuje ADR 0007.
 
 Projekt má pokrývat nejen velká města, ale také jednotlivé obce, městyse, místní části, spolky, kluby, farnosti, SDH, sportovní areály, kempy, koupaliště, restaurace, kulturní prostory a jednorázové lokální pořadatele.
 
@@ -137,14 +140,22 @@ Agent má ukládat vyhledávací vzory, které skutečně vedly k novým relevan
 
 Agent si průběžně buduje vlastní znalostní bázi.
 
-Doporučené soubory:
+Existující soubory:
 
 - `config/source-registry.json`
+- `config/municipalities.json`
+- `config/categories.json`
+- `config/municipality-aliases.json`
 - `research/query-patterns.md`
 - `research/findings.md`
-- `research/discovery-score.json`
-- `stats/coverage.json`
 - `stats/runs/YYYY-MM/`
+- `stats/coverage.json`
+
+Plánované, zatím neexistující:
+
+- `research/discovery-score.json` — skóre zdrojů a dotazů
+
+Definice agentů na plánované soubory odkazují vždy podmínkou „pokud existuje“. Agent je nesmí zakládat s vymyšleným obsahem jen proto, aby existovaly; prázdný soubor metrik je horší než žádný.
 
 Registr zdrojů má uchovávat například:
 
@@ -227,29 +238,24 @@ Tento model je záměrně jednoduchý pro GitHub Pages.
 
 Dlouhodobé akce mohou být v první fázi uvedeny ve více týdenních souborech, pokud jsou kopie konzistentní a mají stabilní základ ID.
 
-Migrace na centrální katalog událostí nebo SQLite je možná později, ale není součástí aktuální fáze.
+Pro fázi 2 je rozhodnuto o přechodu na centrální katalog v SQLite; viz ADR 0002. Týdenní soubory tím nezanikají — přestávají být zdrojem pravdy a stávají se generovaným exportem, který slouží jako auditní stopa v gitu a jako regresní test migrace.
 
 ## 10. Frontend
 
-Frontend je statické GitHub Pages preview.
+Projekt dočasně udržuje dvě frontendové implementace se společnými
+publikovanými daty, nikoli dva nezávislé produkty:
 
-Má podporovat:
+- statický GitHub Pages web čte auditní JSON export a do produkčního
+  přepnutí zůstává veřejnou kompatibilní plochou,
+- PHP web čte SQLite, renderuje obsah a filtry na serveru a je kanonickou
+  cílovou produkční plochou.
 
-- seznamový pohled,
-- kalendářový pohled,
-- fulltext,
-- filtr týdne,
-- filtr kraje,
-- filtr okresu,
-- filtr obce,
-- filtr kategorie,
-- filtr vstupného,
-- pouze budoucí akce,
-- zobrazení času,
-- vícedenní rozsahy,
-- přímý odkaz na zdroj.
-
-JavaScript má být modulární. HTML nemá obsahovat aplikační logiku a `app.js` má být pouze orchestrace.
+Obě vrstvy zachovávají seznam, kalendář, fulltext, filtr týdne, obce,
+kategorie, cílové skupiny a vstupného, budoucí akce, vícedenní rozsahy a
+odkaz na zdroj. PHP navíc poskytuje indexovatelné detailní URL, JSON-LD,
+sitemapu, robots, stránkování a soukromý inbox. Přepnutí veřejné URL se smí
+udělat až s produkčním serverem, TLS, persistentní databází, zálohou a
+ověřeným restore. Podrobný regresní kontrakt je v ADR 0007.
 
 ## 11. Automatizace
 
@@ -288,34 +294,45 @@ Projekt má postupně měřit:
 
 Metriky mají pomáhat řídit práci agentů. Nemají nahrazovat faktické ověření konkrétní události.
 
-## 13. Co projekt zatím není
+## 13. Co projekt není
 
-Aktuální fáze neobsahuje:
+První fáze neobsahuje backend, databázi ani serverovou vrstvu. Zůstává statickým katalogem na GitHub Pages.
 
-- backend,
-- SQLite,
-- PHP,
-- Next.js,
-- přihlašování,
+Druhá fáze zavedla SQLite, funkční PHP serving vrstvu, konzervativní
+deduplikaci, první geografický alias s coverage reportem a produkční stack s
+otestovanou zálohou a obnovou. Úplná orchestrace pipeline ještě hotová není a
+produkční deploy nebyl doložen na cílovém hostu. Rozsah a zdůvodnění popisují
+ADR 0002 až 0007, `docs/phase-2-architecture.md` a
+`docs/phase-2-work-packages.md`.
+
+Trvale, tedy ani ve fázi 2, projekt neobsahuje:
+
+- Next.js — zamítnuto v ADR 0002 pro současný rozsah,
+- přihlašování a uživatelské účty,
 - administrační rozhraní,
+- veřejný neověřený příjem tipů od návštěvníků,
 - přihlášený nebo neveřejný Facebook scraper,
 - automatické publikování neověřených kandidátů,
 - AI doporučení uložená ve finálních datech.
+
+Ruční vložení odkazu mimo git je řešeno inboxem podle ADR 0005. Není to administrační rozhraní a neobchází ověření Curatorem.
 
 ## 14. Otevřené otázky k nezávislé revizi
 
 Další agent nebo lidský revizor má zejména posoudit:
 
 1. Je rozdělení Discovery / Curator / Quality dostatečné?
-2. Je týdenní JSON model vhodný pro současnou fázi?
-3. Jak nejlépe reprezentovat dlouhodobé akce bez nekonzistentních kopií?
-4. Jak importovat a průběžně aktualizovat úplný oficiální seznam obcí?
+2. ~~Je týdenní JSON model vhodný pro současnou fázi?~~ Zodpovězeno: pro fázi 1 ano, pro fázi 2 se stává exportem (ADR 0002).
+3. ~~Jak nejlépe reprezentovat dlouhodobé akce bez nekonzistentních kopií?~~ Zodpovězeno: akce je jeden záznam, kopie vznikají exportem a jejich členství v týdnech se odvozuje z termínu (ADR 0006). Identita kopií je sjednocená v ADR 0001.
+4. ~~Jak importovat a průběžně aktualizovat úplný oficiální seznam obcí?~~ Zadáno jako balíček P1-6: číselník ČSÚ/RÚIAN do tabulky `municipality`.
 5. Jak navrhnout rotační plán kontrol obcí, aby byl efektivní a spravedlivý?
 6. Které metriky jsou skutečně užitečné a které by vytvářely zbytečnou administrativu?
 7. Jak bezpečně a legálně maximalizovat pokrytí veřejných Facebook Events?
-8. Jak validovat konkrétnost a životnost zdrojových odkazů?
-9. Kdy má smysl přejít z týdenních JSONů na centrální katalog a SQLite?
+8. ~~Jak validovat konkrétnost a životnost zdrojových odkazů?~~ Zadáno jako balíčky P0-1 (kontrola odkazů v CI) a P1-5 (sledování zdraví zdrojů, ADR 0004).
+9. ~~Kdy má smysl přejít z týdenních JSONů na centrální katalog a SQLite?~~ Zodpovězeno v ADR 0002.
 10. Jak rozšířit frontend o filtr kraje a okresu bez zbytečné složitosti?
+
+Nově otevřené otázky fáze 2 jsou v závěru `docs/phase-2-architecture.md`.
 
 ## 15. Pokyny pro revizního agenta
 
