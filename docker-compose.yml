@@ -18,7 +18,7 @@ services:
     # Vestavěný server je jednovláknový a je určen výhradně pro vývoj.
     command: php -S 0.0.0.0:8080 -t /app
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     volumes:
       - .:/app
 
@@ -29,7 +29,7 @@ services:
     working_dir: /app
     command: php -S 0.0.0.0:8081 -t /app/web/public /app/web/public/router.php
     ports:
-      - "8081:8081"
+      - "127.0.0.1:8081:8081"
     volumes:
       - .:/app
     environment:
