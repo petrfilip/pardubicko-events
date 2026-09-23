@@ -1,24 +1,24 @@
 {
   "schema_version": 1,
-  "date": "2026-08-02",
-  "generated_at": "2026-08-02T16:56:44+02:00",
+  "date": "2026-08-04",
+  "generated_at": "2026-08-04T07:24:40+02:00",
   "horizon": {
-    "from": "2026-08-02",
-    "to": "2026-08-15",
+    "from": "2026-08-04",
+    "to": "2026-08-17",
     "days": 14
   },
   "limits": {
-    "max_municipalities": 18,
-    "max_queries": 120,
-    "max_candidates": 40,
+    "max_municipalities": 12,
+    "max_queries": 72,
+    "max_candidates": 48,
     "max_new_sources": 10
   },
   "backlog": {
     "new_candidates": 0,
-    "needs_verification": 9,
-    "verified_candidates": 11,
-    "unique_open_total": 20,
-    "pressure": "low"
+    "needs_verification": 83,
+    "verified_candidates": 0,
+    "unique_open_total": 83,
+    "pressure": "high"
   },
   "municipalities": [
     {
@@ -26,71 +26,62 @@
       "district": "Pardubice",
       "region": "pardubicky-kraj",
       "tier": "tier-1",
-      "priority_score": 95,
-      "reasons": ["krajské centrum", "prioritní známé zdroje v registru"],
-      "query_budget": 6
+      "priority_score": 98,
+      "reasons": ["denní deterministický zdroj", "nejvíce akcí v aktuálním horizontu"],
+      "query_budget": 4
     },
     {
       "name": "Přelouč",
       "district": "Pardubice",
       "region": "pardubicky-kraj",
       "tier": "tier-2",
-      "priority_score": 76,
-      "reasons": ["rotační pokrytí bez dostupné historie", "v dostupných týdenních datech bez produkční akce"],
-      "query_budget": 5
-    },
-    {
-      "name": "Sezemice",
-      "district": "Pardubice",
-      "region": "pardubicky-kraj",
-      "tier": "tier-3",
-      "priority_score": 67,
-      "reasons": ["rotační pokrytí menší obce bez dostupné historie"],
-      "query_budget": 4
+      "priority_score": 73,
+      "reasons": ["rotační pokrytí bez akce v aktuálním horizontu"],
+      "query_budget": 3
     },
     {
       "name": "Chrudim",
       "district": "Chrudim",
       "region": "pardubicky-kraj",
       "tier": "tier-1",
-      "priority_score": 94,
-      "reasons": ["okresní město", "prioritní pořadatel a známý zdroj v konfiguraci"],
-      "query_budget": 6
+      "priority_score": 91,
+      "reasons": ["prioritní známý zdroj", "otevřený facebookový backlog"],
+      "query_budget": 4
     },
     {
-      "name": "Nasavrky",
+      "name": "Hlinsko",
       "district": "Chrudim",
       "region": "pardubicky-kraj",
       "tier": "tier-2",
-      "priority_score": 97,
-      "reasons": ["prioritní pořadatel Země Keltů", "letní sezónnost uvedená v konfiguraci"],
-      "query_budget": 6
+      "priority_score": 84,
+      "reasons": ["prioritní známý zdroj", "silné aktuální pokrytí k ověření"],
+      "query_budget": 4
     },
     {
       "name": "Svitavy",
       "district": "Svitavy",
       "region": "pardubicky-kraj",
       "tier": "tier-1",
-      "priority_score": 87,
-      "reasons": ["okresní město", "v dostupných týdenních datech bez produkční akce"],
-      "query_budget": 5
+      "priority_score": 80,
+      "reasons": ["okresní město bez akce v aktuálním horizontu"],
+      "query_budget": 4
     },
     {
-      "name": "Polička",
+      "name": "Litomyšl",
       "district": "Svitavy",
       "region": "pardubicky-kraj",
       "tier": "tier-2",
-      "priority_score": 75,
-      "reasons": ["rotační pokrytí bez dostupné historie", "v dostupných týdenních datech bez produkční akce"],
-      "query_budget": 5
+      "priority_score": 78,
+      "reasons": ["prioritní známý zdroj", "kontrola existujícího pokrytí"],
+      "query_budget": 3
     },
     {
-      "name": "Česká Třebová",
+      "name": "Ústí nad Orlicí",
       "district": "Ústí nad Orlicí",
       "region": "pardubicky-kraj",
-      "tier": "tier-2",
-      "priority_score": 74,
-      "reasons": ["rotační pokrytí okresu bez dostupné historie", "v dostupných týdenních datech bez produkční akce"],
+      "tier": "tier-1",
+      "priority_score": 79,
+      "reasons": ["prioritní známý zdroj", "rotační okresní pokrytí"],
       "query_budget": 4
     },
     {
@@ -98,17 +89,8 @@
       "district": "Hradec Králové",
       "region": "kralovehradecky-kraj",
       "tier": "tier-1",
-      "priority_score": 95,
-      "reasons": ["krajské centrum", "prioritní známé zdroje v registru"],
-      "query_budget": 6
-    },
-    {
-      "name": "Nechanice",
-      "district": "Hradec Králové",
-      "region": "kralovehradecky-kraj",
-      "tier": "tier-3",
-      "priority_score": 68,
-      "reasons": ["rotační pokrytí menšího města bez dostupné historie"],
+      "priority_score": 97,
+      "reasons": ["denní deterministický zdroj", "nízké produkční pokrytí v horizontu"],
       "query_budget": 4
     },
     {
@@ -116,17 +98,8 @@
       "district": "Jičín",
       "region": "kralovehradecky-kraj",
       "tier": "tier-1",
-      "priority_score": 89,
-      "reasons": ["okresní město", "prioritní známý zdroj v registru", "v dostupných týdenních datech bez produkční akce"],
-      "query_budget": 5
-    },
-    {
-      "name": "Sobotka",
-      "district": "Jičín",
-      "region": "kralovehradecky-kraj",
-      "tier": "tier-3",
-      "priority_score": 69,
-      "reasons": ["rotační pokrytí menšího města bez dostupné historie"],
+      "priority_score": 84,
+      "reasons": ["prioritní známý zdroj", "bez akce v aktuálním horizontu"],
       "query_budget": 4
     },
     {
@@ -134,35 +107,17 @@
       "district": "Náchod",
       "region": "kralovehradecky-kraj",
       "tier": "tier-1",
-      "priority_score": 93,
-      "reasons": ["tři kandidáti needs-verification a jeden přechodový verified", "prioritní známý zdroj v registru"],
-      "query_budget": 6
+      "priority_score": 89,
+      "reasons": ["prioritní známý zdroj", "otevřený facebookový backlog"],
+      "query_budget": 4
     },
     {
-      "name": "Jaroměř",
-      "district": "Náchod",
-      "region": "kralovehradecky-kraj",
-      "tier": "tier-2",
-      "priority_score": 85,
-      "reasons": ["prioritní pořadatel Pevnost Josefov", "v dostupných týdenních datech bez produkční akce"],
-      "query_budget": 5
-    },
-    {
-      "name": "Opočno",
+      "name": "Rychnov nad Kněžnou",
       "district": "Rychnov nad Kněžnou",
       "region": "kralovehradecky-kraj",
-      "tier": "tier-2",
+      "tier": "tier-1",
       "priority_score": 77,
-      "reasons": ["rotační pokrytí okresu bez dostupné historie", "v dostupných týdenních datech bez produkční akce"],
-      "query_budget": 5
-    },
-    {
-      "name": "Častolovice",
-      "district": "Rychnov nad Kněžnou",
-      "region": "kralovehradecky-kraj",
-      "tier": "tier-3",
-      "priority_score": 68,
-      "reasons": ["rotační pokrytí menší obce bez dostupné historie"],
+      "reasons": ["okresní město bez akce v aktuálním horizontu"],
       "query_budget": 4
     },
     {
@@ -170,46 +125,34 @@
       "district": "Trutnov",
       "region": "kralovehradecky-kraj",
       "tier": "tier-1",
-      "priority_score": 90,
-      "reasons": ["okresní město", "dva prioritní známé zdroje v registru", "v dostupných týdenních datech bez produkční akce"],
-      "query_budget": 5
-    },
-    {
-      "name": "Kuks",
-      "district": "Trutnov",
-      "region": "kralovehradecky-kraj",
-      "tier": "tier-3",
-      "priority_score": 84,
-      "reasons": ["prioritní pořadatel Hospital Kuks", "letní sezónnost uvedená v konfiguraci"],
-      "query_budget": 5
+      "priority_score": 93,
+      "reasons": ["deterministický iCal zdroj", "bez akce v aktuálním horizontu"],
+      "query_budget": 4
     }
   ],
   "sources": [
-    {"id": "pardubice-calendar", "priority_score": 98, "reason": "priorita high a denní interval v registru"},
-    {"id": "chrudimska-beseda", "priority_score": 98, "reason": "priorita high a denní interval v registru"},
-    {"id": "kultura-hk-official", "priority_score": 98, "reason": "priorita high a denní interval v registru"},
-    {"id": "nachod-city", "priority_score": 94, "reason": "priorita high v registru a otevřený kandidátní backlog"},
-    {"id": "jicin-city", "priority_score": 91, "reason": "priorita high v registru pro okres bez produkční akce v dostupných datech"},
-    {"id": "trutnov-city", "priority_score": 91, "reason": "priorita high v registru pro okres bez produkční akce v dostupných datech"},
-    {"id": "uffo-trutnov", "priority_score": 90, "reason": "priorita high v registru a prioritní pořadatel v konfiguraci"},
-    {"id": "rychnov-city", "priority_score": 88, "reason": "známý zdroj pro okres bez produkční akce v dostupných datech"},
-    {"id": "litomysl-city", "priority_score": 86, "reason": "priorita high v registru; kontrola bez opakování již známých kandidátů"},
-    {"id": "usti-nad-orlici-city", "priority_score": 86, "reason": "priorita high v registru pro rotační okresní kontrolu"},
-    {"id": "kudyznudy-pardubicky", "priority_score": 80, "reason": "povinný doplňkový discovery kanál po primárních zdrojích"},
-    {"id": "kudyznudy-kralovehradecky", "priority_score": 80, "reason": "povinný doplňkový discovery kanál po primárních zdrojích"},
-    {"id": "facebook-public-events", "priority_score": 78, "reason": "pouze veřejně dostupný povinný discovery kanál"}
+    {"id": "pardubice-calendar", "priority_score": 100, "reason": "implementovaný denní adaptér"},
+    {"id": "kultura-hk-official", "priority_score": 100, "reason": "implementovaný denní adaptér"},
+    {"id": "uffo-trutnov", "priority_score": 96, "reason": "implementovaný iCal adaptér"},
+    {"id": "chrudimska-beseda", "priority_score": 91, "reason": "prioritní známý zdroj bez adaptéru"},
+    {"id": "mfc-hlinsko", "priority_score": 86, "reason": "prioritní známý zdroj bez adaptéru"},
+    {"id": "usti-nad-orlici-city", "priority_score": 82, "reason": "rotační okresní kontrola"},
+    {"id": "jicin-city", "priority_score": 84, "reason": "okres bez aktuální produkční akce"},
+    {"id": "nachod-city", "priority_score": 88, "reason": "prioritní zdroj a otevřený backlog"},
+    {"id": "rychnov-city", "priority_score": 78, "reason": "okres bez aktuální produkční akce"},
+    {"id": "facebook-public-events", "priority_score": 80, "reason": "povinný veřejný discovery kanál"},
+    {"id": "kudyznudy-pardubicky", "priority_score": 70, "reason": "doplňkový kanál pouze při kapacitě"},
+    {"id": "kudyznudy-kralovehradecky", "priority_score": 70, "reason": "doplňkový kanál pouze při kapacitě"}
   ],
-  "required_passes": ["priority-organizers", "known-sources", "google", "facebook-public", "kudyznudy"],
+  "required_passes": ["known-sources", "facebook-public", "targeted-coverage-gaps"],
   "allocation": {
-    "query_budget_total": 90,
-    "reserve_queries": 30
+    "query_budget_total": 46,
+    "reserve_queries": 26
   },
   "notes": [
-    "Priority_score je pouze pořadová pomůcka pro tento běh.",
-    "Nejprve zkontrolovat prioritní pořadatele, zejména Země Keltů, Pevnost Josefov a Hospital Kuks, a potom známé zdroje.",
-    "Šestnáct z dvaceti stavově otevřených kandidátů již má shodné ID v produkčních datech; před hledáním je považovat za známé a nevytvářet jejich duplicity.",
-    "Čtyři náchodské kandidáty nevytvářet znovu; jejich ověření a uzavření patří Curator Agentovi.",
-    "Chybí config/municipalities.json, stats/coverage.json a research/discovery-score.json; rotační priority proto nepoužívají tvrzení o poslední kontrole ani historické výtěžnosti.",
-    "Maxima nejsou cíle; při nízké mezní výtěžnosti ukončit broad Google a agregátory dříve."
+    "Backlog 83 otevřených kandidátů znamená high pressure; limit kandidátů je snížen přibližně o 60 %.",
+    "Široké obecné hledání je pozastaveno ve prospěch deterministických zdrojů, prioritních známých zdrojů a kurátorského zpracování.",
+    "Coverage report neobsahuje historii kontrol jednotlivých obcí; rotační důvody proto netvrdí, že obec nebyla dlouho kontrolována.",
+    "Maxima nejsou cíle a běh má skončit dříve při nízké mezní výtěžnosti."
   ]
 }

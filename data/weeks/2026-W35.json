@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "week": "2026-W35",
-  "generated_at": "2026-08-02T08:35:00+02:00",
+  "generated_at": "2026-08-04T08:31:44+02:00",
   "events": [
     {
       "id": "slavnost-shakespearova-chrudim-2026-08-24",
@@ -143,6 +143,70 @@
       "price": {"type": "paid", "text": "20 Kč"},
       "source": {"type": "official", "url": "https://www.chrudimskabeseda.cz/akce/rodinna-anamneza-jaroslav-korecek-marketa-koreckova-juliana-mackova/"},
       "last_verified_at": "2026-08-02T08:40:00+02:00",
+      "cancelled": false
+    },
+    {
+      "id": "prazdniny-v-knihovne-spolecenske-hry-pardubice-2026-08-26",
+      "week": "2026-W35",
+      "title": "Prázdniny v knihovně – společenské hry pro děti",
+      "description": "Dopolední hraní společenských her pro děti v knihovně v Polabinách.",
+      "start_at": "2026-08-26T10:00:00+02:00",
+      "end_at": "2026-08-26T12:00:00+02:00",
+      "all_day": false,
+      "venue": "Knihovna městského obvodu Pardubice II, Družby 334",
+      "municipality": "Pardubice",
+      "categories": ["zabava", "deti"],
+      "price": {"type": "unknown", "text": "Neuvedeno"},
+      "source": {"type": "official-calendar", "url": "https://pardubice.eu/prazdniny-v-knihovne-spolecenske-hry-pro-deti"},
+      "last_verified_at": "2026-08-04T08:11:12+02:00",
+      "cancelled": false
+    },
+    {
+      "id": "prazdninova-joga-na-prihradku-pardubice-2026-08-27",
+      "week": "2026-W35",
+      "title": "Prázdninová jóga na Příhrádku",
+      "description": "Ranní lekce jógy s protažením, posílením a relaxací; vlastní jogamatku s sebou.",
+      "start_at": "2026-08-27T09:00:00+02:00",
+      "end_at": "2026-08-27T10:00:00+02:00",
+      "all_day": false,
+      "venue": "Louka pod terasou Příhrádku, Příhrádek 6–8",
+      "municipality": "Pardubice",
+      "categories": ["sport"],
+      "price": {"type": "free", "text": "Zdarma"},
+      "source": {"type": "official-calendar", "url": "https://pardubice.eu/prazdninova-joga-na-prihradku-42174"},
+      "last_verified_at": "2026-08-04T08:11:12+02:00",
+      "cancelled": false
+    },
+    {
+      "id": "zapad-slunce-zelena-brana-pardubice-2026-08-28",
+      "week": "2026-W35",
+      "title": "Západ slunce na Zelené bráně",
+      "description": "Večerní návštěva ochozu Zelené brány s výhledem na historické centrum za příznivého počasí.",
+      "start_at": "2026-08-28T19:00:00+02:00",
+      "end_at": "2026-08-28T22:00:00+02:00",
+      "all_day": false,
+      "venue": "Zelená brána, Zelenobranská 68",
+      "municipality": "Pardubice",
+      "categories": ["pamatky", "rodiny"],
+      "price": {"type": "paid", "text": "Dle běžného ceníku"},
+      "source": {"type": "official-calendar", "url": "https://pardubice.eu/zapady-slunce-na-zelene-brane-42875"},
+      "last_verified_at": "2026-08-04T08:31:44+02:00",
+      "cancelled": false
+    },
+    {
+      "id": "zapad-slunce-zelena-brana-pardubice-2026-08-29",
+      "week": "2026-W35",
+      "title": "Západ slunce na Zelené bráně",
+      "description": "Večerní návštěva ochozu Zelené brány s výhledem na historické centrum za příznivého počasí.",
+      "start_at": "2026-08-29T19:00:00+02:00",
+      "end_at": "2026-08-29T22:00:00+02:00",
+      "all_day": false,
+      "venue": "Zelená brána, Zelenobranská 68",
+      "municipality": "Pardubice",
+      "categories": ["pamatky", "rodiny"],
+      "price": {"type": "paid", "text": "Dle běžného ceníku"},
+      "source": {"type": "official-calendar", "url": "https://pardubice.eu/zapady-slunce-na-zelene-brane-42875"},
+      "last_verified_at": "2026-08-04T08:31:44+02:00",
       "cancelled": false
     }
   ]

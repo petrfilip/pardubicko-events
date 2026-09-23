@@ -577,8 +577,14 @@
       "expandable": false,
       "facebook_time_ids": [],
       "facebook_total_dates": null,
-      "status": "needs-verification",
-      "notes": "Geoznačka Facebooku uvádí obec „Pardubice“ — ověřit. Vstupné Facebook nenabízí strukturovaně, ověřit u pořadatele. Výpis uváděl jen „Právě probíhá“; termín doplněn z detailu akce."
+      "status": "imported",
+      "notes": "Geoznačka Facebooku i termín byly ověřeny na konkrétním oficiálním detailu města.",
+      "categories": ["sport", "festivaly", "rodiny"],
+      "source_type": "official-calendar",
+      "reviewed_at": "2026-08-04T08:11:12+02:00",
+      "resolution_notes": "Duplicita již publikované produkční akce; oficiální detail potvrzuje termín 1.–9. srpna, místo i vstup zdarma.",
+      "production_event_id": "sportovni-park-pardubice-2026",
+      "verified_source_url": "https://pardubice.eu/sportovni-park-pardubice-2026-43517"
     },
     {
       "id": "fb-28018480151079845",
@@ -615,7 +621,13 @@
       "facebook_time_ids": [],
       "facebook_total_dates": null,
       "status": "needs-verification",
-      "notes": "Geoznačka Facebooku uvádí obec „Pardubice“ — ověřit. Vstupné Facebook nenabízí strukturovaně, ověřit u pořadatele."
+      "notes": "Facebook potvrzuje termín a místo v Pardubicích, ale konkrétní primární detail této programové položky se nepodařilo dohledat.",
+      "categories": ["film", "sport"],
+      "source_type": "facebook",
+      "reviewed_at": "2026-08-04T08:11:12+02:00",
+      "resolution_notes": "Opravena chybná vazba na Den s Městskou policií. Ověřen Facebook Event a obecný oficiální článek Sportovního parku; článek však položku s Lukášem Krpálkem a přesným termínem neuvádí. Vyhledávání skončilo na CAPTCHA.",
+      "production_event_id": null,
+      "verified_source_url": null
     },
     {
       "id": "fb-1287966610075408",
@@ -650,8 +662,14 @@
       "expandable": false,
       "facebook_time_ids": [],
       "facebook_total_dates": null,
-      "status": "needs-verification",
-      "notes": "Geoznačka Facebooku uvádí obec „Pardubice“ — ověřit. Vstupné Facebook nenabízí strukturovaně, ověřit u pořadatele."
+      "status": "imported",
+      "notes": "Geoznačka Facebooku uvádí obec „Pardubice“ — ověřeno na konkrétním oficiálním detailu města.",
+      "categories": ["zabava", "rodiny"],
+      "source_type": "official-calendar",
+      "reviewed_at": "2026-08-04T08:11:12+02:00",
+      "resolution_notes": "Duplicita již publikované produkční akce; oficiální detail potvrzuje název, termín, místo a pořadatele.",
+      "production_event_id": "den-s-mestskou-policii-pardubice-2026-08-06",
+      "verified_source_url": "https://pardubice.eu/den-s-mestskou-policii-pardubice-43795"
     },
     {
       "id": "fb-969241209468682",
@@ -686,8 +704,14 @@
       "expandable": false,
       "facebook_time_ids": [],
       "facebook_total_dates": null,
-      "status": "needs-verification",
-      "notes": "Geoznačka Facebooku uvádí obec „Pardubice“ — ověřit. Vstupné Facebook nenabízí strukturovaně, ověřit u pořadatele."
+      "status": "imported",
+      "notes": "Obec a den byly ověřeny na oficiálním detailu města; konkrétní Facebook Event potvrdil čas 10:00–18:00.",
+      "categories": ["sport", "komunitni"],
+      "source_type": "official-calendar",
+      "reviewed_at": "2026-08-04T08:11:12+02:00",
+      "resolution_notes": "Ověřeno na konkrétním detailu Pardubice.eu a veřejném Facebook Eventu; publikováno jako samostatný program Sportovního parku.",
+      "production_event_id": "seniorka-sportovni-park-pardubice-2026-08-06",
+      "verified_source_url": "https://pardubice.eu/seniorka"
     },
     {
       "id": "fb-1065371286062768",
@@ -723,8 +747,14 @@
       "expandable": false,
       "facebook_time_ids": [],
       "facebook_total_dates": null,
-      "status": "needs-verification",
-      "notes": "Geoznačka Facebooku uvádí obec „Pardubice“ — ověřit. Vstupné Facebook nenabízí strukturovaně, ověřit u pořadatele."
+      "status": "imported",
+      "notes": "Geoznačka Facebooku uvádí obec „Pardubice“ — ověřeno na konkrétním oficiálním detailu města.",
+      "categories": ["vzdelavani", "sport"],
+      "source_type": "official-calendar",
+      "reviewed_at": "2026-08-04T08:11:12+02:00",
+      "resolution_notes": "Ověřen přesný čas 13:00–18:00, místo a obsah na konkrétním detailu Pardubice.eu; publikováno.",
+      "production_event_id": "zmena-jako-konstanta-konference-pardubice-2026-08-06",
+      "verified_source_url": "https://pardubice.eu/zmena-jako-konstanta-unikatni-konference-o-sportu"
     },
     {
       "id": "fb-1702602597669918",
@@ -1434,8 +1464,14 @@
       "expandable": false,
       "facebook_time_ids": [],
       "facebook_total_dates": null,
-      "status": "needs-verification",
-      "notes": "Geoznačka Facebooku uvádí obec „Pardubice“ — ověřit. Vstupné Facebook nenabízí strukturovaně, ověřit u pořadatele."
+      "status": "imported",
+      "notes": "Obec, místo, termín a vstupné byly ověřeny na konkrétním oficiálním detailu Východočeského muzea.",
+      "categories": ["pamatky", "rodiny"],
+      "source_type": "official",
+      "reviewed_at": "2026-08-04T08:11:12+02:00",
+      "resolution_notes": "Duplicita již publikované produkční akce; oficiální detail potvrzuje program 14:00–19:00 a vstup zdarma s výjimkou placené výstavy.",
+      "production_event_id": "strileni-u-pernstejnskych-kanonu-2026-08-05",
+      "verified_source_url": "https://zamekpardubice.cz/en/navstivte-nas/akce/strileni-u-pernstejnskych-kanonu-2026/"
     },
     {
       "id": "fb-1553648102954873",

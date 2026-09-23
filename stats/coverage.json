@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-03T00:00:00+02:00",
+  "generated_at": "2026-08-04T06:38:19+00:00",
   "municipalities_in_catalog": 899,
   "aliases_in_catalog": 1,
   "events": {
-    "total": 77,
-    "linked_to_municipality": 76,
+    "total": 116,
+    "linked_to_municipality": 115,
     "unresolved": 1
   },
   "parts_of_municipalities": [
