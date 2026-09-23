@@ -44,9 +44,10 @@ splnění provozních podmínek. Statický web se nemaže; po přepnutí zůstan
 kompatibilní referenční vrstvou. Podrobnosti a regresní kontrakt stanoví
 ADR 0007.
 
-**Fáze 3 – rozhodnutá, neimplementovaná.** SQLite na serveru jako jediný
-zdroj pravdy, správa přes admin UI a agenti přes HTTP API. Stanoví ji ADR 0008,
-etapy popisuje `phase-3-plan.md`. Do dokončení etapy 1 platí režim fáze 2.
+**Fáze 3 – rozpracovaná.** SQLite na serveru jako jediný zdroj pravdy,
+správa přes admin UI a agenti přes HTTP API (ADR 0008). Etapa 1 (web a API na
+https://pardubicko.tix.cz) je nasazená 23. 9. 2026 a data v gitu jsou od té
+doby zmrazená. Další etapy popisuje `phase-3-plan.md`.
 
 ## Přehled ADR
 
@@ -59,7 +60,7 @@ etapy popisuje `phase-3-plan.md`. Do dokončení etapy 1 platí režim fáze 2.
 | 0005 | Inbox pro ručně vložené odkazy | Přijato |
 | 0006 | Zařazení akce do týdnů se odvozuje z termínu | Přijato, zavedení odloženo |
 | 0007 | PHP jako cílová veřejná plocha, statický web jako kompatibilní reference | Nahrazeno ADR 0008 |
-| 0008 | SQLite jako jediný zdroj pravdy, správa přes web a API | Přijato; implementace nezačala |
+| 0008 | SQLite jako jediný zdroj pravdy, správa přes web a API | Přijato; etapa 1 nasazena 23. 9. 2026 |
 
 ## Pravidla
 

@@ -104,5 +104,6 @@ Nevýhody a rizika:
 
 ## Stav
 
-Přijato. Implementace nezačala; plán je v `docs/phase-3-plan.md`. Do
-dokončení etapy 1 platí dosavadní režim (JSON v gitu podle `AGENTS.md`).
+Přijato. Etapa 1 je nasazená od 23. 9. 2026 na https://pardubicko.tix.cz;
+od té doby jsou data v gitu zmrazená. Další etapy popisuje
+`docs/phase-3-plan.md`.

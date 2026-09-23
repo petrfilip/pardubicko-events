@@ -9,7 +9,7 @@ správce.
 | Etapa | Stav |
 |---|---|
 | 0 | Hotovo: rozpracovaná data a příkazy pipeline ze 4. 8. jsou commitnuté. |
-| 1 | Kód hotový a otestovaný: schéma v `web/migrations/`, doménová vrstva (`EventService`, `CandidateService`, `SourceService`), deduplikace se stejnými skóre jako `matching.py`, historie změn, API v1 s tokeny, `web/bin/pardubicko`, `bin/prepare-initial-db` a `bin/deploy`. **Nenasazeno:** chybí doména v Hestii a vzdálený cíl zálohy (otázky 1 a 2). |
+| 1 | Hotovo a nasazeno 23. 9. 2026 na https://pardubicko.tix.cz: schéma v `web/migrations/`, doménová vrstva, deduplikace se stejnými skóre jako `matching.py`, historie změn, API v1 s tokeny, `web/bin/pardubicko`, `bin/prepare-initial-db`, `bin/deploy`. Ověřeno: stránky, autentizace přes Apache, zkušební obnova ze snímku, denní snímek v cronu ve 4:50. Data v gitu jsou zmrazená (`pipeline.py` zápis odmítne). Vzdálenou zálohu řeší správce. |
 | 2–5 | Nezačato. |
 
 Oproti původnímu plánu se `POST /api/v1/runs` (report běhu, fetch a health)
