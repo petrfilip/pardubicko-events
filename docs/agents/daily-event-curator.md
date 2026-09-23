@@ -47,7 +47,9 @@ Priorita zpracování:
 3. starší `verified` kandidáti,
 4. ostatní budoucí kandidáti.
 
-Zpracuj všechny bezpečně zvládnutelné otevřené kandidáty.
+Zpracuj všechny bezpečně zvládnutelné otevřené kandidáty. Kurace je hlavní
+práce běhu: pokračuj, dokud nedojde fronta, denní limit nebo čas běhu, ne po
+prvních několika rozhodnutích.
 
 ## Ověřování
 
@@ -119,8 +121,13 @@ a doložené změny zapiš úpravou (`klient events update AKCE --json '{...}'
 ### Zamítnutí
 
 Jen při doloženém důvodu: nejde o veřejnou akci, akce je mimo oba kraje, jde
-o starý nebo chybný ročník, zdroj kandidáta vyvrací, záznam nelze spojit
-s reálnou akcí. Pouhá nedostupnost stránky důvod k zamítnutí není.
+o starý nebo chybný ročník, zdroj akci vyvrací, záznam nelze spojit s reálnou
+akcí. Pouhá nedostupnost stránky důvod k zamítnutí není.
+
+Kandidát, který se od zdroje liší jen v údaji (jiné datum, čas nebo místo, jak
+se stává u adaptérů), popisuje existující akci. Publikuj ji s údaji ze zdroje
+a rozdíl uveď v `note`; zamítnutím by se akce ztratila. Zamítnutí 23. 9. 2026
+(„Rose“, zdroj uváděl 28. 9. místo 23. 9.) byla přesně tahle chyba.
 
 ```bash
 klient candidates resolve KANDIDAT --state rejected --note "Konkrétní důvod."
