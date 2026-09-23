@@ -222,6 +222,13 @@ def _dispatch(client: ApiClient, args: argparse.Namespace) -> ApiResponse:
             return client.post(f"/match-reviews/{args.id}/decide",
                                {"decision": args.decision, "note": args.note})
 
+    if group == "runs":
+        if action == "report":
+            data = _load_json(args)
+            return client.post("/runs", data if "run" in data else {"run": data})
+        if action == "get":
+            return client.get(f"/runs/{_id(args.id)}")
+
     if group == "sources":
         if action == "list":
             return client.get("/sources", {"due": "1" if args.due else None})
@@ -329,6 +336,11 @@ def build_parser() -> argparse.ArgumentParser:
     decide.add_argument("id", type=int)
     decide.add_argument("--decision", required=True, choices=["merged", "separate"])
     decide.add_argument("--note", required=True)
+
+    runs = groups.add_parser("runs", help="běhy pipeline").add_subparsers(dest="action", required=True)
+    run_report = runs.add_parser("report", help="report běhu; run_id je --run-id / PARDUBICKO_RUN_ID")
+    _json_input(run_report, "report ({run: …} nebo rovnou jeho obsah)")
+    runs.add_parser("get", help="běh a výsledky zdrojů").add_argument("id")
 
     sources = groups.add_parser("sources", help="registr zdrojů").add_subparsers(dest="action", required=True)
     sources.add_parser("list").add_argument("--due", action="store_true")

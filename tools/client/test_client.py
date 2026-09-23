@@ -152,6 +152,12 @@ try:
         env={"PARDUBICKO_RUN_ID": "r"})
     check("resolve vynechá prázdné pole", last()["body"], {"state": "rejected", "note": "Mimo kraj."})
 
+    run("runs", "report", "--json", '{"run": {"status": "success"}}', env={"PARDUBICKO_RUN_ID": "p-1"})
+    check("runs report posílá obálku a běh", (last()["path"], last()["body"], last()["headers"].get("x-run-id")),
+          ("/api/v1/runs", {"run": {"status": "success"}}, "p-1"))
+    run("runs", "report", "--json", '{"status": "success"}', env={"PARDUBICKO_RUN_ID": "p-1"})
+    check("runs report doplní obálku", last()["body"], {"run": {"status": "success"}})
+
     run("sources", "due")
     check("sources due", last()["path"], "/api/v1/sources?due=1")
     run("changes", "--run", "collect-1")
