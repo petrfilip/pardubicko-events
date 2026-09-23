@@ -38,7 +38,9 @@ try {
         array_map('strval', $headers),
         $body,
     );
-} catch (Throwable) {
+} catch (Throwable $error) {
+    // Návštěvník dostane obecnou chybu, podrobnosti jdou do logu serveru.
+    error_log('pardubicko: ' . $error);
     $response = str_starts_with($requestPath, '/api/')
         ? Response::json(['status' => 'error', 'error' => 'Aplikace není dostupná.'], 500)
         : Response::html('<!doctype html><html lang="cs"><meta charset="utf-8">'
