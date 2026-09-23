@@ -23,6 +23,11 @@ final class Router
         $this->routes[] = ['method' => 'POST', 'pattern' => $pattern, 'handler' => $handler];
     }
 
+    public function patch(string $pattern, callable $handler): void
+    {
+        $this->routes[] = ['method' => 'PATCH', 'pattern' => $pattern, 'handler' => $handler];
+    }
+
     /**
      * Vrátí odpověď, nebo `null`, pokud cesta neodpovídá žádné trase.
      * Shoda cesty při neshodě metody končí kódem 405.

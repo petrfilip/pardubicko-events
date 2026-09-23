@@ -16,6 +16,8 @@ final class Application
     private readonly EventRepository $events;
     private readonly InboxRepository $inbox;
     private readonly View $view;
+    private readonly PDO $writer;
+    private readonly ?DateTimeImmutable $now;
 
     public function __construct(
         PDO $reader,
@@ -24,8 +26,10 @@ final class Application
         ?View $view = null,
     ) {
         $this->events = new EventRepository($reader, $now);
-        $this->inbox = new InboxRepository($writer ?? $reader);
+        $this->writer = $writer ?? $reader;
+        $this->inbox = new InboxRepository($this->writer);
         $this->view = $view ?? new View();
+        $this->now = $now;
     }
 
     /**
@@ -35,6 +39,11 @@ final class Application
     public function handle(string $method, string $path, array $query = [],
                            array $headers = [], string $body = ''): Response
     {
+        if ($path === '/api/v1' || str_starts_with($path, '/api/v1/')) {
+            return self::secured((new ApiController($this->writer, new Clock($this->now)))
+                ->handle($method === 'HEAD' ? 'GET' : strtoupper($method), $path, $query, $headers, $body));
+        }
+
         $router = new Router();
         $router->get('~^/$~', fn (): Response => $this->home($query));
         $router->get('~^/akce/(?P<id>[a-z0-9][a-z0-9-]*)$~',
@@ -53,6 +62,11 @@ final class Application
         $response = $router->dispatch(strtoupper($method), $path)
             ?? $this->notFound();
 
+        return self::secured($response);
+    }
+
+    private static function secured(Response $response): Response
+    {
         return new Response($response->body, $response->status, array_merge([
             'X-Content-Type-Options' => 'nosniff',
             'Referrer-Policy' => 'strict-origin-when-cross-origin',

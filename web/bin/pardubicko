@@ -1,0 +1,141 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Provozní příkazy na serveru. Databázi bere z `PARDUBICKO_DB` stejně jako
+ * web.
+ *
+ *   pardubicko migrate                      dotáhne schéma na poslední migraci
+ *   pardubicko status                       verze schématu a počty záznamů
+ *   pardubicko token:create NÁZEV [LIMIT]   vytvoří token agenta a jednou ho vypíše
+ *   pardubicko token:list                   tokeny bez tajných hodnot
+ *   pardubicko token:limit NÁZEV LIMIT      změní denní limit publikací
+ *   pardubicko token:revoke NÁZEV           odvolá token
+ *   pardubicko snapshot ADRESÁŘ [DNY]       konzistentní kopie databáze přes VACUUM INTO
+ *                                           a smazání snímků starších než DNY (výchozí 7)
+ */
+
+use Pardubicko\Clock;
+use Pardubicko\Config;
+use Pardubicko\DomainError;
+use Pardubicko\Migrator;
+use Pardubicko\TokenRepository;
+
+require dirname(__DIR__) . '/src/bootstrap.php';
+
+$arguments = array_slice($argv, 1);
+$command = array_shift($arguments) ?? 'help';
+
+function fail(string $message): never
+{
+    fwrite(STDERR, 'CHYBA: ' . $message . "\n");
+    exit(1);
+}
+
+function database(): PDO
+{
+    $path = Config::databasePath();
+    if (!is_file($path)) {
+        fail('Databáze ' . $path . ' neexistuje.');
+    }
+    $pdo = new PDO('sqlite:' . $path, null, null, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
+    $pdo->exec('PRAGMA busy_timeout = 5000');
+    $pdo->exec('PRAGMA journal_mode = WAL');
+    $pdo->exec('PRAGMA foreign_keys = ON');
+
+    return $pdo;
+}
+
+try {
+    switch ($command) {
+        case 'migrate':
+            $migrator = new Migrator(database());
+            $applied = $migrator->migrate();
+            echo $applied === [] ? "Schéma je aktuální (verze {$migrator->currentVersion()}).\n"
+                : 'Aplikované migrace: ' . implode(', ', $applied) . ".\n";
+            break;
+
+        case 'status':
+            $pdo = database();
+            $migrator = new Migrator($pdo);
+            printf("schéma: %d / %d\n", $migrator->currentVersion(), $migrator->latestVersion());
+            foreach (['event', 'candidate', 'source', 'municipality', 'category', 'change_log', 'api_token'] as $table) {
+                $exists = $pdo->query("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = '$table'")->fetchColumn();
+                printf("%-13s %s\n", $table . ':', $exists === false ? '— (chybí, spusť migrate)'
+                    : (string) $pdo->query("SELECT COUNT(*) FROM $table")->fetchColumn());
+            }
+            printf("integrita:    %s\n", (string) $pdo->query('PRAGMA quick_check')->fetchColumn());
+            break;
+
+        case 'token:create':
+            $name = $arguments[0] ?? fail('Chybí název tokenu.');
+            $limit = isset($arguments[1]) ? (int) $arguments[1] : 50;
+            $token = (new TokenRepository(database(), new Clock()))->create($name, $limit);
+            echo "Token pro {$name} (denní limit {$limit} publikací). Ukáže se jen teď:\n{$token}\n";
+            break;
+
+        case 'token:list':
+            foreach ((new TokenRepository(database(), new Clock()))->all() as $row) {
+                printf("%-24s limit %-4d vytvořen %s  naposledy %s%s\n", $row['name'],
+                    $row['daily_publish_limit'], $row['created_at'], $row['last_used_at'] ?? '—',
+                    $row['revoked_at'] !== null ? '  ODVOLÁN ' . $row['revoked_at'] : '');
+            }
+            break;
+
+        case 'token:limit':
+            $name = $arguments[0] ?? fail('Chybí název tokenu.');
+            $limit = $arguments[1] ?? fail('Chybí limit.');
+            (new TokenRepository(database(), new Clock()))->setLimit($name, (int) $limit)
+                or fail('Token ' . $name . ' neexistuje.');
+            echo "Limit tokenu {$name} je {$limit}.\n";
+            break;
+
+        case 'token:revoke':
+            $name = $arguments[0] ?? fail('Chybí název tokenu.');
+            (new TokenRepository(database(), new Clock()))->revoke($name)
+                or fail('Aktivní token ' . $name . ' neexistuje.');
+            echo "Token {$name} je odvolaný.\n";
+            break;
+
+        case 'snapshot':
+            $directory = rtrim($arguments[0] ?? fail('Chybí cílový adresář.'), '/');
+            $keepDays = max(1, (int) ($arguments[1] ?? 7));
+            if (!is_dir($directory) && !mkdir($directory, 0700, true)) {
+                fail('Adresář ' . $directory . ' nejde vytvořit.');
+            }
+            $target = $directory . '/pardubicko-' . (new Clock())->now()->format('Y-m-d-His') . '.sqlite';
+            $pdo = database();
+            $statement = $pdo->prepare('VACUUM INTO ?');
+            $statement->execute([$target]);
+            $check = new PDO('sqlite:' . $target);
+            $result = (string) $check->query('PRAGMA integrity_check')->fetchColumn();
+            if ($result !== 'ok') {
+                fail('Snímek ' . $target . ' neprošel kontrolou integrity: ' . $result);
+            }
+            chmod($target, 0600);
+            $removed = 0;
+            foreach (glob($directory . '/pardubicko-*.sqlite') ?: [] as $old) {
+                if ($old !== $target && filemtime($old) < time() - $keepDays * 86400) {
+                    unlink($old);
+                    $removed++;
+                }
+            }
+            echo "Snímek {$target} ({$result}); smazáno starých: {$removed}.\n";
+            break;
+
+        default:
+            $help = (string) file_get_contents(__FILE__);
+            preg_match('~/\*\*(.*?)\*/~s', $help, $match);
+            echo preg_replace('/^ \* ?/m', '', trim($match[1] ?? '')) . "\n";
+            exit($command === 'help' ? 0 : 1);
+    }
+} catch (DomainError $error) {
+    fail($error->getMessage() . ($error->details === [] ? '' : ' ' . json_encode($error->details, JSON_UNESCAPED_UNICODE)));
+} catch (Throwable $error) {
+    fail($error->getMessage());
+}
