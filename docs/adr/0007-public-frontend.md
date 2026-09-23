@@ -80,4 +80,6 @@ produkce.
 
 ## Stav
 
-Přijato. Rozhodnutí je účinné; produkční přepnutí zatím neproběhlo.
+Přijato. Nahrazeno ADR 0008: veřejnou plochou bude jen PHP web na Hestii a
+statický frontend se ruší. Do dokončení etapy 1 z `docs/phase-3-plan.md`
+zůstává statický web veřejnou plochou.

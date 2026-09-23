@@ -6,15 +6,16 @@ Tento dokument je vstupním bodem pro člověka i AI agenty.
 
 1. project-vision.md – cíle, architektura a filozofie projektu.
 2. adr/ – závazná architektonická rozhodnutí.
-3. phase-2-architecture.md – návrh druhé fáze: pipeline, datový model, zdraví zdrojů, inbox.
-4. phase-2-work-packages.md – rozpad druhé fáze do zadatelných balíčků s kritérii přijetí.
-5. monitoring.md – jak se měří běhy agentů.
-6. agents/ – role Planner, Discovery, Curator a Quality Agentů.
-7. config/ – geografické pokrytí a discovery policy.
-8. benchmarks/ – referenční sady pro testování Discovery.
-9. data/ – produkční ověřená data.
-10. research/ – pracovní poznámky a kandidáti.
-11. stats/ – metriky a reporty.
+3. phase-3-plan.md – plán přechodu na SQLite jako jediný zdroj pravdy a správu přes web (ADR 0008).
+4. phase-2-architecture.md – návrh druhé fáze: pipeline, datový model, zdraví zdrojů, inbox.
+5. phase-2-work-packages.md – rozpad druhé fáze do zadatelných balíčků s kritérii přijetí.
+6. monitoring.md – jak se měří běhy agentů.
+7. agents/ – role Planner, Discovery, Curator a Quality Agentů.
+8. config/ – geografické pokrytí a discovery policy.
+9. benchmarks/ – referenční sady pro testování Discovery.
+10. data/ – produkční ověřená data.
+11. research/ – pracovní poznámky a kandidáti.
+12. stats/ – metriky a reporty.
 
 ## Fáze projektu
 
@@ -43,22 +44,27 @@ splnění provozních podmínek. Statický web se nemaže; po přepnutí zůstan
 kompatibilní referenční vrstvou. Podrobnosti a regresní kontrakt stanoví
 ADR 0007.
 
+**Fáze 3 – rozhodnutá, neimplementovaná.** SQLite na serveru jako jediný
+zdroj pravdy, správa přes admin UI a agenti přes HTTP API. Stanoví ji ADR 0008,
+etapy popisuje `phase-3-plan.md`. Do dokončení etapy 1 platí režim fáze 2.
+
 ## Přehled ADR
 
 | ADR | Rozhodnutí | Stav |
 |---|---|---|
-| 0001 | Týdenní JSON soubory jako formát první fáze | Přijato; ve fázi 2 se mění na formát exportu |
-| 0002 | SQLite na backendu a PHP jako serving vrstva | Přijato |
+| 0001 | Týdenní JSON soubory jako formát první fáze | Přijato; ve fázi 2 formát exportu, ve fázi 3 se ruší |
+| 0002 | SQLite na backendu a PHP jako serving vrstva | Přijato; částečně nahrazeno ADR 0008 |
 | 0003 | Deterministické adaptéry jako primární kanál sběru | Přijato |
 | 0004 | Sledování zdraví zdrojů | Přijato |
 | 0005 | Inbox pro ručně vložené odkazy | Přijato |
 | 0006 | Zařazení akce do týdnů se odvozuje z termínu | Přijato, zavedení odloženo |
-| 0007 | PHP jako cílová veřejná plocha, statický web jako kompatibilní reference | Přijato; přepnutí čeká na produkční deploy |
+| 0007 | PHP jako cílová veřejná plocha, statický web jako kompatibilní reference | Nahrazeno ADR 0008 |
+| 0008 | SQLite jako jediný zdroj pravdy, správa přes web a API | Přijato; implementace nezačala |
 
 ## Pravidla
 
-- Repozitář je hlavním zdrojem pravdy.
+- Repozitář je hlavním zdrojem pravdy. Ve fázi 3 jím pro data a konfiguraci přestává být (ADR 0008).
 - Dokumentace má přednost před obsahem chatu.
 - Každé významné architektonické rozhodnutí má být zaznamenáno jako ADR.
 - Dokumentace nesmí odkazovat na soubory a chování, které neexistují. Návrh se od implementovaného stavu odlišuje explicitně.
-- Konfiguraci vlastní git a mění ji člověk. Provozní stav vlastní databáze a píše ho pipeline. Tyto dvě věci se nemíchají do jednoho souboru.
+- Konfiguraci vlastní git a mění ji člověk. Provozní stav vlastní databáze a píše ho pipeline. Tyto dvě věci se nemíchají do jednoho souboru. Platí do fáze 3; potom obojí vlastní databáze a mění se přes admin UI nebo API.

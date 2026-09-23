@@ -46,4 +46,4 @@ Poznámka k `last_verified_at`: je to údaj o akci, ne o kopii. Když se kopie o
 
 ## Stav
 
-Přijato. Ve fázi 2 částečně nahrazeno ADR 0002: týdenní soubory zůstávají v nezměněném formátu, ale přestávají být zdrojem pravdy a stávají se generovaným exportem. Pravidlo o kopiích dlouhodobých akcí se tím mění z datového modelu na pravidlo exportu.
+Přijato. Ve fázi 2 částečně nahrazeno ADR 0002: týdenní soubory zůstávají v nezměněném formátu, ale přestávají být zdrojem pravdy a stávají se generovaným exportem. Pravidlo o kopiích dlouhodobých akcí se tím mění z datového modelu na pravidlo exportu. ADR 0008 ruší i export; formát zůstane jen v historii gitu.

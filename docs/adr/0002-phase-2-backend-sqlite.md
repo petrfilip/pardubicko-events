@@ -85,4 +85,7 @@ ADR 0001 zůstává platný jako popis fáze 1 a jako **formát exportu**. Týde
 
 ## Stav
 
-Přijato.
+Přijato. Částečně nahrazeno ADR 0008: SQLite a PHP zůstávají, ale do databáze
+zapisuje jen PHP aplikace, databáze je jediným zdrojem pravdy včetně
+konfigurace a JSON export se ruší. Do dokončení etapy 1 z
+`docs/phase-3-plan.md` platí toto ADR beze změny.

@@ -2,6 +2,10 @@
 
 Tento dokument je hlavní přehled záměru, architektury a provozních pravidel projektu `petrfilip/pardubicko-events`. Slouží jako podklad pro další AI agenty, lidské revizory a budoucí správce projektu.
 
+> **Fáze 3 (ADR 0008):** jediným zdrojem pravdy bude SQLite na serveru, správa
+> přes admin UI a agenti přes HTTP API. Kapitoly 3, 9 a 10 popisují stav
+> před fází 3 a platí do dokončení etapy 1 z `docs/phase-3-plan.md`.
+
 ## 1. Účel projektu
 
 Cílem je vytvořit otevřenou, průběžně aktualizovanou a auditovatelnou databázi veřejných akcí pro celý Pardubický a Královéhradecký kraj.
@@ -305,17 +309,19 @@ produkční deploy nebyl doložen na cílovém hostu. Rozsah a zdůvodnění pop
 ADR 0002 až 0007, `docs/phase-2-architecture.md` a
 `docs/phase-2-work-packages.md`.
 
-Trvale, tedy ani ve fázi 2, projekt neobsahuje:
+Fáze 3 podle ADR 0008 přidává administrační rozhraní s přihlášením jednoho
+správce a HTTP API pro agenty s vlastními tokeny.
+
+Trvale projekt neobsahuje:
 
 - Next.js — zamítnuto v ADR 0002 pro současný rozsah,
-- přihlašování a uživatelské účty,
-- administrační rozhraní,
+- uživatelské účty pro návštěvníky,
 - veřejný neověřený příjem tipů od návštěvníků,
 - přihlášený nebo neveřejný Facebook scraper,
 - automatické publikování neověřených kandidátů,
 - AI doporučení uložená ve finálních datech.
 
-Ruční vložení odkazu mimo git je řešeno inboxem podle ADR 0005. Není to administrační rozhraní a neobchází ověření Curatorem.
+Ruční vložení odkazu mimo git je řešeno inboxem podle ADR 0005. Neobchází ověření Curatorem.
 
 ## 14. Otevřené otázky k nezávislé revizi
 
