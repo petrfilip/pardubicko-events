@@ -66,7 +66,9 @@ def main() -> int:
 
         with tempfile.TemporaryFile() as server_log:
             server = subprocess.Popen(
-                [php, "-S", f"127.0.0.1:{port}", "-t", "web/public",
+                # open_basedir jako na Hestii: kód, databáze a /tmp, nic víc.
+                [php, "-d", f"open_basedir={REPO_ROOT / 'web'}:{database.parent}:/tmp",
+                 "-S", f"127.0.0.1:{port}", "-t", "web/public",
                  "web/public/router.php"],
                 cwd=REPO_ROOT,
                 env=environment,
