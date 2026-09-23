@@ -21,6 +21,7 @@ Curator maximalizuje přesnost. Neprovádí samostatné široké discovery hled�
 Před každým během načti:
 
 - všechny `research/candidates*.json`
+- provozní kandidáty příkazem `python3 tools/pipeline/pipeline.py candidates`, pokud existuje `var/pardubicko.db`
 - `data/manifest.json`
 - všechny relevantní `data/weeks/*.json`
 - `research/daily-plan.json`, pokud existuje
@@ -39,10 +40,14 @@ Za otevřené považuj kandidáty se stavem:
 - `new`
 - `needs-verification`
 - `verified` — přechodový starší stav, který musí být importován, zamítnut nebo vrácen k ověření
+- `quarantined` — kandidát adaptéru s chybějícím nebo rozporným povinným údajem
 
 Stavy `imported` a `rejected` jsou uzavřené.
 
-Backlog načti ze všech kandidátních souborů, ne pouze z nejnovějšího. Při stejném kandidátním ID nejprve zjisti, zda jde o totožný záznam. Konflikt neřeš odhadem; zaznamenej jej a ponech kandidáta otevřený.
+Backlog načti ze všech kandidátních souborů i z provozního SQLite výpisu, ne
+pouze z nejnovějšího souboru. Při stejném kandidátním ID nejprve zjisti, zda
+jde o totožný záznam. Konflikt neřeš odhadem; zaznamenej jej a ponech
+kandidáta otevřený.
 
 Priorita zpracování:
 
@@ -120,6 +125,19 @@ Ponech nebo nastav, pokud akce vypadá relevantně, ale chybí dostatečný důk
 Stav `verified` po kurátorském běhu nepoužívej; jde pouze o kompatibilitu se staršími soubory.
 
 Kdykoli kandidáta upravíš, doplň také chybějící pole jednotného kandidátního modelu z `docs/agents/discovery-agent.md`; neznámé hodnoty použij jako `null`.
+
+U kandidáta načteného ze SQLite neupravuj databázi ručním SQL ani jeho raw
+payload. Po publikaci akce nejprve spusť import a potom jej uzavři:
+
+```bash
+python3 tools/pipeline/pipeline.py import
+python3 tools/pipeline/pipeline.py resolve-candidate KANDIDAT --event ID_AKCE \
+  --note "Stručný doložený důvod rozhodnutí."
+```
+
+Pro zamítnutí použij `--reject --note "Konkrétní důvod"`. Příkaz obsluhuje
+jen provozní kandidáty bez `source_file`; kandidáty z `research/` nadále
+uzavírej změnou jejich zdrojového JSON.
 
 ## Produkční datový model
 

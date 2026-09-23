@@ -1,7 +1,8 @@
 """Přístup k provozní databázi fáze 2.
 
-Databáze je odvozený artefakt. Smí být kdykoli smazána a znovu postavena
-importem z repozitáře; nic, co v ní vznikne, nesmí být nenahraditelné.
+Publikovaná data v databázi jsou odvozený artefakt a lze je znovu postavit
+importem z repozitáře. Provozní historie sběru a kandidáti z adaptérů se při
+importu zachovávají, dokud je Curator výslovně neuzavře.
 
 Pisatelem je vždy jen jeden proces (pipeline). WAL a `busy_timeout` jsou
 nastavené proto, aby čtenáři — například webová vrstva podle ADR 0002 —
@@ -101,21 +102,26 @@ def reset(connection: sqlite3.Connection) -> None:
     """Vyprázdní obsahové tabulky, schéma ponechá.
 
     Používá import, aby byl opakovatelný. Provozní stav sběru
-    (`source_fetch`, `source_extract`, `source_health`) a `inbox`
-    se nemažou — ty v repozitáři svůj protějšek nemají a import
-    by je zahodil bez náhrady.
+    (`source_fetch`, `source_extract`, `source_health`), `inbox` a kandidáti
+    bez `source_file` se nemažou — v repozitáři svůj protějšek nemají.
+    Kandidáti z `research/` se naopak znovu načtou ze zdrojových JSON.
     """
     tables = (
-        "event_fts", "event_week", "event_category", "event_source", "match_review",
-        "event", "week", "candidate", "facebook_page", "source",
+        "event_fts", "event_week", "event_category", "event_source",
+        "event", "week", "facebook_page", "source",
         "municipality_alias", "municipality", "category_alias", "category",
         "repo_meta",
     )
     connection.execute("PRAGMA foreign_keys = OFF")
+    connection.execute(
+        "DELETE FROM match_review WHERE candidate_id IN "
+        "(SELECT id FROM candidate WHERE source_file IS NOT NULL)"
+    )
+    connection.execute("DELETE FROM candidate WHERE source_file IS NOT NULL")
     for table in tables:
         connection.execute(f"DELETE FROM {table}")
-    connection.execute("PRAGMA foreign_keys = ON")
     connection.commit()
+    connection.execute("PRAGMA foreign_keys = ON")
 
 
 def set_meta(connection: sqlite3.Connection, key: str, value: str | None) -> None:

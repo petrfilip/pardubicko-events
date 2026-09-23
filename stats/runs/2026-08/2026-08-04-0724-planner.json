@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "agent": "planner",
+  "run_id": "2026-08-04-0724-planner",
+  "started_at": "2026-08-04T07:24:16+02:00",
+  "finished_at": "2026-08-04T07:24:40+02:00",
+  "duration_seconds": 24,
+  "status": "success",
+  "partial_reason": null,
+  "commit_sha": null,
+  "metrics": {
+    "municipalities_planned": 12,
+    "sources_planned": 12,
+    "districts_planned": 9,
+    "regions_planned": 2,
+    "query_budget": 46,
+    "candidate_limit": 48,
+    "backlog_before": 83,
+    "backlog_pressure": "high"
+  },
+  "coverage": {
+    "regions": ["pardubicky-kraj", "kralovehradecky-kraj"],
+    "districts": ["Chrudim", "Hradec Králové", "Jičín", "Náchod", "Pardubice", "Rychnov nad Kněžnou", "Svitavy", "Trutnov", "Ústí nad Orlicí"],
+    "municipalities": ["Chrudim", "Hlinsko", "Hradec Králové", "Jičín", "Litomyšl", "Náchod", "Pardubice", "Přelouč", "Rychnov nad Kněžnou", "Svitavy", "Trutnov", "Ústí nad Orlicí"]
+  },
+  "errors": [],
+  "notes": [
+    "Plán byl omezen kvůli vysokému kurátorskému backlogu.",
+    "Historie kontrol obcí není v coverage reportu dostupná; rotační priority jsou neutrální."
+  ]
+}

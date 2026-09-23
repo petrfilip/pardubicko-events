@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "agent": "curator",
+  "run_id": "2026-08-04-0836-curator",
+  "started_at": "2026-08-04T08:29:18+02:00",
+  "finished_at": "2026-08-04T08:39:21+02:00",
+  "duration_seconds": 603,
+  "status": "partial",
+  "partial_reason": "Zbývající backlog přesahuje bezpečný rozsah jedné kurátorské dávky; další kandidáti nebyli v tomto běhu rozhodováni.",
+  "commit_sha": null,
+  "metrics": {
+    "candidates_reviewed": 11,
+    "events_added": 18,
+    "events_updated": 0,
+    "events_cancelled": 0,
+    "candidates_rejected": 0,
+    "duplicates_removed": 0,
+    "deferred_candidates": 0,
+    "backlog_after": 234
+  },
+  "coverage": {
+    "regions": ["pardubicky-kraj"],
+    "districts": ["Pardubice"],
+    "municipalities": ["Pardubice", "Spojil"]
+  },
+  "errors": [],
+  "notes": [
+    "Na konkrétních detailech Pardubice.eu bylo ověřeno jedenáct nejbližších provozních kandidátů na 6. a 7. srpna 2026.",
+    "Publikováno bylo deset samostatných akcí a osm samostatných termínů série Západy slunce na Zelené bráně do týdnů 2026-W32 až 2026-W35.",
+    "Backlog_after se skládá ze 156 provozních SQLite kandidátů a 78 unikátních otevřených kandidátů v research/candidates*.json.",
+    "Úplná sada prošla 16 z 16 testovacích sad bez chyb a varování; round-trip ověřil sedm souborů.",
+    "Statický web byl lokálně načten na http://127.0.0.1:8080; nové akce i aktualizace 4. 8. 2026 8:31 byly zobrazeny v týdenním kalendáři."
+  ]
+}

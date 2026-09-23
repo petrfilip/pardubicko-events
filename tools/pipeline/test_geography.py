@@ -26,8 +26,8 @@ assert row and row["municipality_id"] == 571164
 report = coverage.build_report(connection, generated_at="2026-08-03T00:00:00+00:00")
 assert report["municipalities_in_catalog"] == 899
 assert report["aliases_in_catalog"] == 1
-assert report["events"]["total"] == 77
-assert report["events"]["linked_to_municipality"] == 76
+assert report["events"]["total"] == stats["events"]
+assert report["events"]["linked_to_municipality"] == stats["events"] - 1
 assert report["parts_of_municipalities"][0]["alias"] == "Janderov"
 assert report["unresolved_values"] == [
     {"municipality_name": "Hrádek u Nechanic", "events": 1},

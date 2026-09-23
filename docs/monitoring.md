@@ -110,7 +110,12 @@ Nulová výtěžnost sama o sobě chyba není. Malí venkovští pořadatelé Fa
 - `deferred_candidates`
 - `backlog_after`
 
-`backlog_after` je počet unikátních kandidátů napříč všemi `research/candidates*.json`, jejichž stav je po běhu `new`, `needs-verification` nebo přechodový starší stav `verified`. Stavy `imported` a `rejected` jsou uzavřené.
+`backlog_after` je počet unikátních kandidátů napříč všemi
+`research/candidates*.json` a provozním SQLite výpisem `pipeline.py
+candidates`, jejichž stav je po běhu `new`, `needs-verification`,
+`quarantined` nebo přechodový starší stav `verified`. Stavy `imported` a
+`rejected` jsou uzavřené. Report v `notes` uvádí rozpad na souborový a
+provozní backlog, aby šel výsledek auditovat.
 
 ## Pipeline metriky
 

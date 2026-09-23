@@ -73,4 +73,22 @@ check("Pardubice: kumulativní plán končí šestou stránkou",
           "id": "pardubice-calendar", "url": "https://pardubice.eu/kalendar-akci"})[0].url,
       "https://pardubice.eu/kalendar-akci?page=6")
 
+detail = pardubice_calendar.extract_detail(Snapshot.from_path(
+    HERE / "fixtures" / "pardubice-calendar-detail.html",
+    url="https://pardubice.eu/zapady-slunce-na-zelene-brane-42875"))
+check("Pardubice detail: rozbalí všechny úplné termíny", len(detail.items), 2)
+check("Pardubice detail: začátek prvního termínu",
+      detail.items[0].start_at, "2026-08-07T19:00:00+02:00")
+check("Pardubice detail: konec prvního termínu",
+      detail.items[0].end_at, "2026-08-07T22:00:00+02:00")
+check("Pardubice detail: zachová doslovné vstupné",
+      detail.items[0].price_text, "dle běžně dostupného ceníku")
+check("Pardubice detail: zachová mapovou adresu",
+      detail.items[0].extra["map_address"],
+      "Zelená brána, Zelenobranská 68, Pardubice")
+check("Pardubice detail: odkaz zbaví stránkování",
+      pardubice_calendar.canonical_detail_url(
+          "https://pardubice.eu/akce-1?page=6&utm=x"),
+      "https://pardubice.eu/akce-1?utm=x")
+
 print("\nVšechny golden testy adaptérů prošly.")

@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import db  # noqa: E402
 import import_repo  # noqa: E402
+import pipeline as pipeline_cli  # noqa: E402
 
 failures: list[str] = []
 
@@ -93,10 +94,152 @@ check(
     True,
 )
 
+# Provozní kandidát nemá `source_file`: vznikl během běhu adaptéru a import
+# repozitáře jej ani jeho čekající deduplikační rozhodnutí nesmí zahodit.
+test_event_id = connection.execute(
+    "SELECT id FROM event ORDER BY id LIMIT 1").fetchone()[0]
+connection.execute(
+    "INSERT INTO candidate (id, source_id, discovery_method, payload, state, created_at) "
+    "VALUES ('adapter-import-survivor', 'pardubice-calendar', 'adapter', ?, "
+    "'new', '2026-08-04T08:00:00+02:00')",
+    (json.dumps({"normalized": {"title": "Testovací kandidát"}}),),
+)
+connection.execute(
+    "INSERT INTO match_review "
+    "(candidate_id, event_id, score, breakdown, created_at) "
+    "VALUES ('adapter-import-survivor', ?, 0.75, '{}', "
+    "'2026-08-04T08:00:00+02:00')",
+    (test_event_id,),
+)
+connection.commit()
+
 # Import je idempotentní i po naplnění nových referenčních tabulek.
 stats_again = import_repo.import_all(connection)
 check("opakovaný import zachová počet obcí", stats_again["municipalities"], 899)
 check("opakovaný import zachová počet kategorií", stats_again["categories"], 18)
+check(
+    "opakovaný import zachová provozního kandidáta",
+    connection.execute(
+        "SELECT state FROM candidate WHERE id = 'adapter-import-survivor'"
+    ).fetchone()[0],
+    "new",
+)
+check(
+    "opakovaný import zachová jeho rozhodovací frontu",
+    connection.execute(
+        "SELECT state FROM match_review "
+        "WHERE candidate_id = 'adapter-import-survivor'"
+    ).fetchone()[0],
+    "pending",
+)
+check(
+    "kurátorský výpis obsahuje provozní backlog",
+    [item["id"] for item in pipeline_cli.operational_candidates(
+        connection, states=["new"], limit=1000)],
+    ["adapter-import-survivor"],
+)
+connection.execute(
+    "INSERT INTO candidate (id, source_id, discovery_method, payload, state, created_at) "
+    "VALUES ('adapter-week-33', 'pardubice-calendar', 'adapter', ?, "
+    "'new', '2026-08-04T08:01:00+02:00')",
+    (json.dumps({"normalized": {
+        "title": "Týdenní kandidát",
+        "start_at": "2026-08-12T18:00:00+02:00",
+        "end_at": "2026-08-12T20:00:00+02:00",
+    }}),),
+)
+connection.commit()
+check(
+    "limit výpisu nemění celkový počet backlogu",
+    (
+        len(pipeline_cli.operational_candidates(
+            connection, states=["new"], limit=1)),
+        pipeline_cli.count_operational_candidates(
+            connection, states=["new"]),
+    ),
+    (1, 2),
+)
+check(
+    "kurátorský výpis lze omezit na ISO týden",
+    [item["id"] for item in pipeline_cli.operational_candidates(
+        connection, states=["new"], week_id="2026-W33", limit=100)],
+    ["adapter-week-33"],
+)
+check(
+    "research kandidát s českým termínem se přiřadí k týdnu",
+    pipeline_cli._research_week_match(
+        {"date_text": "Sobota 15. 8. 2026 v 18:00–19:30"}, "2026-W33"),
+    True,
+)
+check(
+    "research kandidát bez termínu zůstane přiznaně nezařazený",
+    pipeline_cli._research_week_match({"date_text": None}, "2026-W33"),
+    None,
+)
+
+publication = {
+    "candidate_id": "adapter-week-33",
+    "events": [{
+        "id": "bezpecny-publish-regresni-test-2026-08-12",
+        "week": "2026-W33",
+        "title": "Bezpečný publish – regresní test",
+        "description": "Pouze in-memory návrh pro regresní test.",
+        "start_at": "2026-08-12T18:00:00+02:00",
+        "end_at": "2026-08-12T19:00:00+02:00",
+        "all_day": False,
+        "venue": "Testovací místo",
+        "municipality": "Pardubice",
+        "categories": ["zabava"],
+        "price": {"type": "unknown", "text": "Neuvedeno"},
+        "source": {"type": "official", "url": "https://example.test/event"},
+        "cancelled": False,
+    }],
+}
+_manifest, prepared_weeks, changed_weeks = pipeline_cli._prepare_publication(
+    db.REPO_ROOT, publication)
+check("publish preview určí změněný týden", changed_weeks, ["2026-W33"])
+check(
+    "publish preview připraví akci bez zápisu do repozitáře",
+    prepared_weeks["2026-W33"]["events"][-1]["id"],
+    "bezpecny-publish-regresni-test-2026-08-12",
+)
+check(
+    "publish preview skutečný týden nezmění",
+    any(event["id"] == "bezpecny-publish-regresni-test-2026-08-12"
+        for event in json.loads(
+            (db.REPO_ROOT / "data/weeks/2026-W33.json").read_text(encoding="utf-8")
+        )["events"]),
+    False,
+)
+
+pipeline_cli.resolve_operational_candidate(
+    connection, "adapter-import-survivor", event_id=test_event_id,
+    note="Ověřeno regresním testem.")
+check(
+    "Curator propojí kandidáta s produkční akcí",
+    tuple(connection.execute(
+        "SELECT state, event_id FROM candidate "
+        "WHERE id = 'adapter-import-survivor'"
+    ).fetchone()),
+    ("imported", test_event_id),
+)
+check(
+    "kurátorské rozhodnutí uzavře match review",
+    connection.execute(
+        "SELECT state FROM match_review "
+        "WHERE candidate_id = 'adapter-import-survivor'"
+    ).fetchone()[0],
+    "merged",
+)
+import_repo.import_all(connection)
+check(
+    "další import zachová uzavřený provozní stav",
+    tuple(connection.execute(
+        "SELECT state, event_id FROM candidate "
+        "WHERE id = 'adapter-import-survivor'"
+    ).fetchone()),
+    ("imported", test_event_id),
+)
 
 # Nedestruktivní migrace existující databáze. V produkčním souboru
 # jsou health/inbox data, proto se databáze kvůli novým sloupcům nezakládá znovu.

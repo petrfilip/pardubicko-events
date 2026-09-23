@@ -497,6 +497,18 @@ def _report_id_mismatch(files):
 expect_error("run_id neodpovídá názvu", _report_id_mismatch, "neodpovídá názvu souboru")
 
 
+def _report_with_seconds(files):
+    report = files.pop("stats/runs/2026-07/2026-07-28-1200-quality.json")
+    report["run_id"] = "2026-07-28-120015-quality"
+    files["stats/runs/2026-07/2026-07-28-120015-quality.json"] = report
+
+
+seconds_report = run(_report_with_seconds)
+check("druhý report ve stejné minutě smí použít sekundy",
+      not errors(seconds_report),
+      str([str(item) for item in errors(seconds_report)]))
+
+
 def _report_wrong_month(files):
     report = files.pop("stats/runs/2026-07/2026-07-28-1200-quality.json")
     files["stats/runs/2026-08/2026-07-28-1200-quality.json"] = report

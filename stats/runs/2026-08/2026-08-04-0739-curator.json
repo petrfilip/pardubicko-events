@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "agent": "curator",
+  "run_id": "2026-08-04-0739-curator",
+  "started_at": "2026-08-04T07:39:04+02:00",
+  "finished_at": "2026-08-04T07:39:04+02:00",
+  "duration_seconds": null,
+  "status": "partial",
+  "partial_reason": "Pipeline vytvořila více kandidátů, než dovoluje bezpečně ověřit omezený kurátorský běh.",
+  "commit_sha": null,
+  "metrics": {
+    "candidates_reviewed": 6,
+    "events_added": 6,
+    "events_updated": 0,
+    "events_cancelled": 0,
+    "candidates_rejected": 0,
+    "duplicates_removed": 0,
+    "deferred_candidates": 176,
+    "backlog_after": 82
+  },
+  "coverage": {
+    "regions": ["pardubicky-kraj"],
+    "districts": ["Pardubice"],
+    "municipalities": ["Pardubice"]
+  },
+  "errors": [],
+  "notes": [
+    "Šest nejbližších kandidátů bylo ověřeno na konkrétních detailech oficiálního kalendáře Pardubice.eu.",
+    "Backlog_after podle společné definice počítá pouze otevřené kandidáty v research/candidates*.json; nové adapter kandidáty zůstávají v provozní SQLite databázi.",
+    "Přesnou dobu kurátorského ověřování nebylo možné změřit, proto je duration_seconds null."
+  ]
+}

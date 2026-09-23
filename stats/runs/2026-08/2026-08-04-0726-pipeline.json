@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "agent": "pipeline",
+  "run_id": "2026-08-04-0726-pipeline",
+  "started_at": "2026-08-04T07:26:27+02:00",
+  "finished_at": "2026-08-04T07:26:27+02:00",
+  "duration_seconds": 0.007192,
+  "status": "no-change",
+  "partial_reason": null,
+  "commit_sha": null,
+  "metrics": {
+    "sources_selected": 36,
+    "sources_checked": 0,
+    "sources_succeeded": 0,
+    "sources_failed": 0,
+    "sources_skipped": 36,
+    "offline": false,
+    "dry_run": false,
+    "items_found": 0,
+    "items_valid": 0,
+    "items_unparsed": 0,
+    "candidates_created": 0,
+    "candidates_existing": 0,
+    "candidates_updated": 0,
+    "candidates_quarantined": 0,
+    "matched_existing": 0,
+    "match_review_queued": 0
+  },
+  "coverage": {
+    "regions": [],
+    "districts": [],
+    "municipalities": [],
+    "sources": []
+  },
+  "errors": [],
+  "notes": [
+    "Runner nevytváří nové event ani export; automaticky smí pouze připojit zdroj k již publikované jisté shodě.",
+    "Přeskočené zdroje bez podporovaného adaptéru: automaticke-mlyny, bio-central, chrudim-city, chrudimska-beseda, divadlo-29, divadlo-drak, divadlo-karla-pippicha, dvur-kralove-city, facebook-public-events, fhk, galerie-modernihoumeni-hk, hk-city, hlinsko-city, jicin-city, klicperovo-divadlo, kudyznudy-kralovehradecky, kudyznudy-pardubicky, kultura-hradec-regional, letos-rychtarem, litomysl-city, mfc-hlinsko, muzeum-vychodnich-cech, nachod-city, rychnov-city, slatinany-city, smetanova-litomysl, tic-hlinsko, trutnov-city, ufc-janderov, usti-nad-orlici-city, vesely-kopec, vysoke-myto-city, zamek-litomysl, zamek-nachod, zamek-pardubice, zamek-slatinany."
+  ]
+}

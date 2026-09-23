@@ -23,7 +23,8 @@ TZ = ZoneInfo("Europe/Prague")
 ERROR = "error"
 WARNING = "warning"
 
-REPORT_NAME_RE = re.compile(r"^(\d{4})-(\d{2})-(\d{2})-(\d{4})-([a-z]+)$")
+REPORT_NAME_RE = re.compile(
+    r"^(\d{4})-(\d{2})-(\d{2})-(\d{4}|\d{6}|\d{12})-([a-z]+)$")
 
 # Pole, která podle ADR 0001 musí být shodná u všech kopií jedné akce.
 IDENTITY_FIELDS = ("title", "start_at", "end_at", "venue", "municipality")
@@ -669,7 +670,7 @@ def check_run_reports(repo: Repo) -> list[Finding]:
         if not match:
             findings.append(Finding(
                 ERROR, relative, "",
-                "Název neodpovídá tvaru YYYY-MM-DD-HHMM-<agent>.json.",
+                "Název neodpovídá tvaru YYYY-MM-DD-HHMM[SS[ffffff]]-<agent>.json.",
             ))
             continue
 

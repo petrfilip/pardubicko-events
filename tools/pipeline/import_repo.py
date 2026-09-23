@@ -349,12 +349,26 @@ def import_candidates(connection, root: Path) -> int:
     for path in sorted((root / "research").glob("candidates*.json")):
         data = _load(path)
         for candidate in data.get("candidates") or []:
+            existing = connection.execute(
+                "SELECT source_file FROM candidate WHERE id = ?",
+                (candidate["id"],),
+            ).fetchone()
+            if existing is not None and existing["source_file"] is None:
+                raise ImportError_(
+                    f"Kandidát {candidate['id']!r} z {path.name} koliduje s "
+                    "provozním kandidátem v SQLite.")
             production_id = candidate.get("production_event_id")
             connection.execute(
-                "INSERT OR REPLACE INTO candidate ("
+                "INSERT INTO candidate ("
                 "  id, source_file, discovery_method, payload, state, event_id,"
                 "  created_at, reviewed_at, notes"
-                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) "
+                "ON CONFLICT(id) DO UPDATE SET "
+                "source_file = excluded.source_file, source_id = NULL, inbox_id = NULL, "
+                "discovery_method = excluded.discovery_method, payload = excluded.payload, "
+                "state = excluded.state, event_id = excluded.event_id, "
+                "created_at = excluded.created_at, reviewed_at = excluded.reviewed_at, "
+                "notes = excluded.notes",
                 (
                     candidate["id"], path.name, candidate["discovery_method"],
                     json.dumps(candidate, ensure_ascii=False),
@@ -366,6 +380,36 @@ def import_candidates(connection, root: Path) -> int:
             )
             count += 1
     return count
+
+
+def reconcile_operational_candidates(connection) -> None:
+    """Opraví jen vazby provozních kandidátů po obnovení repo dat.
+
+    Během resetu se jejich odkazované zdroje a akce krátce smažou a následně
+    znovu vloží. Pokud už v repozitáři skutečně nejsou, nesmí po importu
+    zůstat porušený cizí klíč ani falešně uzavřený kandidát.
+    """
+    connection.execute(
+        "DELETE FROM match_review "
+        "WHERE NOT EXISTS (SELECT 1 FROM candidate WHERE candidate.id = candidate_id) "
+        "OR NOT EXISTS (SELECT 1 FROM event WHERE event.id = event_id)"
+    )
+    connection.execute(
+        "UPDATE candidate SET source_id = NULL "
+        "WHERE source_file IS NULL AND source_id IS NOT NULL "
+        "AND NOT EXISTS (SELECT 1 FROM source WHERE source.id = candidate.source_id)"
+    )
+    connection.execute(
+        "UPDATE candidate SET event_id = NULL, "
+        "state = CASE WHEN state = 'imported' THEN 'needs-verification' ELSE state END, "
+        "notes = CASE "
+        "  WHEN notes IS NULL OR notes = '' THEN "
+        "    'Import: dříve propojená produkční akce už v repozitáři není.' "
+        "  ELSE notes || ' Import: dříve propojená produkční akce už v repozitáři není.' "
+        "END "
+        "WHERE source_file IS NULL AND event_id IS NOT NULL "
+        "AND NOT EXISTS (SELECT 1 FROM event WHERE event.id = candidate.event_id)"
+    )
 
 
 def import_all(connection, root: Path | None = None) -> dict[str, int]:
@@ -391,5 +435,6 @@ def import_all(connection, root: Path | None = None) -> dict[str, int]:
         "event_rows": event_rows,
         "candidates": import_candidates(connection, root),
     }
+    reconcile_operational_candidates(connection)
     connection.commit()
     return stats

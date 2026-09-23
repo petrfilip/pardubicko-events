@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "agent": "facebook",
+  "run_id": "2026-08-04-0732-facebook",
+  "started_at": "2026-08-04T07:32:57+02:00",
+  "finished_at": "2026-08-04T07:35:36+02:00",
+  "duration_seconds": 160,
+  "status": "no-change",
+  "partial_reason": null,
+  "commit_sha": "b2c97e57153899452f2cc76b8b73334dd00b714f",
+  "metrics": {
+    "facebook_pages_checked": 9,
+    "facebook_events_extracted": 64,
+    "facebook_details_fetched": 0,
+    "facebook_blocked": 0,
+    "facebook_duplicates": 64,
+    "facebook_suggested_events_seen": 0,
+    "facebook_blocks_unparsed": 0,
+    "facebook_details_failed": 0
+  },
+  "coverage": {
+    "regions": [
+      "kralovehradecky-kraj",
+      "pardubicky-kraj"
+    ],
+    "districts": [
+      "Chrudim",
+      "Hradec Králové",
+      "Náchod",
+      "Pardubice",
+      "Svitavy",
+      "Trutnov"
+    ],
+    "municipalities": [
+      "Chrudim",
+      "Hradec Králové",
+      "Litomyšl",
+      "Náchod",
+      "Pardubice",
+      "Trutnov"
+    ]
+  },
+  "errors": [],
+  "notes": [
+    "Všechny nalezené akce už byly v repozitáři známé."
+  ],
+  "suggested_event_ids": []
+}

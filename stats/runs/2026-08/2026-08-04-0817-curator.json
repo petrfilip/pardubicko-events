@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "agent": "curator",
+  "run_id": "2026-08-04-0817-curator",
+  "started_at": "2026-08-04T08:07:14+02:00",
+  "finished_at": "2026-08-04T08:17:47+02:00",
+  "duration_seconds": 633,
+  "status": "partial",
+  "partial_reason": "Jeden nejbližší facebookový kandidát zůstal bez konkrétního primárního detailu a zbývající backlog přesahuje bezpečný rozsah jednoho kurátorského běhu.",
+  "commit_sha": null,
+  "metrics": {
+    "candidates_reviewed": 15,
+    "events_added": 15,
+    "events_updated": 0,
+    "events_cancelled": 0,
+    "candidates_rejected": 0,
+    "duplicates_removed": 5,
+    "deferred_candidates": 1,
+    "backlog_after": 245
+  },
+  "coverage": {
+    "regions": ["pardubicky-kraj"],
+    "districts": ["Pardubice"],
+    "municipalities": ["Pardubice"]
+  },
+  "errors": [
+    "Kandidát fb-28018480151079845: konkrétní primární detail s termínem se nepodařilo dohledat; DuckDuckGo vyžádal CAPTCHA, která nebyla obcházena. Kandidát zůstal needs-verification."
+  ],
+  "notes": [
+    "Na konkrétních detailech Pardubice.eu, Východočeského muzea a veřejném Facebook Eventu bylo ověřeno devět programových položek a dvě opakované série.",
+    "Patnáct nových termínů bylo publikováno do týdnů 2026-W32 až 2026-W35.",
+    "Opravena chybná historická vazba kandidáta fb-28018480151079845 na Den s Městskou policií; správný kandidát fb-1287966610075408 byl uzavřen jako duplicita této produkční akce.",
+    "Backlog_after se skládá ze 167 provozních SQLite kandidátů a 78 unikátních otevřených kandidátů v research/candidates*.json.",
+    "Statický web byl lokálně načten na http://localhost:8080; nové akce i aktualizace 4. 8. 2026 8:11 byly zobrazeny v týdenním kalendáři."
+  ]
+}

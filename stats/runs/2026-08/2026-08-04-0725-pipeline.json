@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "agent": "pipeline",
+  "run_id": "2026-08-04-0725-pipeline",
+  "started_at": "2026-08-04T07:25:53+02:00",
+  "finished_at": "2026-08-04T07:26:00+02:00",
+  "duration_seconds": 7.056317,
+  "status": "failed",
+  "partial_reason": null,
+  "commit_sha": null,
+  "metrics": {
+    "sources_selected": 39,
+    "sources_checked": 3,
+    "sources_succeeded": 0,
+    "sources_failed": 3,
+    "sources_skipped": 36,
+    "offline": false,
+    "dry_run": false,
+    "items_found": 0,
+    "items_valid": 0,
+    "items_unparsed": 0,
+    "candidates_created": 0,
+    "candidates_existing": 0,
+    "candidates_updated": 0,
+    "candidates_quarantined": 0,
+    "matched_existing": 0,
+    "match_review_queued": 0
+  },
+  "coverage": {
+    "regions": [
+      "kralovehradecky-kraj",
+      "pardubicky-kraj"
+    ],
+    "districts": [
+      "Hradec Králové",
+      "Pardubice",
+      "Trutnov"
+    ],
+    "municipalities": [
+      "Hradec Králové",
+      "Pardubice",
+      "Trutnov"
+    ],
+    "sources": [
+      "kultura-hk-official",
+      "pardubice-calendar",
+      "uffo-trutnov"
+    ]
+  },
+  "errors": [
+    {
+      "source_id": "kultura-hk-official",
+      "message": "SourceRunError: URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known>; URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known>; URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known>"
+    },
+    {
+      "source_id": "pardubice-calendar",
+      "message": "SourceRunError: URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known>"
+    },
+    {
+      "source_id": "uffo-trutnov",
+      "message": "SourceRunError: URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known>"
+    }
+  ],
+  "notes": [
+    "Runner nevytváří nové event ani export; automaticky smí pouze připojit zdroj k již publikované jisté shodě.",
+    "Přeskočené zdroje bez podporovaného adaptéru: automaticke-mlyny, bio-central, chrudim-city, chrudimska-beseda, divadlo-29, divadlo-drak, divadlo-karla-pippicha, dvur-kralove-city, facebook-public-events, fhk, galerie-modernihoumeni-hk, hk-city, hlinsko-city, jicin-city, klicperovo-divadlo, kudyznudy-kralovehradecky, kudyznudy-pardubicky, kultura-hradec-regional, letos-rychtarem, litomysl-city, mfc-hlinsko, muzeum-vychodnich-cech, nachod-city, rychnov-city, slatinany-city, smetanova-litomysl, tic-hlinsko, trutnov-city, ufc-janderov, usti-nad-orlici-city, vesely-kopec, vysoke-myto-city, zamek-litomysl, zamek-nachod, zamek-pardubice, zamek-slatinany."
+  ]
+}

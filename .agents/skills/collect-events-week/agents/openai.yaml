@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sběr akcí pro ISO týden"
+  short_description: "Kompletní projektový sběr a kurace akcí pro zadaný týden."
+  default_prompt: "Použij $collect-events-week a zpracuj kompletní sběr akcí pro týden 33."

@@ -5,9 +5,11 @@ návrh `docs/phase-2-architecture.md`.
 
 ## Zásada, kterou nelze obejít
 
-Databáze je **odvozený artefakt**, ne zdroj pravdy. Smí být kdykoli smazána
-a znovu postavena importem z repozitáře. Zdrojem pravdy zůstává git:
-konfiguraci vlastní člověk, publikovaná data existují jako export v `data/`.
+Databáze není zdroj pravdy pro konfiguraci ani publikované akce; ty zůstávají
+v gitu a import je vždy znovu sestaví. SQLite ale obsahuje také provozní stav,
+který v repozitáři protějšek nemá: historii fetchů, inbox a kandidáty adaptérů.
+Příkaz `import` tuto část zachovává. Smazání databáze proto znamená vědomé
+zahození rozpracované fronty a vyžaduje nový sběr.
 
 Soubor databáze do gitu nepatří (`var/` je v `.gitignore`).
 
@@ -18,9 +20,72 @@ python3 tools/pipeline/pipeline.py import      # repozitář -> databáze
 python3 tools/pipeline/pipeline.py export      # databáze -> repozitář
 python3 tools/pipeline/pipeline.py roundtrip   # ověření bezeztrátovosti
 python3 tools/pipeline/pipeline.py stats       # obsah databáze
+python3 tools/pipeline/pipeline.py candidates  # otevřený provozní backlog
+python3 tools/pipeline/pipeline.py backlog-summary # přesný souhrn obou backlogů
 ```
 
 Nevyžaduje žádnou závislost mimo standardní knihovnu.
+
+## Předání kandidátů Curatorovi
+
+Kandidáti z `research/candidates*.json` zůstávají editovatelní přímo ve svém
+zdrojovém souboru. Kandidáty vytvořené adaptéry čte Curator podporovaným JSON
+výpisem ze SQLite:
+
+```bash
+python3 tools/pipeline/pipeline.py candidates --limit 50
+python3 tools/pipeline/pipeline.py candidates --state new --source pardubice-calendar
+python3 tools/pipeline/pipeline.py candidates --week 2026-W33
+```
+
+JSON obsahuje `shown` i `total`, takže stránkovací `--limit` už nelze
+zaměnit za velikost celé fronty. `backlog-summary` navíc sloučí unikátní
+otevřená ID ze všech `research/candidates*.json` a odděleně vykáže provozní
+SQLite kandidáty.
+
+U kandidáta z výpisové karty Pardubice.eu lze načíst konkrétní detail a
+bez odhadu rozbalit všechny úplné termíny:
+
+```bash
+python3 tools/pipeline/pipeline.py expand-candidate KANDIDAT --week 2026-W33
+python3 tools/pipeline/pipeline.py expand-candidate KANDIDAT --offline
+```
+
+Příkaz odstraní pouze stránkovací parametr `page`, detail stáhne přes
+společnou ohleduplnou fetch vrstvu a vypíše kurátorský návrh s
+`requires_review: true`. Sám nic nepublikuje ani neuzavírá. `--offline`
+použije poslední uložený detailní snapshot; `--snapshot SOUBOR` je určený
+pro fixture a diagnostiku.
+
+Hotový kurátorský návrh lze před zápisem ověřit a publikovat společně s
+uzavřením provozního kandidáta. Soubor návrhu obsahuje `candidate_id`, pole
+hotových produkčních `events` a u více termínů volitelný `primary_event_id`:
+
+```bash
+python3 tools/pipeline/pipeline.py publish-candidate KANDIDAT --proposal navrh.json
+python3 tools/pipeline/pipeline.py publish-candidate KANDIDAT --proposal navrh.json \
+  --apply --note "Ověřeno na konkrétní stránce pořadatele."
+```
+
+Bez `--apply` jde pouze o preview. Skutečný zápis odmítne neúplná pole,
+neznámý týden, rozpor s existující akcí i chybějící konkrétní URL. Změněné
+týdny a manifest se před uzavřením kandidáta znovu naimportují; při chybě se
+obnoví jejich původní obsah.
+
+Výchozí výpis zahrnuje stavy `new`, `needs-verification`, `quarantined` a
+starší `verified`. Po zápisu nebo nalezení produkční akce Curator kandidáta
+uzavře; ID akce musí už po importu existovat v tabulce `event`:
+
+```bash
+python3 tools/pipeline/pipeline.py resolve-candidate KANDIDAT --event ID_AKCE \
+  --note "Ověřeno na konkrétní stránce pořadatele."
+python3 tools/pipeline/pipeline.py resolve-candidate KANDIDAT --reject \
+  --note "Doloženě mimo pokryté kraje."
+```
+
+Zamítnutí bez auditní poznámky příkaz odmítne. Import repozitáře provozní
+kandidáty ani jejich `match_review` nemaže; odstraní a znovu načte pouze
+zrcadla kandidátů, která mají původ v `research/`.
 
 ## Dávkový end-to-end běh
 

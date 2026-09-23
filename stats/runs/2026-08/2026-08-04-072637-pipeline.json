@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "agent": "pipeline",
+  "run_id": "2026-08-04-072637-pipeline",
+  "started_at": "2026-08-04T07:26:37+02:00",
+  "finished_at": "2026-08-04T07:26:48+02:00",
+  "duration_seconds": 11.826901,
+  "status": "success",
+  "partial_reason": null,
+  "commit_sha": null,
+  "metrics": {
+    "sources_selected": 3,
+    "sources_checked": 3,
+    "sources_succeeded": 3,
+    "sources_failed": 0,
+    "sources_skipped": 0,
+    "offline": false,
+    "dry_run": false,
+    "items_found": 186,
+    "items_valid": 186,
+    "items_unparsed": 0,
+    "candidates_created": 186,
+    "candidates_existing": 0,
+    "candidates_updated": 0,
+    "candidates_quarantined": 0,
+    "matched_existing": 4,
+    "match_review_queued": 0
+  },
+  "coverage": {
+    "regions": [
+      "kralovehradecky-kraj",
+      "pardubicky-kraj"
+    ],
+    "districts": [
+      "Hradec Králové",
+      "Pardubice",
+      "Trutnov"
+    ],
+    "municipalities": [
+      "Hradec Králové",
+      "Pardubice",
+      "Trutnov"
+    ],
+    "sources": [
+      "kultura-hk-official",
+      "pardubice-calendar",
+      "uffo-trutnov"
+    ]
+  },
+  "errors": [],
+  "notes": [
+    "Runner nevytváří nové event ani export; automaticky smí pouze připojit zdroj k již publikované jisté shodě."
+  ]
+}
