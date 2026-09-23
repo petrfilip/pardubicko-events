@@ -1,5 +1,15 @@
 # Facebook Agent
 
+> **Pozastaveno od 23. 9. 2026.** Skript `tools/fb-events/fb_events.py` zapisuje
+> kandidáty do `research/`, a ten je od ADR 0008 zmrazený; v NanoClaw je navíc
+> repozitář připojený jen pro čtení a obraz agenta nemá playwright. Kanál se
+> znovu zapne, až skript bude posílat kandidáty přes
+> `klient candidates submit` (`discovery_method: facebook`) a playwright bude
+> ve vlastním mountu (`docs/phase-3-plan.md`, etapa 2, bod 3). Do té doby
+> skript nespouštěj. Pravidla níže zůstávají platná pro kurátora, který
+> zpracovává facebookové kandidáty už založené v databázi, a pro přestavbu
+> skriptu.
+
 Discovery kanál nad veřejnými stránkami Facebooku pro repozitář `petrfilip/pardubicko-events`.
 
 Kanál je specializovaný doplněk Discovery Agenta. Nepokrývá celý kraj, nenahrazuje oficiální weby a nezapisuje do produkčních dat. Jeho výstupem jsou pouze kandidáti v `research/` a report běhu.

@@ -1,25 +1,31 @@
 # Repository Guidelines
 
-## Data freeze (ADR 0008) — read first
+## Source of truth (ADR 0008) — read first
 
 Since 2026-09-23 the production SQLite database behind https://pardubicko.tix.cz
-is the single source of truth. Event data in `data/`, `research/`, `stats/` and
-`config/` is frozen: do not edit it, do not run `pipeline.py export`,
-`publish-candidate --apply` or `resolve-candidate` (they refuse), and do not run
-the `collect-events-week` skill. Writes go through the token-authenticated
-`/api/v1` only; `GET /api/v1` lists the endpoints. The API client and rewritten
-agent instructions arrive in stage 2 of `docs/phase-3-plan.md`. The sections
-below describe the phase 2 workflow and stay until then.
+is the single source of truth, and agents read and write it only through the
+token-authenticated `/api/v1` with the client `tools/client/pardubicko_client.py`.
+Event data in `data/`, `research/`, `stats/` and `config/` is a frozen snapshot:
+do not edit it and do not read current state from it; `pipeline.py export`,
+`publish-candidate --apply` and `resolve-candidate` refuse to write.
+
+- Agent roles, client setup, `run_id` and reporting: `docs/agents/README.md`
+  (in Czech, like the rest of `docs/`).
+- Weekly collection: the `collect-events-week` skill.
+- Pipeline of registered sources: `tools/pipeline/run.py`, an API client with a
+  local cache only (`tools/pipeline/README.md`).
+- The daily pipeline and curation run in the NanoClaw group `pardubicko`.
 
 ## Project Structure & Module Organization
 
-The root `index.html`, CSS, and `js/` modules form the static reference site; `web/src/`, `web/templates/`, and `web/public/` contain the PHP/SQLite application. Published events live in `data/weeks/YYYY-Www.json`; curated registries and taxonomies belong in `config/`. Python ingestion, validation, pipeline, and operations code is under `tools/`. Keep architecture notes in `docs/` and fixtures beside their owning tool, such as `tools/pipeline/fixtures/`.
+The root `index.html`, CSS, and `js/` modules form the static reference site; `web/src/`, `web/templates/`, and `web/public/` contain the PHP/SQLite application. Published events, sources and taxonomies live in the server database; `data/weeks/` and `config/` hold the frozen 2026-09-23 snapshot that tests and the local import use. Python ingestion, validation, pipeline, and operations code is under `tools/`. Keep architecture notes in `docs/` and fixtures beside their owning tool, such as `tools/pipeline/fixtures/`.
 
 ## Build, Test, and Development Commands
 
 - `docker compose up web` serves the static site at `http://localhost:8080`.
-- `python3 tools/pipeline/pipeline.py import` rebuilds the derived SQLite database from repository data.
-- `docker compose up app` serves the PHP application at `http://localhost:8081` after import.
+- `python3 tools/pipeline/pipeline.py import` builds a local SQLite database from the frozen repository snapshot, for development and tests only.
+- `docker compose up app` serves the PHP application at `http://localhost:8081` over that local database.
+- `bin/deploy` tests, stages and deploys the PHP app and API to pardubicko.tix.cz (`docs/production-runbook.md`).
 - `docker compose run --rm validate` checks JSON schemas and cross-file data rules.
 - `docker compose run --rm --build tests` runs Python, Node, PHP, HTTP smoke, validation, and lossless round-trip checks.
 - `python3 tools/run_tests.py --list` lists deterministic test scripts.

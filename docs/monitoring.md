@@ -2,6 +2,14 @@
 
 Tento dokument popisuje, jak projekt měří výkon Planner, Discovery, Curator a Quality Agentů.
 
+> **Od 23. 9. 2026 (ADR 0008) se reporty do `stats/runs/` nepíšou.** Pipeline
+> posílá report běhu do `POST /api/v1/runs` (na serveru v `pipeline_run`,
+> `pipeline_source_run` a `source_fetch`; zdraví zdrojů počítá server) a agenti
+> zakončí běh zprávou se svým `run_id`, jehož změny vrací
+> `GET /api/v1/changes?run_id=`. Viz `docs/agents/README.md`. Přehled nad
+> těmito daty přinese admin UI v etapě 3. Zbytek dokumentu popisuje formát
+> reportů fáze 2 a metriky, které zůstávají užitečné jako slovník.
+
 ## Umístění reportů
 
 Každý běh uloží samostatný JSON soubor:
