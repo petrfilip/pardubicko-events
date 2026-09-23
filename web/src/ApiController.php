@@ -163,6 +163,13 @@ final class ApiController
         $router->patch("~^/api/v1/sources/$id$~", fn (array $p): Response => Response::json(
             $this->sources->update($p['id'], self::object($input, 'changes'), $actor, $runId, self::note($input))));
 
+        $router->post('~^/api/v1/runs$~', fn (): Response => Response::json(
+            (new RunService($this->pdo, $this->clock))->report((string) $runId, self::object($input, 'run'), $actor),
+            201));
+        $router->get("~^/api/v1/runs/$id$~", fn (array $p): Response =>
+            Response::json((new RunService($this->pdo, $this->clock))->get($p['id'])
+                ?? throw DomainError::notFound('Běh ' . $p['id'] . ' neexistuje.')));
+
         $router->get('~^/api/v1/changes$~', function () use ($query): Response {
             $filter = array_filter([
                 'run_id' => $query['run_id'] ?? null,
@@ -218,6 +225,9 @@ final class ApiController
                 'POST /api/v1/match-reviews/{id}/decide {decision, note}' => 'merged nebo separate',
                 'GET /api/v1/sources?due=1' => 'registr zdrojů, splatné ke kontrole',
                 'PATCH /api/v1/sources/{id} {changes, note}' => 'úprava zdroje',
+                'POST /api/v1/runs {run: {started_at, finished_at, status, offline?, report?, sources}}'
+                    => 'report běhu pipeline; run_id je X-Run-Id',
+                'GET /api/v1/runs/{id}' => 'běh a výsledky zdrojů',
                 'GET /api/v1/changes?run_id=&actor=&entity=&entity_id=&since_id=' => 'historie změn',
                 'POST /api/v1/inbox {url, note?}' => 'ručně vložený odkaz',
             ],
