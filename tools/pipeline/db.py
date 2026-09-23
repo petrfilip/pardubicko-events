@@ -17,7 +17,8 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_DB_PATH = REPO_ROOT / "var" / "pardubicko.db"
-SCHEMA_PATH = Path(__file__).resolve().parent / "schema.sql"
+# Schéma vlastní PHP aplikace (ADR 0008); pipeline čte jeho výchozí migraci.
+SCHEMA_PATH = REPO_ROOT / "web" / "migrations" / "0001_baseline.sql"
 
 SCHEMA_VERSION = 5
 

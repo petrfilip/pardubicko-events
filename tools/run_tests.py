@@ -23,10 +23,7 @@ from pathlib import Path
 
 TOOLS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = TOOLS_DIR.parent
-WEB_TESTS = (
-    REPO_ROOT / "web" / "tests" / "test_web.php",
-    REPO_ROOT / "web" / "tests" / "run_http_smoke.py",
-)
+WEB_TESTS_DIR = REPO_ROOT / "web" / "tests"
 
 
 def discover() -> list[Path]:
@@ -36,7 +33,8 @@ def discover() -> list[Path]:
         for path in TOOLS_DIR.rglob(pattern)
         if "__pycache__" not in path.parts
     )
-    return tool_tests + list(WEB_TESTS)
+    web_tests = sorted(WEB_TESTS_DIR.glob("test_*.php"))
+    return tool_tests + web_tests + [WEB_TESTS_DIR / "run_http_smoke.py"]
 
 
 def runner_for(path: Path) -> list[str] | None:

@@ -31,7 +31,7 @@ $pdo = new PDO('sqlite::memory:', null, null, [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);
-$pdo->exec((string) file_get_contents(dirname(__DIR__, 2) . '/tools/pipeline/schema.sql'));
+$pdo->exec((string) file_get_contents(dirname(__DIR__, 2) . '/web/migrations/0001_baseline.sql'));
 $pdo->exec("INSERT INTO week (id, date_from, date_to, file, generated_at, position)
     VALUES ('2026-W32', '2026-08-03', '2026-08-09', 'data/weeks/2026-W32.json',
             '2026-08-03T12:00:00+02:00', 1)");

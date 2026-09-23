@@ -1,19 +1,14 @@
--- Schéma provozní databáze fáze 2 (ADR 0002).
+-- Migrace 0001: výchozí schéma, převzaté z fáze 2 (ADR 0002).
 --
--- Databáze je odvozený provozní store, ne zdroj pravdy. Zdrojem pravdy je
--- git: konfiguraci vlastní člověk, publikovaná data existují jako export
--- v `data/`. Soubor databáze do gitu nepatří.
+-- Vzniklo jako `tools/pipeline/schema.sql`, kdy byla databáze odvozeným
+-- storem nad gitem. Podle ADR 0008 je databáze jediným zdrojem pravdy a
+-- schéma vlastní PHP aplikace; další změny přicházejí jen jako nové
+-- migrace. Komentáře u tabulek popisují stav fáze 2.
 --
--- Hranice, která platí napříč schématem:
---   * konfigurace  — zrcadlo souborů v `config/`, mění ji člověk
---   * provozní stav — píše pipeline, do konfigurace se nikdy nevrací
---
--- Odchylky od návrhu v docs/phase-2-architecture.md jsou vysvětlené u
--- konkrétních tabulek. Vždy jde o totéž: uchovat data doslovně, aby byl
--- export prokazatelně bezeztrátový dřív, než vznikne normalizační vrstva.
-
-PRAGMA journal_mode = WAL;
-PRAGMA foreign_keys = ON;
+-- Soubor je idempotentní (`IF NOT EXISTS`), aby šel použít i na databázi
+-- vytvořenou Python pipeline, která ho do dokončení etapy 2 čte také.
+-- WAL a cizí klíče nastavuje připojení, ne migrace: `journal_mode` nejde
+-- měnit uvnitř transakce, ve které migrace běží.
 
 -- ---------------------------------------------------------------------------
 -- Metadata repozitáře

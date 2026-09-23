@@ -10,11 +10,11 @@ use RuntimeException;
 /**
  * Připojení k SQLite.
  *
- * Podle ADR 0002 je webová vrstva **čtenář**. Výchozí spojení se proto
- * otevírá v režimu `mode=ro`; pokus o zápis skončí chybou databáze, ne
- * tichým poškozením dat. Jedinou výjimkou je zápis do tabulky `inbox`
- * z `POST /api/inbox`, pro který existuje samostatné spojení `mode=rw`.
- * Pisatelem publikovaných dat zůstává Python pipeline.
+ * Podle ADR 0008 je PHP aplikace jediným pisatelem databáze. Veřejné
+ * stránky přesto čtou spojením v režimu `mode=ro`, takže chyba ve čtecí
+ * cestě nemůže data změnit. Zápis (API, inbox, administrace) jde přes
+ * samostatné spojení `mode=rw`, které před prvním použitím doběhne
+ * případné migrace schématu.
  */
 final class Database
 {
@@ -26,10 +26,19 @@ final class Database
         return self::$reader ??= self::connect('mode=ro');
     }
 
-    /** Spojení pro zápis do `inbox`. Nikde jinde se nepoužívá. */
+    /** Spojení pro zápis. Schéma dotáhne na poslední migraci. */
     public static function writer(): PDO
     {
-        return self::$writer ??= self::connect('mode=rw');
+        if (self::$writer === null) {
+            $pdo = self::connect('mode=rw');
+            $migrator = new Migrator($pdo);
+            if ($migrator->currentVersion() < $migrator->latestVersion()) {
+                $migrator->migrate();
+            }
+            self::$writer = $pdo;
+        }
+
+        return self::$writer;
     }
 
     private static function connect(string $mode): PDO
@@ -48,9 +57,10 @@ final class Database
             PDO::ATTR_EMULATE_PREPARES => false,
         ]);
 
-        // Databáze běží ve WAL módu a pipeline do ní může psát souběžně.
+        // Databáze běží ve WAL módu, takže čtenáři zápis neblokuje.
         $pdo->exec('PRAGMA busy_timeout = 5000');
         if ($mode !== 'mode=ro') {
+            $pdo->exec('PRAGMA journal_mode = WAL');
             $pdo->exec('PRAGMA foreign_keys = ON');
         }
 

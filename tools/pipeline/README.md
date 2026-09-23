@@ -273,7 +273,7 @@ skutečně vyskytla a odhalil ji až import.
 
 | Soubor | Role |
 |---|---|
-| `schema.sql` | Schéma databáze. Kontrakt pro všechny ostatní nástroje. |
+| `../../web/migrations/0001_baseline.sql` | Výchozí schéma databáze; schéma vlastní PHP aplikace (ADR 0008). |
 | `db.py` | Otevření spojení, aplikace schématu, `repo_meta`. |
 | `jsonfmt.py` | Serializace JSON ve stylu repozitáře. |
 | `import_repo.py` | Repozitář → databáze. |
