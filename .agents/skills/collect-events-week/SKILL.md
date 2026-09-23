@@ -5,6 +5,11 @@ description: Projektový end-to-end sběr a kurátorské zpracování veřejnýc
 
 # Collect Events Week
 
+> **Pozastaveno od 23. 9. 2026 (ADR 0008).** Data v gitu jsou zmrazená a
+> zdrojem pravdy je databáze na https://pardubicko.tix.cz. Tento skill zapisuje
+> do týdenních JSON, takže ho nespouštěj; skonči bez změn a odkaž na etapu 2 v
+> `docs/phase-3-plan.md`, která ho přepíše na klienta API.
+
 ## Ověř projekt a vstup
 
 - Pracuj pouze v repozitáři, který obsahuje `AGENTS.md`, `config/source-registry.json`, `data/manifest.json` a `tools/pipeline/run.py`. Mimo něj skonči bez změn.

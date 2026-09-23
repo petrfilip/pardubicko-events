@@ -1,5 +1,16 @@
 # Repository Guidelines
 
+## Data freeze (ADR 0008) — read first
+
+Since 2026-09-23 the production SQLite database behind https://pardubicko.tix.cz
+is the single source of truth. Event data in `data/`, `research/`, `stats/` and
+`config/` is frozen: do not edit it, do not run `pipeline.py export`,
+`publish-candidate --apply` or `resolve-candidate` (they refuse), and do not run
+the `collect-events-week` skill. Writes go through the token-authenticated
+`/api/v1` only; `GET /api/v1` lists the endpoints. The API client and rewritten
+agent instructions arrive in stage 2 of `docs/phase-3-plan.md`. The sections
+below describe the phase 2 workflow and stay until then.
+
 ## Project Structure & Module Organization
 
 The root `index.html`, CSS, and `js/` modules form the static reference site; `web/src/`, `web/templates/`, and `web/public/` contain the PHP/SQLite application. Published events live in `data/weeks/YYYY-Www.json`; curated registries and taxonomies belong in `config/`. Python ingestion, validation, pipeline, and operations code is under `tools/`. Keep architecture notes in `docs/` and fixtures beside their owning tool, such as `tools/pipeline/fixtures/`.
@@ -28,4 +39,4 @@ Recent commits use short imperative subjects, usually `type(scope): summary` (fo
 
 ## Security & Configuration
 
-Copy settings from `.env.example`; never commit `.env`, inbox tokens, TLS keys, databases, or `var/` runtime snapshots. Git-tracked JSON remains the source of truth; treat SQLite as rebuildable derived state.
+Copy settings from `.env.example`; never commit `.env`, inbox tokens, TLS keys, databases, or `var/` runtime snapshots. Git-tracked JSON is a frozen snapshot from 2026-09-23; the production database is the source of truth (ADR 0008).

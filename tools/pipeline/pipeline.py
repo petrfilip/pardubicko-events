@@ -64,6 +64,17 @@ def cmd_import(args) -> int:
     return 0
 
 
+FROZEN_MESSAGE = (
+    "CHYBA: data v gitu jsou od 23. 9. 2026 zmrazená. Zdrojem pravdy je databáze "
+    "na https://pardubicko.tix.cz (ADR 0008); zápis jde jen přes /api/v1. "
+    "Kurátorské běhy stojí, dokud etapa 2 v docs/phase-3-plan.md nepřinese klienta API.")
+
+
+def _frozen() -> int:
+    print(FROZEN_MESSAGE, file=sys.stderr)
+    return 2
+
+
 def cmd_export(args) -> int:
     connection = db.connect(args.database, create=False)
     stats = export_repo.export_all(connection, args.root)
@@ -698,6 +709,9 @@ def main() -> int:
     publish.add_argument("--note", help="Auditní důvod; při --apply povinný.")
 
     args = parser.parse_args()
+    if args.command in {"export", "resolve-candidate"} or (
+            args.command == "publish-candidate" and args.apply):
+        return _frozen()
     return {
         "import": cmd_import, "export": cmd_export,
         "roundtrip": cmd_roundtrip, "stats": cmd_stats,
