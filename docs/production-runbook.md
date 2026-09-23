@@ -12,7 +12,7 @@ Ověřeno na serveru 23. 9. 2026: `php8.3` má `pdo_sqlite` s FTS5 (SQLite
 ## Rozložení
 
 ```
-/home/mujfibi/web/<doména>/
+/home/mujfibi/web/pardubicko.tix.cz/
   public_html/index.php        skořápka: PARDUBICKO_DB, PARDUBICKO_BASE_URL, require kódu
   public_html/.htaccess        přepis na index.php, předání hlavičky Authorization
   public_html/assets/          CSS
@@ -24,29 +24,30 @@ Ověřeno na serveru 23. 9. 2026: `php8.3` má `pdo_sqlite` s FTS5 (SQLite
 
 ## První nasazení
 
-1. Založit doménu v Hestii (`v-add-web-domain mujfibi <doména>`) a certifikát
-   Let's Encrypt.
+1. Doména `pardubicko.tix.cz` je v Hestii od 23. 9. 2026: výchozí šablony
+   jako splitt, bez aliasu `www` (wildcard DNS `*.tix.cz` na něj nesahá),
+   Let's Encrypt, vynucené HTTPS a HSTS.
 2. Lokálně připravit databázi z aktuálního gitu:
    `bin/prepare-initial-db` → `var/phase3/prevod.db`. Skript odmítne běžet,
    pokud `data/`, `research/` nebo `config/` mají necommitnuté změny.
-3. `PARDUBICKO_DOMAIN=<doména> bin/deploy --initial-db var/phase3/prevod.db`.
+3. `bin/deploy --initial-db var/phase3/prevod.db`.
    Na serveru, kde už databáze je, `--initial-db` odmítne.
 4. Vytvořit token pro každého agenta. Token se ukáže jen jednou; uloží se do
    konfigurace NanoClaw skupiny, ne do repozitáře:
    ```sh
-   ssh tix.cz 'su -s /bin/sh mujfibi -c "PARDUBICKO_DB=/home/mujfibi/web/<doména>/private/pardubicko/data/pardubicko.db \
-     php8.3 /home/mujfibi/web/<doména>/private/pardubicko/web/bin/pardubicko token:create nanoclaw-curator 50"'
+   ssh tix.cz 'su -s /bin/sh mujfibi -c "PARDUBICKO_DB=/home/mujfibi/web/pardubicko.tix.cz/private/pardubicko/data/pardubicko.db \
+     php8.3 /home/mujfibi/web/pardubicko.tix.cz/private/pardubicko/web/bin/pardubicko token:create nanoclaw-curator 50"'
    ```
 5. Cron na denní snímek před zálohou Hestie (ta běží v 5:10):
    ```sh
    v-add-cron-job mujfibi 50 4 '*' '*' '*' \
-     'PARDUBICKO_DB=/home/mujfibi/web/<doména>/private/pardubicko/data/pardubicko.db php8.3 /home/mujfibi/web/<doména>/private/pardubicko/web/bin/pardubicko snapshot /home/mujfibi/web/<doména>/private/zalohy 14 >/dev/null'
+     'PARDUBICKO_DB=/home/mujfibi/web/pardubicko.tix.cz/private/pardubicko/data/pardubicko.db php8.3 /home/mujfibi/web/pardubicko.tix.cz/private/pardubicko/web/bin/pardubicko snapshot /home/mujfibi/web/pardubicko.tix.cz/private/zalohy 14 >/dev/null'
    ```
    Chyba snímku jde na stderr a cron ji pošle mailem.
 
 ## Další nasazení
 
-`PARDUBICKO_DOMAIN=<doména> bin/deploy`. Skript pustí testy, sestaví artefakt,
+`bin/deploy`. Skript pustí testy, sestaví artefakt,
 na serveru udělá snímek živé databáze, zkusí migrace nanečisto na jeho kopii,
 prohodí adresáře a doběhne migrace pod `mujfibi`. Na konci zkontroluje web,
 `/api/health` a že `/api/v1/me` bez tokenu vrací 401.

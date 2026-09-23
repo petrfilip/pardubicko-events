@@ -4,8 +4,10 @@
 # nejdřív zkusí nanečisto na kopii živé databáze a teprve pak se adresáře
 # prohodí. Databáze zůstává na serveru a deploy ji jen přenese do nového stromu.
 #
-#   PARDUBICKO_DOMAIN=akce.example.cz bin/deploy
-#   PARDUBICKO_DOMAIN=akce.example.cz bin/deploy --initial-db var/phase3/prevod.db
+#   bin/deploy
+#   bin/deploy --initial-db var/phase3/prevod.db
+#
+# Doménu jde přebít proměnnou PARDUBICKO_DOMAIN, třeba pro zkušební instanci.
 #
 # --initial-db nahraje první databázi (jednorázový převod z gitu, viz
 # docs/production-runbook.md). Odmítne, pokud na serveru databáze už je.
@@ -22,7 +24,7 @@
 set -e
 cd "$(dirname "$0")/.."
 
-DOMAIN="${PARDUBICKO_DOMAIN:?Nastav PARDUBICKO_DOMAIN na doménu webu v Hestii.}"
+DOMAIN="${PARDUBICKO_DOMAIN:-pardubicko.tix.cz}"
 HOST=tix.cz
 OWNER=mujfibi
 S=/home/$OWNER/web/$DOMAIN
