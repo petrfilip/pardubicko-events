@@ -1,87 +1,89 @@
 # Produkční runbook
 
-Cílová produkční plocha je podle ADR 0007 PHP web za Nginxem. Dokud nebylo
-nasazení ověřeno na cílovém hostu a přepnuta veřejná URL, zůstává veřejnou
-plochou statický GitHub Pages web. `docker-compose.yml` je jen pro vývoj;
-produkční konfigurace používá `docker-compose.production.yml`, PHP-FPM a
-persistentní volume pro SQLite, snapshoty a zálohy. GitHub Actions nic
-neplánují.
+Podle ADR 0008 běží web, API a databáze na Hestii (`tix.cz`, uživatel
+`mujfibi`, PHP 8.3-FPM) stejně jako splitt. Databáze na serveru je jediným
+zdrojem pravdy; do repozitáře se nic neexportuje. Docker stack z fáze 2
+(`docker-compose.production.yml`, `deploy/`) se na Hestii nepoužívá a odstraní
+se v etapě 2.
 
-## Předpoklady a secrets
+Ověřeno na serveru 23. 9. 2026: `php8.3` má `pdo_sqlite` s FTS5 (SQLite
+3.45.1, hledání „ridic“ najde „řidič“), `mbstring` i `intl`.
 
-Na jednom hostu je Docker Compose a platný TLS certifikát. Secrets patří do
-lokálního `.env`, který je ignorovaný gitem:
+## Rozložení
 
-```dotenv
-PARDUBICKO_BASE_URL=https://akce.example.cz
-PARDUBICKO_INBOX_TOKEN=<alespoň 32 náhodných bajtů>
-PARDUBICKO_TLS_CERT=/etc/letsencrypt/live/akce.example.cz/fullchain.pem
-PARDUBICKO_TLS_KEY=/etc/letsencrypt/live/akce.example.cz/privkey.pem
+```
+/home/mujfibi/web/<doména>/
+  public_html/index.php        skořápka: PARDUBICKO_DB, PARDUBICKO_BASE_URL, require kódu
+  public_html/.htaccess        přepis na index.php, předání hlavičky Authorization
+  public_html/assets/          CSS
+  private/pardubicko/web/      kód
+  private/pardubicko/data/     pardubicko.db (+ -wal, -shm), jen mujfibi
+  private/pardubicko.predchozi předchozí verze kódu pro rollback
+  private/zalohy/              snímky VACUUM INTO, 14 dní
 ```
 
-Nginx přesměruje HTTP na HTTPS, přijme nejvýše 32 kB request body a omezuje
-`POST /api/inbox` na pět požadavků za minutu na IP s malým burstem. Token se
-nikdy nezapisuje do repozitáře ani logu.
+## První nasazení
 
-## První start a upgrade
+1. Založit doménu v Hestii (`v-add-web-domain mujfibi <doména>`) a certifikát
+   Let's Encrypt.
+2. Lokálně připravit databázi z aktuálního gitu:
+   `bin/prepare-initial-db` → `var/phase3/prevod.db`. Skript odmítne běžet,
+   pokud `data/`, `research/` nebo `config/` mají necommitnuté změny.
+3. `PARDUBICKO_DOMAIN=<doména> bin/deploy --initial-db var/phase3/prevod.db`.
+   Na serveru, kde už databáze je, `--initial-db` odmítne.
+4. Vytvořit token pro každého agenta. Token se ukáže jen jednou; uloží se do
+   konfigurace NanoClaw skupiny, ne do repozitáře:
+   ```sh
+   ssh tix.cz 'su -s /bin/sh mujfibi -c "PARDUBICKO_DB=/home/mujfibi/web/<doména>/private/pardubicko/data/pardubicko.db \
+     php8.3 /home/mujfibi/web/<doména>/private/pardubicko/web/bin/pardubicko token:create nanoclaw-curator 50"'
+   ```
+5. Cron na denní snímek před zálohou Hestie (ta běží v 5:10):
+   ```sh
+   v-add-cron-job mujfibi 50 4 '*' '*' '*' \
+     'PARDUBICKO_DB=/home/mujfibi/web/<doména>/private/pardubicko/data/pardubicko.db php8.3 /home/mujfibi/web/<doména>/private/pardubicko/web/bin/pardubicko snapshot /home/mujfibi/web/<doména>/private/zalohy 14 >/dev/null'
+   ```
+   Chyba snímku jde na stderr a cron ji pošle mailem.
 
-```bash
-docker compose -f docker-compose.production.yml --profile ops build
-docker compose -f docker-compose.production.yml --profile ops run --rm pipeline \
-  python3 tools/pipeline/pipeline.py --database /data/pardubicko.db import
-docker compose -f docker-compose.production.yml up -d app nginx
-curl --fail https://akce.example.cz/api/health
-```
+## Další nasazení
 
-Při upgradu nejprve vytvoř zálohu, stáhni/checkoutni ověřený commit, sestav
-obrazy a spusť import/migraci. Pak `up -d`; named volume se při redeployi
-nesmaže. Při běžném `down` nikdy nepoužívej `--volumes`.
+`PARDUBICKO_DOMAIN=<doména> bin/deploy`. Skript pustí testy, sestaví artefakt,
+na serveru udělá snímek živé databáze, zkusí migrace nanečisto na jeho kopii,
+prohodí adresáře a doběhne migrace pod `mujfibi`. Na konci zkontroluje web,
+`/api/health` a že `/api/v1/me` bez tokenu vrací 401.
 
-## Pipeline a plánování
+Nasazení prohazuje adresáře, ne symlink, takže opcache změnu pozná podle času
+souborů a reload PHP-FPM není potřeba.
 
-Pipeline plánuje hostitelský cron, ne GitHub Actions. Hotový dávkový runner
-spouštěj jednou denně například:
+## Záloha a obnova
 
-```cron
-17 4 * * * cd /srv/pardubicko-events && docker compose -f docker-compose.production.yml --profile ops run --rm pipeline python3 tools/pipeline/run.py --due >>/var/log/pardubicko-pipeline.log 2>&1
-```
+- **Hestia zálohuje jen lokálně** (`BACKUP_SYSTEM='local'`, zjištěno
+  23. 9. 2026). Denní archiv leží na stejném disku jako databáze, takže při
+  ztrátě serveru nepomůže. Dokud se nenastaví vzdálený cíl
+  (`v-add-backup-host`) nebo se snímky nestahují jinam, je databáze bez kopie
+  mimo server.
+- Obnova ze snímku: zastavit zápisy (odvolat tokeny `token:revoke`), přesunout
+  `pardubicko.db`, `-wal` a `-shm` stranou, zkopírovat snímek na
+  `private/pardubicko/data/pardubicko.db`, `chown mujfibi:mujfibi`, spustit
+  `pardubicko status` a ověřit `/api/health` a detail náhodné akce.
+- Obnovu zkoušet nejméně jednou měsíčně do vedlejší cesty
+  (`PARDUBICKO_DB=/tmp/zkouska.db pardubicko status`).
 
-Cron zapni až po ověření offline běhu a zálohy na cílovém hostu. Log rotuje
-hostitelský `logrotate` (denně, 14 souborů, `copytruncate`). Nginx log
-je v named volume `nginx-logs`; jeho rotaci nastav stejnou politikou přes
-Docker logging driver nebo hostitelský sběr logů.
+## Tokeny
 
-## Záloha a test obnovy
+| Příkaz | Účel |
+|---|---|
+| `pardubicko token:create NÁZEV [LIMIT]` | nový token, výchozí limit 50 publikací denně |
+| `pardubicko token:list` | přehled bez tajných hodnot |
+| `pardubicko token:limit NÁZEV LIMIT` | změna denního limitu |
+| `pardubicko token:revoke NÁZEV` | odvolání |
 
-Denní cron používá konzistentní SQLite kopii přes `VACUUM INTO`, checksum a
-14denní retenci:
+Všechny příkazy pouštět pod `mujfibi` (`su -s /bin/sh mujfibi -c …`), jinak
+by root mohl založit `-wal` a `-shm`, do kterých web nezapíše.
 
-```cron
-42 3 * * * cd /srv/pardubicko-events && docker compose -f docker-compose.production.yml --profile ops run --rm pipeline python3 tools/ops/backup.py
-```
+## Rollback
 
-Ověření a obnova se dělají explicitně:
-
-```bash
-docker compose -f docker-compose.production.yml --profile ops run --rm pipeline \
-  python3 tools/ops/restore.py /backups/pardubicko-YYYYMMDDTHHMMSSZ.sqlite3 --verify-only
-docker compose -f docker-compose.production.yml stop app nginx
-docker compose -f docker-compose.production.yml --profile ops run --rm pipeline \
-  python3 tools/ops/restore.py /backups/pardubicko-YYYYMMDDTHHMMSSZ.sqlite3 \
-  --target /data/pardubicko.db --replace
-docker compose -f docker-compose.production.yml up -d app nginx
-```
-
-Po obnově musí projít `/api/health`, počet akcí a náhodný detail. Restore se
-nejméně měsíčně zkouší do vedlejší cesty bez přepsání produkce.
-
-## Dohled, místo na disku a rollback
-
-- sleduj `/api/health`, stav kontejnerů a volné místo volume `database`,
-  `snapshots`, `backups` a `nginx-logs`;
-- upozorni při méně než 20 % nebo 5 GB volného místa (platí nižší práh);
-- snapshot retention drží posledních pět obsahů na zdroj a poslední úspěšnou
-  extrakci; po prvním měsíci porovnej skutečný růst s kapacitou disku;
-- rollback kódu znamená checkout předchozího ověřeného commitu a rebuild;
-  rollback schématu znamená nejdřív zastavit zapisovatele a obnovit odpovídající
-  zálohu. JSON export v `data/` zůstává auditní a recovery referencí.
+Kód: vrátit `private/pardubicko.predchozi` a `public_html.predchozi` na
+jejich místa; data se předtím přesunou z `private/pardubicko/data` do
+vraceného stromu. Pokud nová verze už migrovala schéma, starý kód s ním
+nemusí fungovat; pak obnovit snímek pořízený při nasazení
+(`private/zalohy/`, nejnovější před časem nasazení).

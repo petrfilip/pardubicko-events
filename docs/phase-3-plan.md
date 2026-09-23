@@ -4,6 +4,17 @@ Rozpracovává ADR 0008 do etap. Každá etapa je samostatně nasaditelná a má
 kritérium přijetí. Odhady jsou hrubé a počítají s prací agenta pod dohledem
 správce.
 
+## Stav k 23. 9. 2026
+
+| Etapa | Stav |
+|---|---|
+| 0 | Hotovo: rozpracovaná data a příkazy pipeline ze 4. 8. jsou commitnuté. |
+| 1 | Kód hotový a otestovaný: schéma v `web/migrations/`, doménová vrstva (`EventService`, `CandidateService`, `SourceService`), deduplikace se stejnými skóre jako `matching.py`, historie změn, API v1 s tokeny, `web/bin/pardubicko`, `bin/prepare-initial-db` a `bin/deploy`. **Nenasazeno:** chybí doména v Hestii a vzdálený cíl zálohy (otázky 1 a 2). |
+| 2–5 | Nezačato. |
+
+Oproti původnímu plánu se `POST /api/v1/runs` (report běhu, fetch a health)
+přesouvá do etapy 2: jeho tvar určí až přestavba `run.py` na klienta API.
+
 ## Cílový stav
 
 ```
@@ -36,8 +47,8 @@ Dosavadní režim platí až do konce této etapy.
 
 1. **Schéma:** tabulky `api_token` (název, hash, oprávnění, odvolání),
    `change_log` (čas, aktér, `run_id`, entita, akce, stav předtím a potom,
-   poznámka) a `admin_session`. Migrace se pouštějí při startu jako ve splitt
-   (`PRAGMA user_version`).
+   poznámka). Migrace se pouštějí při startu jako ve splitt
+   (`PRAGMA user_version`). Session správce přijde s admin UI v etapě 3.
 2. **Doménová vrstva v PHP:** publikace, úprava, zrušení a přidání zdroje k
    akci; vyřízení kandidáta; úprava zdroje. Každá operace validuje, zapíše
    `change_log` a proběhne v jedné transakci.
@@ -54,7 +65,7 @@ Dosavadní režim platí až do konce této etapy.
    | `PATCH /api/v1/events/{id}`, `POST …/cancel`, `POST …/sources` | úpravy, zrušení, další zdroj |
    | `GET/POST /api/v1/candidates`, `POST …/{id}/resolve` | fronta kandidátů |
    | `GET /api/v1/sources?due=1`, `PATCH …/{id}` | zdroje ke kontrole |
-   | `POST /api/v1/runs` | report běhu, výsledky fetch a health |
+   | `GET /api/v1/changes?run_id=` | historie změn, také celého běhu |
    | `GET /api/v1/taxonomy` | kategorie, obce, aliasy |
    | `POST /api/v1/inbox` | stávající inbox, nová cesta |
 
@@ -67,10 +78,11 @@ Dosavadní režim platí až do konce této etapy.
    a jednou nahraje na server. Provozní kandidáti z lokální `var/pardubicko.db`
    se převedou také.
 7. **Nasazení na Hestii** jedním `bin/deploy` jako u splitt: testy, staging,
-   migrace nanečisto na kopii živé databáze, přepnutí, reload PHP-FPM, kontrola.
+   migrace nanečisto na kopii živé databáze, prohození adresářů, kontrola.
+   Prohozením se mění čas souborů, takže reload PHP-FPM není potřeba.
    Veřejný web tím běží na PHP.
 8. **Záloha:** cron s `VACUUM INTO` do `private/zalohy/` před časem zálohy
-   Hestie, retence 7 dní. Ověřit cíl zálohy Hestie a jednou vyzkoušet obnovu.
+   Hestie, retence 14 dní. Ověřit cíl zálohy Hestie a jednou vyzkoušet obnovu.
 
 - **Hotovo, když:** agent přes API publikuje akci, zapíše se do historie a je
   vidět na webu; jistá duplicita vrátí `409`; obnova ze snímku projde; veřejný
@@ -83,7 +95,8 @@ Dosavadní režim platí až do konce této etapy.
    odpovídají API (`events publish`, `events find`, `candidates list`,
    `sources due`, `runs report`) a vypisují JSON.
 2. **Pipeline:** `run.py` bere splatné zdroje z API, kandidáty a report běhu
-   posílá do API. Lokální SQLite zůstává jen jako cache (ETagy, snapshoty).
+   posílá do API; přibude `POST /api/v1/runs` pro report běhu, výsledky fetch
+   a health. Lokální SQLite zůstává jen jako cache (ETagy, snapshoty).
 3. **NanoClaw:** skupina s tokenem v konfiguraci skupiny, ne v repozitáři, a
    plán spouštění. Facebookový kanál potřebuje `playwright`; instaluje se do
    vlastního mountu, ne do sdíleného `.venv`, jinak rozbije prostředí hostu.
@@ -91,7 +104,8 @@ Dosavadní režim platí až do konce této etapy.
    `collect-events-week` na CLI klienta místo úprav JSON.
 5. **Úklid:** odstranit `data/`, `research/`, `stats/`, `config/*.json`
    (kromě seed dat číselníku obcí), export, roundtrip, statický frontend,
-   `tools/validate/` a GitHub workflows, které je kontrolují.
+   `tools/validate/`, GitHub workflows, které je kontrolují, a docker stack
+   fáze 2 (`docker-compose.production.yml`, `deploy/`, `tools/ops/`).
 
 - **Hotovo, když:** celý běh z NanoClaw proběhne bez zápisu do repozitáře
   (`git status` čistý) a výsledek je vidět v API.
@@ -135,9 +149,9 @@ Do té doby konfiguraci mění agenti přes API.
 ## Otevřené otázky
 
 1. Veřejná doména webu.
-2. Kam Hestia ukládá denní zálohu: pokud jen na stejný server, je potřeba
-   nastavit vzdálený cíl.
+2. Vzdálený cíl zálohy. Ověřeno 23. 9. 2026: Hestia zálohuje jen lokálně
+   (`BACKUP_SYSTEM='local'`), takže databáze zatím nemá kopii mimo server.
 3. Výše denního limitu publikací na token.
 4. Přihlášení do admin UI: vlastní heslo v aplikaci, nebo HTTP autentizace
    Hestie před `/admin`.
-5. Dostupnost FTS5 v PHP na Hestii (`pdo_sqlite`); ověřit před etapou 1.
+5. ~~Dostupnost FTS5 v PHP na Hestii.~~ Ověřeno 23. 9. 2026: funguje.

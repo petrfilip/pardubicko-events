@@ -1,0 +1,34 @@
+#!/bin/sh
+# Jednorázový převod dat z gitu do databáze, která se stane jediným zdrojem
+# pravdy (ADR 0008, etapa 1). Výsledek nahraje `bin/deploy --initial-db`.
+#
+#   bin/prepare-initial-db [CÍL]      výchozí cíl var/phase3/prevod.db
+#
+# Základem je lokální var/pardubicko.db, protože jen v ní jsou provozní
+# kandidáti adaptérů a historie health; import do ní znovu načte publikované
+# akce, konfiguraci a kandidáty z research/ přesně podle gitu.
+set -e
+cd "$(dirname "$0")/.."
+
+TARGET="${1:-var/phase3/prevod.db}"
+case "$TARGET" in
+    var/*) ;;
+    *) echo "Cíl musí ležet ve var/, kam vidí i testovací kontejner."; exit 1 ;;
+esac
+[ -f var/pardubicko.db ] || { echo "Chybí var/pardubicko.db s provozním stavem."; exit 1; }
+[ -z "$(git status --porcelain -- data research config)" ] || {
+    echo "data/, research/ nebo config/ mají necommitnuté změny; převádí se jen stav z gitu."; exit 1; }
+
+mkdir -p "$(dirname "$TARGET")"
+rm -f "$TARGET" "$TARGET-wal" "$TARGET-shm"
+sqlite3 var/pardubicko.db ".backup '$TARGET'"
+python3 tools/pipeline/pipeline.py --database "$TARGET" import >/dev/null
+python3 tools/pipeline/pipeline.py --database "$TARGET" roundtrip >/dev/null
+
+docker compose run --rm -T -e PARDUBICKO_DB="/app/$TARGET" tests sh -c '
+    php web/bin/pardubicko migrate &&
+    php web/bin/pardubicko reindex-weeks &&
+    php web/bin/pardubicko status' 2>&1 | grep -v Container
+
+sqlite3 "$TARGET" "PRAGMA wal_checkpoint(TRUNCATE); PRAGMA journal_mode = DELETE;" >/dev/null
+echo "Připraveno: $TARGET ($(git rev-parse --short HEAD))"

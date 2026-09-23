@@ -1,0 +1,152 @@
+#!/bin/sh
+# Nasazení PHP webu a API na Hestii (ADR 0008). Stejný vzor jako splitt:
+# artefakt se staví tady, na serveru se rozbalí vedle běžící verze, migrace se
+# nejdřív zkusí nanečisto na kopii živé databáze a teprve pak se adresáře
+# prohodí. Databáze zůstává na serveru a deploy ji jen přenese do nového stromu.
+#
+#   PARDUBICKO_DOMAIN=akce.example.cz bin/deploy
+#   PARDUBICKO_DOMAIN=akce.example.cz bin/deploy --initial-db var/phase3/prevod.db
+#
+# --initial-db nahraje první databázi (jednorázový převod z gitu, viz
+# docs/production-runbook.md). Odmítne, pokud na serveru databáze už je.
+#
+# Rozložení na serveru:
+#   public_html/index.php          skořápka: prostředí + require kódu z private/
+#   public_html/assets/            statické CSS
+#   private/pardubicko/web/        kód (src, templates, migrations, bin, public)
+#   private/pardubicko/data/       SQLite; deploy ho nikdy nepřepisuje
+#   private/zalohy/                snímky před nasazením a denní snímky z cronu
+#
+# Cron na denní snímek před zálohou Hestie (5:10) se zakládá jednou ručně přes
+# v-add-cron-job, ne tady; viz runbook.
+set -e
+cd "$(dirname "$0")/.."
+
+DOMAIN="${PARDUBICKO_DOMAIN:?Nastav PARDUBICKO_DOMAIN na doménu webu v Hestii.}"
+HOST=tix.cz
+OWNER=mujfibi
+S=/home/$OWNER/web/$DOMAIN
+VERZE="$(git rev-parse --short HEAD)$(git diff --quiet HEAD -- web bin || echo '+uncommitted')"
+INITIAL_DB=
+if [ "$1" = "--initial-db" ]; then
+    INITIAL_DB="${2:?Chybí cesta k databázi.}"
+    [ -f "$INITIAL_DB" ] || { echo "Databáze $INITIAL_DB neexistuje."; exit 1; }
+fi
+
+echo "== testy =="
+docker compose run --rm -T tests >/dev/null
+
+echo "== artefakt $VERZE =="
+R=$(mktemp -d)
+trap 'rm -rf "$R"' EXIT
+mkdir -p "$R/public_html" "$R/private/pardubicko/web"
+rsync -a --exclude 'tests/' web/src web/templates web/migrations web/bin web/public \
+    "$R/private/pardubicko/web/"
+cp -R web/public/assets "$R/public_html/assets"
+echo "$VERZE" > "$R/private/pardubicko/VERZE"
+
+# Skořápka docrootu. Cesta k databázi a veřejná adresa jdou z prostředí, takže
+# kód je stejný jako v repu. Chybějící token inboxu fáze 2 je záměr: stará
+# cesta /api/inbox bez něj zápis odmítne, nový vstup je /api/v1/inbox.
+cat > "$R/public_html/index.php" <<PHP
+<?php
+putenv('PARDUBICKO_DB=$S/private/pardubicko/data/pardubicko.db');
+putenv('PARDUBICKO_BASE_URL=https://$DOMAIN');
+require '$S/private/pardubicko/web/public/index.php';
+PHP
+cat > "$R/public_html/.htaccess" <<'HT'
+# Všechno kromě existujících souborů (CSS) obslouží PHP.
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ /index.php [L]
+
+# Apache s PHP-FPM hlavičku Authorization jinak do PHP nepředá a API by
+# každý token odmítlo jako chybějící.
+CGIPassAuth On
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+HT
+
+COPYFILE_DISABLE=1 tar -C "$R" -czf "$R/pardubicko-release.tgz" public_html private
+if tar -tzf "$R/pardubicko-release.tgz" | grep -E '\.(db|sqlite)(-wal|-shm)?$|/data/|\.env'; then
+    echo 'artefakt obsahuje data nebo konfiguraci, nenasazuji'; exit 1
+fi
+BYTES=$(stat -f%z "$R/pardubicko-release.tgz" 2>/dev/null || stat -c%s "$R/pardubicko-release.tgz")
+T0=$(date +%s)
+scp -q "$R/pardubicko-release.tgz" "$HOST:/home/$OWNER/tmp/"
+if [ -n "$INITIAL_DB" ]; then
+    scp -q "$INITIAL_DB" "$HOST:/home/$OWNER/tmp/pardubicko-initial.db"
+fi
+echo "$(date '+%Y-%m-%d %H:%M:%S') $DOMAIN $VERZE $BYTES B $(( $(date +%s) - T0 )) s" >> bin/deploy.log
+
+echo "== staging a přepnutí =="
+ssh "$HOST" "S='$S' OWNER='$OWNER' INITIAL='$INITIAL_DB' sh -s" <<'REMOTE'
+set -e
+[ -d "$S" ] || { echo "Doména $S v Hestii neexistuje; založ ji v-add-web-domain."; exit 1; }
+T=$(date +%Y%m%d-%H%M)
+DATA=$S/private/pardubicko/data
+DB=$DATA/pardubicko.db
+rm -rf $S/private/_stage
+mkdir -p $S/private/_stage $S/private/zalohy
+tar -xzf /home/$OWNER/tmp/pardubicko-release.tgz -C $S/private/_stage 2>/dev/null
+# Tar pod rootem zachová UID z Macu; strom patří vlastníkovi aplikace.
+chown -R $OWNER:$OWNER $S/private/_stage $S/private/zalohy
+find $S/private/_stage -name '._*' -delete
+if find $S/private/_stage -name '*.php' -exec php8.3 -l {} \; | grep -v 'No syntax errors'; then
+    echo 'chyba syntaxe, nepřepínám'; exit 1
+fi
+NEW=$S/private/_stage/private/pardubicko/web
+
+if [ -n "$INITIAL" ]; then
+    if [ -f "$DB" ]; then
+        echo "databáze už na serveru je, --initial-db odmítnuto"; exit 1
+    fi
+    mkdir -p $DATA
+    mv /home/$OWNER/tmp/pardubicko-initial.db $DB
+    chown -R $OWNER:$OWNER $DATA
+    chmod 700 $DATA
+    echo "první databáze nahrána"
+fi
+
+if [ -f "$DB" ]; then
+    # Konzistentní záloha živé databáze a migrace nanečisto na její kopii.
+    # Pod vlastníkem aplikace: root by mohl založit -wal a -shm, do kterých
+    # pak web nezapíše.
+    su -s /bin/sh $OWNER -c "PARDUBICKO_DB=$DB php8.3 $NEW/bin/pardubicko snapshot $S/private/zalohy 14" >/dev/null
+    LAST=$(ls -t $S/private/zalohy/pardubicko-*.sqlite | head -1)
+    cp "$LAST" /home/$OWNER/tmp/pardubicko-migrace.db
+    PARDUBICKO_DB=/home/$OWNER/tmp/pardubicko-migrace.db php8.3 $NEW/bin/pardubicko migrate
+    rm -f /home/$OWNER/tmp/pardubicko-migrace.db*
+    echo "záloha: $(basename "$LAST")"
+fi
+
+# Kód se prohodí, data se přestěhují do nového stromu. Předchozí verze
+# zůstává vedle jako rollback.
+mv $S/private/_stage/private/pardubicko $S/private/pardubicko.novy
+if [ -d $DATA ]; then
+    mv $DATA $S/private/pardubicko.novy/data
+fi
+rm -rf $S/private/pardubicko.predchozi
+[ -d $S/private/pardubicko ] && mv $S/private/pardubicko $S/private/pardubicko.predchozi
+mv $S/private/pardubicko.novy $S/private/pardubicko
+
+rm -rf $S/public_html.predchozi
+mv $S/public_html $S/public_html.predchozi
+mv $S/private/_stage/public_html $S/public_html
+chown -R $OWNER:$OWNER $S/private/pardubicko
+chown -R $OWNER:www-data $S/public_html
+chmod 755 $S/public_html
+rm -rf $S/private/_stage /home/$OWNER/tmp/pardubicko-release.tgz
+
+# Migrace na živé databázi pod vlastníkem aplikace, aby -wal a -shm nevznikly
+# jako root a web do nich mohl psát.
+if [ -f "$DB" ]; then
+    su -s /bin/sh $OWNER -c "PARDUBICKO_DB=$DB php8.3 $S/private/pardubicko/web/bin/pardubicko migrate"
+fi
+REMOTE
+
+echo "== kontrola =="
+curl -fsS -o /dev/null -w 'web %{http_code}\n' "https://$DOMAIN/"
+curl -fsS "https://$DOMAIN/api/health" | head -c 200 && echo
+curl -sS -o /dev/null -w 'api bez tokenu %{http_code} (očekáváno 401)\n' "https://$DOMAIN/api/v1/me"
+echo "nasazeno: $VERZE na $DOMAIN"
+echo "rollback: ssh $HOST, vrátit private/pardubicko.predchozi a public_html.predchozi (data přesunout zpět z private/pardubicko/data)"

@@ -420,11 +420,12 @@ final class EventRepository
         return array_map('intval', $row === false ? [] : $row);
     }
 
+    /** Čas poslední změny katalogu; u dat převzatých z gitu čas manifestu. */
     public function generatedAt(): ?string
     {
-        $statement = $this->pdo->prepare('SELECT value FROM repo_meta WHERE key = :key');
-        $statement->execute([':key' => 'manifest_generated_at']);
-        $value = $statement->fetchColumn();
+        $value = $this->pdo->query(
+            "SELECT value FROM repo_meta WHERE key IN ('catalog_updated_at', 'manifest_generated_at')
+             ORDER BY key = 'catalog_updated_at' DESC LIMIT 1")->fetchColumn();
 
         return is_string($value) ? $value : null;
     }

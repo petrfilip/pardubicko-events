@@ -13,15 +13,19 @@ declare(strict_types=1);
  *   pardubicko token:list                   tokeny bez tajných hodnot
  *   pardubicko token:limit NÁZEV LIMIT      změní denní limit publikací
  *   pardubicko token:revoke NÁZEV           odvolá token
+ *   pardubicko reindex-weeks                přepočítá zařazení akcí do existujících týdnů (ADR 0006)
  *   pardubicko snapshot ADRESÁŘ [DNY]       konzistentní kopie databáze přes VACUUM INTO
  *                                           a smazání snímků starších než DNY (výchozí 7)
  */
 
+use Pardubicko\Catalog;
 use Pardubicko\Clock;
 use Pardubicko\Config;
 use Pardubicko\DomainError;
+use Pardubicko\EventStore;
 use Pardubicko\Migrator;
 use Pardubicko\TokenRepository;
+use Pardubicko\Transaction;
 
 require dirname(__DIR__) . '/src/bootstrap.php';
 
@@ -100,6 +104,19 @@ try {
             (new TokenRepository(database(), new Clock()))->revoke($name)
                 or fail('Aktivní token ' . $name . ' neexistuje.');
             echo "Token {$name} je odvolaný.\n";
+            break;
+
+        case 'reindex-weeks':
+            $pdo = database();
+            $store = new EventStore($pdo, new Catalog($pdo), new Clock());
+            $before = (int) $pdo->query('SELECT COUNT(*) FROM event_week')->fetchColumn();
+            Transaction::run($pdo, function () use ($pdo, $store): void {
+                foreach ($pdo->query('SELECT id FROM event')->fetchAll(PDO::FETCH_COLUMN) as $id) {
+                    $store->syncWeeks((string) $id, false);
+                }
+            });
+            $after = (int) $pdo->query('SELECT COUNT(*) FROM event_week')->fetchColumn();
+            echo "Vazby akce–týden: {$before} → {$after}.\n";
             break;
 
         case 'snapshot':

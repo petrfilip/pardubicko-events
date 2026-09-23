@@ -184,9 +184,10 @@ final class EventStore
      * Zařazení do týdnů podle ADR 0006: akce patří do každého týdne, se
      * kterým se překrývá. Týden, ve kterém akce začíná, se založí, pokud
      * ještě neexistuje; dřívější týdny dlouhé akce se nezakládají, jinak by
-     * jedna letní výstava vyrobila řadu jinak prázdných týdnů.
+     * jedna letní výstava vyrobila řadu jinak prázdných týdnů. Přepočet
+     * převzatých dat týdny nezakládá vůbec, jen doplní chybějící vazby.
      */
-    public function syncWeeks(string $eventId): void
+    public function syncWeeks(string $eventId, bool $createStartWeek = true): void
     {
         $statement = $this->pdo->prepare('SELECT start_at, end_at FROM event WHERE id = ?');
         $statement->execute([$eventId]);
@@ -194,8 +195,9 @@ final class EventStore
         if ($row === false) {
             return;
         }
-        $startWeek = self::weekOf(substr((string) $row['start_at'], 0, 10));
-        $this->ensureWeek($startWeek);
+        if ($createStartWeek) {
+            $this->ensureWeek(self::weekOf(substr((string) $row['start_at'], 0, 10)));
+        }
 
         $from = substr((string) $row['start_at'], 0, 10);
         $to = substr((string) ($row['end_at'] ?? $row['start_at']), 0, 10);

@@ -22,3 +22,6 @@ var/
 
 # Výstupy kontrol
 linkcheck.json
+
+# Lokální záznam nasazení
+bin/deploy.log
