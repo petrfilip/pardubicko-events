@@ -89,27 +89,30 @@ zrcadla kandidátů, která mají původ v `research/`.
 
 ## Dávkový end-to-end běh
 
-`run.py` propojuje registr, snapshot, adaptér, normalizaci, matching a
-kandidátní frontu. Bez `--source` projde všechny `enabled` zdroje v pořadí
-podle ID; zdroje bez implementovaného adaptéru bezpečně označí jako
-`skipped`. `--due` výběr zúží na zdroje, od jejichž posledního skutečného
-fetch pokusu uplynul `check_interval_days` (zdroj bez historie je splatný).
+`run.py` je klient API (ADR 0008, etapa 2). Zdroje a číselník obcí bere z
+`GET /api/v1/sources` a `GET /api/v1/taxonomy`, stáhne a vytěží je, kandidáty
+posílá do `POST /api/v1/candidates` a na konci běhu pošle report do
+`POST /api/v1/runs`. Deduplikaci, splatnost i zdraví zdrojů počítá server.
+Bez `--source` projde všechny zapnuté zdroje; zdroje bez adaptéru označí jako
+`skipped`. `--due` vezme jen zdroje, které server označil jako splatné.
 
 ```bash
-python3 tools/pipeline/pipeline.py import
+export PARDUBICKO_API_TOKEN_FILE=~/.config/pardubicko/pipeline.token
 python3 tools/pipeline/run.py --due
-python3 tools/pipeline/run.py --source pardubice-calendar
+python3 tools/pipeline/run.py --source pardubice-calendar --dry-run
 python3 tools/pipeline/run.py --source pardubice-calendar --offline
-python3 tools/pipeline/run.py --source pardubice-calendar --offline --dry-run
 ```
 
-- `--source ID` lze opakovat; disabled zdroj nelze obejít ručním výběrem.
+- Konfigurace API je stejná jako u `tools/client/pardubicko_client.py`.
+  Token pipeline má mít nulový denní limit publikací: kandidáty a reporty
+  posílat smí, publikovat ne.
+- `--source ID` lze opakovat; vypnutý zdroj nelze obejít ručním výběrem.
 - `--offline` nikdy neotevře síť a vyžaduje poslední snapshot pro každý
-  požadavek fetch plánu adaptéru.
-- `--dry-run` vrátí databázovou transakci a nevytvoří report na disku. Při
-  online dry-run se i snapshoty ukládají jen do dočasného adresáře.
-- `--snapshot-dir` a `--report-root` slouží izolovanému testu nebo jinému
-  provoznímu umístění; výchozí jsou `var/snapshots` a `stats/runs`.
+  požadavek fetch plánu. Stažení z minulých běhů se do reportu neposílají.
+- `--dry-run` do API jen čte (u kandidáta zjistí, jestli na serveru je) a
+  lokální cache vrátí. Při online dry-run se snapshoty ukládají jen dočasně.
+- Lokální SQLite (`--cache`, výchozí `var/pipeline-cache.db`) je jen cache
+  ETagů, odkazů na snapshoty a zrcadlo zdrojů a obcí. Smí kdykoli zmizet.
 
 Každá položka kandidáta drží doslovný výstup adaptéru v `payload.raw`,
 normalizovaný tvar v `payload.normalized`, obsahové hashe vstupních snapshotů
@@ -124,24 +127,26 @@ doloženého aliasu. Chybějící nebo rozporný termín, konkrétní URL, náze
 Obec lze převzít z registry jen u lokálního zdroje, kde je explicitně
 uvedená. Nadregionální zdroj bez obce zůstává v karanténě.
 
-### Transakce a publikační hranice
+### Izolace zdrojů a publikační hranice
 
-Fetch pozorování se commitne samostatně, aby ADR 0004 neztratilo ani
-neúspěšný HTTP pokus. Extrakce, kandidáti a matching jednoho zdroje jsou pak
-jedna atomická transakce. Selhání této transakce vrátí jen daný zdroj;
-výsledky předchozích zdrojů zůstanou zachované. Stav dávky i jednotlivých
-zdrojů drží `pipeline_run` a `pipeline_source_run`.
+Selhání zdroje (stažení, adaptér nebo odmítnutí API) označí jen daný zdroj
+jako `failed`; kandidáti předchozích zdrojů už na serveru jsou. Stažení se
+reportuje i při HTTP chybě, aby server spočítal selhání v řadě.
 
-Runner **nikdy nevkládá novou akci do `event`, nemění týdenní JSON a
-nespouští export**. Jistá deduplikační shoda smí pouze doplnit vazbu
-`event_source` k již publikované akci. Střední pásmo jde do `match_review` a
-stav kandidáta `needs-verification`; samostatný nový kandidát zůstane `new`.
-Publikaci po lidském ověření musí provést kurátorský krok, který není součástí
-WP3. Tohle je záměrná bezpečnostní hranice, ne nedokončený implicitní publish.
+Runner **nikdy nevytváří novou akci**. Jistou shodu server připojí jako další
+zdroj publikované akce a kandidáta uzavře, nejistá jde do `match_review`.
+Publikace po ověření je krok kurátora přes `POST /api/v1/events`.
 
-Skutečný (ne dry-run) běh vytvoří právě jeden report
-`stats/runs/YYYY-MM/*-pipeline.json` podle `docs/monitoring.md`. Druhý běh ve
-stejné minutě dostane přesnější čas a existující historii nikdy nepřepíše.
+Report se nejdřív uloží do `var/runs/YYYY-MM/<run_id>.json` a teprve pak
+odešle. Když odeslání selže, pošle se znovu stejným `run_id`:
+
+```bash
+PARDUBICKO_RUN_ID=<run_id> python3 tools/client/pardubicko_client.py \
+    runs report --file var/runs/2026-09/<run_id>.json
+```
+
+Server běh přijme jednou; opakované odeslání vrátí `409 run-exists` a runner
+ho bere jako úspěch.
 
 ## Fetch a snapshoty
 

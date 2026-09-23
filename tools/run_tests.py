@@ -34,7 +34,8 @@ def discover() -> list[Path]:
         if "__pycache__" not in path.parts
     )
     web_tests = sorted(WEB_TESTS_DIR.glob("test_*.php"))
-    return tool_tests + web_tests + [WEB_TESTS_DIR / "run_http_smoke.py"]
+    return tool_tests + web_tests + [WEB_TESTS_DIR / "run_http_smoke.py",
+                                     WEB_TESTS_DIR / "run_pipeline_e2e.py"]
 
 
 def runner_for(path: Path) -> list[str] | None:
