@@ -10,7 +10,8 @@ správce.
 |---|---|
 | 0 | Hotovo: rozpracovaná data a příkazy pipeline ze 4. 8. jsou commitnuté. |
 | 1 | Hotovo a nasazeno 23. 9. 2026 na https://pardubicko.tix.cz: schéma v `web/migrations/`, doménová vrstva, deduplikace se stejnými skóre jako `matching.py`, historie změn, API v1 s tokeny, `web/bin/pardubicko`, `bin/prepare-initial-db`, `bin/deploy`. Ověřeno: stránky, autentizace přes Apache, zkušební obnova ze snímku, denní snímek v cronu ve 4:50. Data v gitu jsou zmrazená (`pipeline.py` zápis odmítne). Vzdálenou zálohu řeší správce. |
-| 2–5 | Nezačato. |
+| 2 | Rozpracováno: CLI klient `tools/client/pardubicko_client.py` pokrývá celé API v1 (test `tools/client/test_client.py`). Zbývá `run.py` jako klient, `POST /api/v1/runs`, NanoClaw, instrukce agentů a úklid. |
+| 3–5 | Nezačato. |
 
 Oproti původnímu plánu se `POST /api/v1/runs` (report běhu, fetch a health)
 přesouvá do etapy 2: jeho tvar určí až přestavba `run.py` na klienta API.
